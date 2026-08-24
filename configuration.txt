@@ -1,5 +1,17 @@
-Need package:
-=============
+===================================================================================
+## Configurations:
+=================================================================================
+httpd and PHP dependencies Configuration:
+========================================
+[root@platform html]# httpd -M | grep php
+[root@platform html]# apachectl -M | grep php
+[root@platform html]# dnf install -y httpd php php-cli php-common php-fpm
+[root@platform html]# systemctl enable --now php-fpm
+[root@platform html]# systemctl enable --now httpd
+[root@server101 ~]# firewall-cmd --add-port=8080/tcp --permanent
+[root@server101 ~]# firewall-cmd –reload
+[root@platform conf.d]# systemctl restart php-fpm
+[root@platform conf.d]# systemctl restart httpd
 dnf install php-ldap -y
 systemctl restart httpd
 
@@ -18,6 +30,21 @@ php -l /var/www/html/config/vcenter.php
 sudo -u apache cat /var/www/html/config/secrets.php
 
 sudo -u apache php -r 'require "/var/www/html/config/vcenter.php"; echo "vCenter functions loaded\n";'
+
+SELINUX ISSUE RESOLVE:
+[root@platform html]# chcon -R -t httpd_sys_rw_content_t /var/www/html
+[root@platform html]# semanage fcontext -a -t httpd_sys_rw_content_t "/var/www/html(/.*)?"
+[root@platform html]# restorecon -Rv /var/www/html
+[root@platform html]# tail -f /var/log/httpd/error_log
+[root@platform html]# setenforce 0
+[root@platform html]# vi /etc/selinux/config
+SELINUX=permissive
+[root@platform html]# semanage fcontext -a -t httpd_sys_rw_content_t "/var/www/private_data/lab/results(/.*)?"
+[root@platform html]# restorecon -Rv /var/www/private_data/lab/results
+
+[root@platform html]# setsebool -P httpd_can_network_connect on
+[root@platform html]# ausearch -m AVC -ts recent | audit2why            ##### (To check issues)
+
 
 
 
