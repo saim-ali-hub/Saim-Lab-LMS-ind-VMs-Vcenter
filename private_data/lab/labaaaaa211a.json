@@ -1,0 +1,111 @@
+{
+"lab_id": "lab211",
+"title": "Lab 211 - Global Regular Expression (Grep)",
+"description": "Global Regular Expression (Grep)",
+
+"lab_objective": {
+"description": "The objective of this lab is to develop practical skills in using the Linux grep command to search, filter, count, and identify text within files. By the end of this lab, you should be able to:",
+
+```
+"scenario": "You are working as a Linux System Administrator responsible for reviewing application files, configuration files, and system-related documentation stored in a designated lab directory. The directory contains multiple files with information such as application status, server events, users, services, errors, and system activities. Your task is to use the grep command to search through these files and extract specific information without manually opening each file. Identify which files contain a particular word or pattern. Count how many lines contain a particular word or pattern. You must use the appropriate grep options to complete each task and demonstrate your ability to efficiently search and filter text from Linux files.",
+
+"prerequisites": [
+  "Access to a Linux server",
+  "Valid Linux user account",
+  "SSH access to the Linux server",
+  "Basic understanding of Linux filesystem navigation",
+  "Basic understanding of Linux files and directories",
+  "Basic understanding of Linux commands",
+  "Basic understanding of grep command",
+  "Basic understanding of find command",
+  "Basic understanding of tar command"
+],
+
+"objectives": [
+  "Understand the purpose of the grep command.",
+  "Use grep to search for specific text.",
+  "Use grep with regular expressions.",
+  "Combine find and grep to locate and inspect files.",
+  "Get familiar with the use of commonly used grep options such as -n, -i, -v, -c, and -l to efficiently locate and analyze information from multiple files.",
+  "Display matching lines along with their line numbers.",
+  "Display lines that do not contain a specified word.",
+  "Perform searches without being affected by uppercase or lowercase letters.",
+  "Understand the difference between searching for files with find and searching inside files with grep.",
+  "Use find, grep, and tar together in practical Linux administration scenarios."
+]
+```
+
+},
+
+"tasks": [
+
+```
+{
+  "task_number": 1,
+  "title": "Copy ‘search_lab’ from /tmp directory",
+  "steps": [
+    "Copy search_lab from /tmp directory inside your home directory.",
+    "If the directory already exists and you are the owner of the directory.",
+    "Change directory to search_lab and stay in this directory unless not instructed explicitly."
+  ]
+},
+
+{
+  "task_number": 2,
+  "title": "Practice grep – Search for Text",
+  "steps": [
+    "Make sure you are inside search_lab directory. Perform the following tasks:",
+    "Task 1: Search the archive/passwd file for all lines containing the string operator and append the output to tmp/grep.txt.",
+    "Task 2: Search the archive/group file for all lines containing the string polkitd and append the output to tmp/grep.txt.",
+    "Task 3: Search the archive/passwd file for all lines containing the string shutdown and append the output to tmp/grep.txt.",
+    "Task 4: Search the archive/group file for all lines containing the string mail and append the output to tmp/grep.txt.",
+    "Task 5: From the archive/resolv.conf file, extract all lines except those containing the string search, and append the output to tmp/grep.txt.",
+    "Understand that grep searches inside files, while find searches for files and directories."
+  ]
+},
+
+{
+  "task_number": 3,
+  "title": "Practice grep Options",
+  "steps": [
+    "Task 6: Use grep -n to search the archive/passwd file for lines containing the string bash. Display the matching lines along with their line numbers. Append the output to tmp/option.txt.",
+    "Task 7: Use grep -i to search the archive/group file for the string MAIL. The search should match the string regardless of whether it appears in uppercase, lowercase, or mixed case. Append the output to tmp/option.txt.",
+    "Task 8: Use grep -v to display all lines from the archive/resolv.conf file that do not contain the string nameserver. Append the output to tmp/option.txt.",
+    "Task 9: Use grep -c to count the number of lines in the archive/passwd file that contain the string nologin. Append the output to tmp/option.txt.",
+    "Task 10: Use grep -i -n to search archive/sshd_config for lines containing permit, perform the search case-insensitively, and display the line numbers of all matching lines. Append the output to tmp/option.txt.",
+    "Task 11: Use grep -l to search all files inside the archive directory for the string ‘localhost’. Display only the filenames that contain a matching line. Append the output to tmp/option.txt."
+  ]
+},
+
+{
+  "task_number": 4,
+  "title": "Practice Recursive grep",
+  "steps": [
+    "Hint: use -r flag.",
+    "Display the filename and matching line.",
+    "Task 12: Use grep to search for the string “Production” in the application and configuration directories under the search_lab directory. Append the output to tmp/recursive.txt.",
+    "Task 13: Use grep to search for the string “customerdb” in the application and configuration directories under the search_lab directory. Append the output to tmp/recursive.txt.",
+    "Task 14: Use grep to search for the string “8080” in the application and configuration directories under the search_lab directory. Append the output to tmp/recursive.txt.",
+    "Task 15: From the archive directory, use grep to identify which files contain the word root. Append the output to tmp/recursive.txt.",
+    "Task 16: Use grep to identify which file in the archive directory contains the word nameserver. Append the output to tmp/recursive.txt. (Hint: use -rl flag)",
+    "Verify that files in nested directories are included in the search. Append the output to tmp/recursive.txt."
+  ]
+},
+
+{
+  "task_number": 5,
+  "title": "Use regular expression for grep",
+  "steps": [
+    "Task 17: Use grep to display all empty lines in sshd_config and include the line number for each empty line. Store the output in tmp/regexp.txt.",
+    "Task 18: Use grep to display all lines in sshd_config that start with #. Store the output in tmp/regexp.txt.",
+    "Task 19: Use grep to display all lines in sshd_config that start with # and include their line numbers. Append the output to tmp/regexp.txt.",
+    "Task 20: Use grep to count the number of lines in sshd_config that begin with #. Append the output to tmp/regexp.txt."
+  ]
+}
+```
+
+],
+
+"completion_message": "Excellent work! You have successfully completed Lab 211 - Global Regular Expression (Grep). You practiced searching, filtering, counting, identifying files, using grep options, recursive grep, and regular expressions to efficiently search and analyze information from Linux files."
+}
+

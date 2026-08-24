@@ -1,0 +1,164 @@
+{
+  "lab_id": "lab209",
+  "title": "Lab 209 – Operation First Day: Onboard the New Developer",
+  "description": "Operation First Day: Onboard the New Developer",
+  "lab_objective": {
+    "description": "By the end of this lab, you should be able to:",
+    "objectives": [
+      "Understand the purpose of common Linux      file system navigation commands such as pwd, cd, and ls.",
+      "Create files and directories      using mkdir, mkdir -p, and touch.",
+      "Gather basic user and system      information using whoami, id, uname, uptime, and free.",
+      "Copy files and directories      using cp and cp -r.",
+      "Move and rename files and      directories using mv.",
+      "Display and inspect file      contents using cat, head, and tail.",
+      "Search for specific information      within files using grep.",
+      "Redirect command output using > and >>.",
+      "Understand the difference      between overwriting and appending file content.",
+      "Manage file and directory      permissions using chmod.",
+      "Use both numeric and symbolic      permission notation with chmod.",
+      "Understand Linux file and      directory ownership.",
+      "Change file and directory      ownership using chown.",
+      "Change group ownership using chgrp.",
+      "Understand the relationship      between users, groups, ownership, and permissions.",
+      "Apply ownership changes      recursively using chown -R and chgrp -R.",
+      "Change both the owner and group      of a file or directory using chown USER\\:GROUP.",
+      "Verify ownership and group      changes using ls -l and ls -ld.",
+      "Understand how file permissions      and ownership work together to control access to Linux resources.",
+      "Practice common Linux      administration tasks involving file management, permissions, ownership,      and group management."
+    ],
+ 
+  "scenario": "You are the Linux Administrator on duty. This morning the IT service desk assigned you Ticket #4471: a new developer named badsha starts today. His Linux account already exists. HR needs you to build the webshop project workspace on the server, hand badsha his welcome package, share the application code with the whole developers group, lock the database secrets so only the admins group can see them, and confirm when done.\n\nHR left the templates and paperwork in /tmp/onboarding\\_kit. This is one of the most common tickets a Linux admin gets — let's close it properly.\n\nTurn on VPN, ssh into 192.168.111.165 with your LDAP account. Make sure you are in your home directory. Pay extra attention while typing as Linux is very case-sensitive. You have been granted sudo for chown and chgrp only — you will need it in Phase 7."
+ },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Phase 1 – Read the Ticket (navigation)",
+      "steps": [
+        "Task 1: Confirm you are in your home directory, then list /tmp/onboarding_kit in long format.",
+        "Look at the owner and group columns of every file — by the end of this lab you will be the one deciding what goes in those columns.",
+        "Hint:  pwd            ls -l /tmp/onboarding_kit",
+        "Task 2: To read the ticket cat /tmp/onboarding_kit/TICKET_4471.txt. Those five requests are your to-do list for the hour."
+      ],
+      "real_world": [
+        "Real-world: Admins live in tickets. Reading a request carefully and turning it into commands is the job."
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Phase 2 – Build the Project Workspace (mkdir, touch)",
+      "steps": [
+        "Task3: Create the workspace in your home directory, create the workspace named webshop and then move into it.",
+        "Task 4: Create the project directories. Inside webshop, create four directories named app, docs, secrets, and reports.",
+        "Task 5: Create the nested directory with a single command, create utils inside src inside app where src does not exit.",
+        "Hint: Use mkdir -p app/src/utils",
+        "Task6: Create an empty file reports/onboarding_report.txt inside reports. Then verify the whole structure with a detailed listing.",
+        "Hint: touch, ls -l (bonus tree)"
+      ],
+      "real_world": [
+        "Real-world: Every new project or new hire starts with an admin laying out a clean directory structure. mkdir -p is used constantly in setup scripts."
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Phase 3 – Audit the Server (system info & redirection)",
+      "steps": [
+        "Stay inside webshop. Build reports/server_audit.txt by appending (>>, never >) the output of each command.",
+        "Task 7: Your username, then your full user and group information",
+        "(Hint: whoami >> reports/server_audit.txt, then id >> reports/server_audit.txt same way)",
+        "Task 8: Your current directory, the kernel information, the uptime, and memory in human-readable form",
+        "(Hint: pwd, uname –a, uptime, free –h, with each command use >>)",
+        "Task 9: Verify the audit file, display the file, then display only its first 3 lines.",
+        "(Hint: cat, head -n 3)"
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Phase 4 – Stage the Files (cp, mv, echo)",
+      "steps": [
+        "Task 10: Copy app_template.sh from the kit into app, renaming it to start.sh in the same command.",
+        "(Hint: cp /tmp/onboarding_kit/app_template.sh app/start.sh)",
+        "Task 11: Copy handbook.txt into docs. (Use a relative destination).",
+        "Task 12: Copy welcome_template.txt into docs as welcome_badsha.txt, writing the destination as an absolute path",
+        "(Hint: destination: ~/webshop/docs/welcome_badsha.txt)",
+        "Task 13: Copy db_password.txt into secrets.",
+        "Task 14: Personalize the welcome file: append one line to docs/welcome_badsha.txt:",
+        "echo 'Welcome badsha! Your admin is: YOUR_NAME' >> docs/welcome_badsha.txt",
+        "Task 15: Back up the docs directory: copy the whole docs directory to reports/docs_backup, then rename it to reports/docs_archive.",
+        "(Hint: cp -r, then mv)"
+      ],
+      "real_world": [
+        "Real-world: Deploying templates, renaming on the way, and archiving before changes — cp/mv are the admin's daily bread. Personalizing a file with echo >> is how quick notes get added on servers"
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Phase 5 – Investigate the Paperwork (head, tail, grep)",
+      "steps": [
+        "Task 16: Inspect the access log. Kit has an access log with 100+ lines. Peek at the first 5 lines and the last 3 lines of /tmp/onboarding_kit/access_requests.log",
+        "(Hint: head -5 ; tail -3)",
+        "Task 17:. Find badsha in the team roster: filter team_roster.txt for badsha. What is his role, team and manager?",
+        "(Hint: grep 'badsha' /tmp/onboarding_kit/team_roster.txt)",
+        "Task 18. Verify what he is approved access log for badsha. Which group was he APPROVED for, and which group he was DENIED? (This information decides what you will do in Phase 7!).",
+        "Task 19:.Save the evidence: Redirect the roster match into the file. reports/badsha_access.txt, then append the log matches. Verify with cat.",
+        "(Hint: first grep with >, second with >>)"
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Phase 6 – Set Permissions (chmod)",
+      "steps": [
+        "Task 20: The app directory will be shared with the developers group. Make it owner=rwx, group=rwx, others=r-x using numeric notation. Verify with ls -ld.",
+        "(Hint: chmod 775 app)",
+        "Task 21: Make app/start.sh executable for its owner using symbolic notation.",
+        "(Hint: chmod u+x app/start.sh — verify with ls -l)",
+        "Task 22: Lock the secrets directory: owner=rwx, group=rwx, others=nothing. Then set secrets/db_password.txt to owner=rw, group=rw, others=nothing. Verify.",
+        "(Hint: chmod 770 secrets, chmod 660 secrets/db_password.txt)"
+      ],
+      "real_world": [
+        "Real-world: chmod decides WHAT can be done (read/write/execute). But look at your ls -l: the group column still says YOUR group. Permissions are useless until the right people own the files. That is the next phase — the part most beginners never learn"
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "Phase 7 – Hand Over Ownership (chown & chgrp)",
+      "steps": [
+        "Every file has an owner (a user) and a group. Together with chmod, they answer: who can do what. Changing them requires privileges, so use sudo.",
+        "Task 23: Look at docs/welcome_badsha.txt with ls -l. Owner is you. It should be badsha's. Hand it over:",
+        "sudo chown badsha docs/welcome_badsha.txt",
+        "ls -l docs/welcome_badsha.txt",
+        "The owner column now says badsha. You just gave a file to another user.",
+        "apps crash with 'Permission denied' — done right, everyone just works.",
+        "Task 24:.The starter script must belong to the developers team. Change only the group of app/start.sh to developers, then verify:",
+        "sudo chgrp developers app/start.sh",
+        "ls -l app/start.sh",
+        "Task 25: Actually the whole app directory — every file and subdirectory inside — should be group developers. Do it in one recursive command and verify all levels:",
+        "sudo chgrp -R developers app",
+        "ls -ld app",
+        "ls -l app app/src",
+        "Combined with the 775 you set in Phase 6, every developer can now create and edit code in app/, and outsiders can only look. That is a shared team directory — built by you.",
+        "Task 26: The secrets: owner should stay you, but the group must be admins, recursively. chown can set both owner and group at once with user\\:group:",
+        "sudo chown -R YOUR_USERNAME:admins secrets",
+        "ls -ld secrets",
+        "ls -l secrets",
+        "(Tip: $(whoami) can replace YOUR_USERNAME.) Read the result: drwxrwx--- you admins — you and the admins group have full access; developers and everyone else: nothing. Badsha was DENIED admins in the log — and now the filesystem enforces it.",
+        "Task 27: Prove ownership is protected: try without sudo to give handbook.txt to root: chown root docs/handbook.txt. Read the error. Only privileged users may give files away — otherwise anyone could dodge disk quotas or plant files as someone else."
+      ],
+      "real_world": [
+        "Real-world: chown = handing files to the person who should own them: a new hire's home files, a developer's uploaded code, a website directory to the web server user (chown www-data). Done wrong,",
+        "Real-world: chgrp = sharing with a team. Shared project folders, log directories readable by the 'ops' group, upload folders for the 'web' group — grouping is how admins give access to twenty people at once without touching twenty accounts.",
+        "Real-world: chown user:group in one shot is the everyday form. Recursive -R after copying an app tree, restoring a backup, or migrating a home directory is standard admin work."
+      ]
+    },
+    {
+      "task_number": 8,
+      "title": "Phase 8 – Close the Ticket",
+      "steps": [
+        "File your completion note and rename the report:",
+        "echo 'badsha onboarded by YOUR_NAME' >> reports/onboarding_report.txt",
+        "mv reports/onboarding_report.txt reports/TICKET_4471_DONE.txt",
+        "You built a workspace, audited a server, staged files, verified approvals in a log, set permissions, handed a file to a user, shared a directory with a team, and locked secrets to admins. That is a real onboarding ticket, closed by a real Linux admin: you"
+      ]
+    }
+  ],
+  "completion_message": "You built a workspace, audited a server, staged files, verified approvals in a log, set permissions, handed a file to a user, shared a directory with a team, and locked secrets to admins. That is a real onboarding ticket, closed by a real Linux admin: you"
+}

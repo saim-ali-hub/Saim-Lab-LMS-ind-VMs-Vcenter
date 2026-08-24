@@ -1,0 +1,189 @@
+{
+  "lab_id": "lab2",
+  "title": "Lab 2 - 2026",
+  "description": "Linux Filesystem Management",
+
+  "lab_objective": {
+
+    "description": "By the end of this lab, you will be able to create directory structures, manage files, copy files between locations, redirect command output, and inspect file contents using common Linux filesystem commands.",
+
+    "scenario": "You have been assigned to organize system files for a Linux server. As a Junior Linux Administrator, your task is to create the required directory structure, manage configuration files, copy important system files, redirect command output into files, and verify file contents using standard Linux commands.",
+
+    "prerequisites": [
+      "Linux server",
+      "Terminal access",
+      "User account with write permission to the home directory"
+    ],
+
+    "objectives": [
+      "Create nested directory structures.",
+      "Create empty files using touch.",
+      "Create text files using output redirection.",
+      "Copy files between directories.",
+      "Rename files during copy operations.",
+      "Display file contents using cat.",
+      "Redirect command output into files.",
+      "View the beginning and end of files using head and tail.",
+      "Identify file types using the file command.",
+      "Understand when rmdir succeeds and fails."
+    ]
+  },
+
+  "tasks": [
+
+    {
+      "task_number": 1,
+      "title": "Prepare the Working Environment",
+      "steps": [
+        "Login to the Linux server.",
+        "Open the Terminal.",
+        "Navigate to your home directory.",
+        "Perform all tasks from your home directory unless otherwise instructed."
+      ]
+    },
+
+    {
+      "task_number": 2,
+      "title": "Create Directory Structure",
+      "steps": [
+        "Create the following nested directory structure:",
+        "vars/systems/logs"
+      ]
+    },
+
+    {
+      "task_number": 3,
+      "title": "Create an Empty File",
+      "steps": [
+        "Navigate to the vars/systems directory.",
+        "Create an empty file named 'dmesg'."
+      ]
+    },
+
+    {
+      "task_number": 4,
+      "title": "Create a Text File",
+      "steps": [
+        "Navigate to vars/systems/logs.",
+        "Create a file named 'file1.txt'.",
+        "Store the following text inside the file:",
+        "I love Linux and am excited to join the DevOps course."
+      ]
+    },
+
+    {
+      "task_number": 5,
+      "title": "Create Another Directory Structure",
+      "steps": [
+        "Create the following directory structure:",
+        "vars/os/configs"
+      ]
+    },
+
+    {
+      "task_number": 6,
+      "title": "Copy System Configuration File",
+      "steps": [
+        "Copy the '/etc/hosts' file into the vars/os/configs directory."
+      ]
+    },
+
+    {
+      "task_number": 7,
+      "title": "Copy Hosts File",
+      "steps": [
+        "Copy the hosts file from vars/os/configs into the vars directory."
+      ]
+    },
+
+    {
+      "task_number": 8,
+      "title": "Display File Contents",
+      "steps": [
+        "Use the cat command to display the contents of the hosts file located inside the vars directory."
+      ]
+    },
+
+    {
+      "task_number": 9,
+      "title": "Redirect Output into a New File",
+      "steps": [
+        "Display the contents of the hosts file using the cat command.",
+        "Redirect the output into a new file named 'new_hosts'.",
+        "Store the new file inside vars/os/configs."
+      ]
+    },
+
+    {
+      "task_number": 10,
+      "title": "Copy and Rename a File",
+      "steps": [
+        "Copy file1.txt from vars/systems/logs into the vars/os directory.",
+        "Rename the copied file as 'new_file1.txt' during the copy operation."
+      ]
+    },
+
+    {
+      "task_number": 11,
+      "title": "Create Additional Files",
+      "steps": [
+        "Inside vars/systems/logs create the following empty files:",
+        "sshd_config",
+        "httpd.conf"
+      ]
+    },
+
+    {
+      "task_number": 12,
+      "title": "Create Another Text File",
+      "steps": [
+        "Inside vars/systems create a file named 'new_file.txt'.",
+        "Store the following text inside the file:",
+        "I am enjoying DevOps sessions and lab work."
+      ]
+    },
+
+    {
+      "task_number": 13,
+      "title": "Remove a Directory",
+      "steps": [
+        "Attempt to remove the vars/os/configs directory using the rmdir command.",
+        "Observe whether the command succeeds or fails.",
+        "Understand why rmdir cannot remove a directory that contains files."
+      ]
+    },
+
+    {
+      "task_number": 14,
+      "title": "Display Last Lines of a File",
+      "steps": [
+        "Display the last five lines of /etc/nsswitch.conf.",
+        "Append the output into a file named 'switch_output.txt'.",
+        "Store the file inside vars/systems."
+      ]
+    },
+
+    {
+      "task_number": 15,
+      "title": "Display First Lines of a File",
+      "steps": [
+        "Display the first three lines of /etc/resolv.conf.",
+        "Overwrite the contents of a file named 'dns_output.txt'.",
+        "Store the file inside vars/systems."
+      ]
+    },
+
+    {
+      "task_number": 16,
+      "title": "Identify File Types",
+      "steps": [
+        "Use the file command on '/etc/passwd'.",
+        "Use the file command on '/bin/ls'.",
+        "Store both outputs in a file named 'output_file' inside vars/systems/logs."
+      ]
+    }
+
+  ],
+
+  "completion_message": "Cool!!!! Great Job. You have successfully completed Linux Filesystem Management Lab."
+}

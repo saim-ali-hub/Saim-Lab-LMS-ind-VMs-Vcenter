@@ -1,0 +1,150 @@
+{
+  "lab_id": "lab206",
+  "title": "Lab 206 - Linux File Permissions II",
+  "description": "Linux File Permissions II",
+
+  "lab_objective": {
+    "description": "In this lab, you will develop practical skills in managing Linux file and directory permissions using both numeric (octal) and symbolic permission methods.",
+
+    "scenario": "You are a Linux Systems Administrator responsible for preparing a server environment for a development team. The development team requires several directories and files for application configuration, logs, scripts, reports, and shared data. Different users and groups must have different levels of access. Your task is to create the required directory structure and configure the appropriate permissions using both numeric and symbolic chmod methods. For each task, verify your configuration before moving to the next task.",
+
+    "prerequisites": [
+      "Access to a Linux server",
+      "Valid Linux user account",
+      "SSH access to the Linux server",
+      "Basic understanding of Linux filesystem navigation",
+      "Basic understanding of Linux files and directories",
+      "Basic understanding of Linux file permissions",
+      "Basic understanding of chmod",
+      "Basic understanding of numeric and symbolic permission notation"
+    ],
+
+    "objectives": [
+      "Understand read, write, and execute permissions.",
+      "Manage permissions for the owner, group, and other users.",
+      "Practice numeric permissions such as 600, 640, 644, 700, and 755.",
+      "Practice symbolic permissions such as u+rwx, g-w, and o-rwx.",
+      "Change file and directory permissions using chmod.",
+      "Apply permissions recursively.",
+      "Understand execute permissions on directories.",
+      "Verify permissions and ownership using ls and stat.",
+      "Create and manage files and directories using Linux commands."
+    ]
+  },
+
+  "tasks": [
+
+    {
+      "task_number": 1,
+      "title": "Create the Lab Directory Structure",
+
+      "steps": [
+        "From your home directory, create a directory named permissions_lab.",
+        "Inside permissions_lab, create the following six directories:",
+        "application",
+        "configuration",
+        "logs",
+        "scripts",
+        "reports",
+        "private",
+        "After creating the directory structure, verify that all required directories were created successfully."
+      ]
+    },
+
+    {
+      "task_number": 2,
+      "title": "Practice Symbolic Permissions",
+
+      "steps": [
+        "Navigate to the scripts directory.",
+        "Create three empty files named backup.sh, monitor.sh, and cleanup.sh.",
+        "To modify permissions, use symbolic permission notation only for this task.",
+        "Modify backup.sh so the owner has read, write, and execute permissions, while the group and other users have no permissions.",
+        "Modify monitor.sh by adding execute permission for the owner without changing the existing read and write permissions. Also add execute permission for the group and other users.",
+        "Modify cleanup.sh by adding execute permission for the owner without changing the existing read and write permissions. Add execute permission for the group and remove read permission from other users.",
+        "Verify the permissions of all three files."
+      ]
+    },
+
+    {
+      "task_number": 3,
+      "title": "Configure the Private Directory",
+
+      "steps": [
+        "Inside private directory, create two files inside it named credentials.txt and keys.txt.",
+        "Use symbolic permission notation to configure the private directory and its files.",
+        "Configure the private directory so that only the owner has access.",
+        "The private directory must allow the owner read, write, and execute permissions while the group and other users have no permissions.",
+        "Configure permissions on credentials.txt so that owner can read, write, group have read permissions and other users have no permissions.",
+        "Modify permissions on keys.txt file, allow owner read and write. The group members and other users have no permission.",
+        "Verify the permissions of the private directory and both files."
+      ]
+    },
+
+    {
+      "task_number": 4,
+      "title": "Create Application Files and Configure Numeric Permissions",
+
+      "steps": [
+        "Navigate to the application directory.",
+        "Create four empty files named app.conf, app.log, deploy.sh, and README.txt.",
+        "Use numeric permission notation for all four files.",
+        "The app.conf with permission, allowing the owner to read and write while the group and other users can read the file.",
+        "Configure app.log with permission, allowing the owner to read and write, the group to read, and preventing access by other users.",
+        "Set permissions for deploy.sh file, allowing the owner to read, write, and execute while the group and other users can read and execute.",
+        "Configure README.txt with permission, allowing the owner to read and write while the group and other users can read.",
+        "Verify the permissions of all four application files."
+      ]
+    },
+
+    {
+      "task_number": 5,
+      "title": "Create Configuration Files",
+
+      "steps": [
+        "Navigate to the configuration directory.",
+        "Create two empty files named database.conf and network.conf.",
+        "Use numeric permission notation for this task.",
+        "Configure database.conf with permission, allowing only the owner to read and modify the file.",
+        "Configure network.conf with permission, allowing the owner to read and write, the group to read, and preventing access by other users.",
+        "Verify the resulting permissions of both files."
+      ]
+    },
+
+    {
+      "task_number": 6,
+      "title": "Create Log Files and Set Directory Permissions",
+
+      "steps": [
+        "Change directory to permissions_lab and remain there.",
+        "Inside the logs directory, create two empty files named application.log and access.log.",
+        "Use numeric permission notation for both the directory and files.",
+        "Configure the logs directory with permission, allowing the owner full access, the group to read and access the directory, and preventing access by other users.",
+        "Configure application.log with permission, allowing the owner to read and write, the group to read, and preventing access by other users.",
+        "Set permission on the access.log, allowing the owner to read and write, the group to read, and other users to read only.",
+        "Verify the permissions of the logs directory and both log files."
+      ]
+    },
+
+    {
+      "task_number": 7,
+      "title": "Practice Recursive Permissions",
+
+      "steps": [
+        "Make sure you are in the permissions_lab directory.",
+        "Inside the reports directory, create two directories named engineering and management.",
+        "Inside engineering, create two empty files named report1.txt and report2.txt.",
+        "Inside management, create two empty files named bonus.txt and rise.txt.",
+        "Modify the permissions using any method you prefer.",
+        "Use a recursive chmod operation to configure the permissions throughout the reports hierarchy, allowing the owner has read, write, and execute permissions, while the group and other users have no permissions.",
+        "After applying the recursive permission change, verify the permissions of all directories and files under reports.",        
+        "Navigate to the reports directory and create an empty file named daily.txt.",
+        "Use numeric permission notation to configure daily.txt with permission, allowing the owner and group to read and write while preventing access by other users.",
+        "Verify the final permissions of daily.txt."
+      ]
+    }
+
+  ],
+
+ "completion_message": "Excellent work! You have successfully completed Lab 206 - Linux File Permissions and practiced managing Linux file and directory permissions using numeric and symbolic methods."
+}

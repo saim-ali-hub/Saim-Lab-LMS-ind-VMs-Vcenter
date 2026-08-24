@@ -1,0 +1,206 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>LinoopTek Innovations Lab Platform Login</title>
+
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            font-family: Arial, sans-serif;
+        }
+
+        #loginBox {
+            text-align: center;
+        }
+
+        .card {
+            background: #111827;
+            width: 460px;
+            padding: 40px;
+            border-radius: 18px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+
+        .logo {
+            width: 380px;
+            height: auto;
+            margin-bottom: 18px;
+            border-radius: 12px;
+        }
+
+        h2 {
+            color: #f8fafc;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 25px;
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border: none;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 95%;
+            padding: 10px;
+            margin-top: 10px;
+            background: #2563eb;
+            border: none;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        button:disabled {
+            background: #64748b;
+            cursor: not-allowed;
+        }
+
+        #loginMessage {
+            margin-top: 15px;
+            color: #f87171;
+            min-height: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="loginBox">
+    <div class="card">
+
+        <h2>LinoopTek Innovations Platform Login</h2>
+
+        <input
+            id="username"
+            type="text"
+            placeholder="LDAP Username"
+            autocomplete="username"
+        >
+
+        <input
+            id="password"
+            type="password"
+            placeholder="LDAP Password"
+            autocomplete="current-password"
+        >
+
+        <button id="loginButton" type="button" onclick="login()">
+            Login
+        </button>
+
+        <div id="loginMessage"></div>
+
+    </div>
+</div>
+
+<script>
+async function login() {
+
+    const username =
+        document.getElementById("username").value.trim();
+
+    const password =
+        document.getElementById("password").value;
+
+    const button =
+        document.getElementById("loginButton");
+
+    const message =
+        document.getElementById("loginMessage");
+
+    message.textContent = "";
+
+    if (!username) {
+        message.textContent = "Enter username";
+        return;
+    }
+
+    if (!password) {
+        message.textContent = "Enter password";
+        return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Logging in...";
+
+    try {
+
+        const res = await fetch("login.php", {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        });
+
+        const responseText = await res.text();
+
+        console.log("login.php response:", responseText);
+
+        if (!res.ok) {
+            throw new Error(
+                "HTTP " + res.status + ": " + responseText
+            );
+        }
+
+        let data;
+
+        try {
+            data = JSON.parse(responseText);
+        } catch (jsonError) {
+            throw new Error(
+                "Server returned invalid JSON: " +
+                responseText
+            );
+        }
+
+        if (data.status === "success") {
+
+            window.location.href = "index.html";
+
+        } else {
+
+            message.textContent =
+                data.message || "Invalid username or password.";
+        }
+
+    } catch (error) {
+
+        console.error("Login error:", error);
+
+        message.textContent =
+            "Login failed. Please try again.";
+
+    } finally {
+
+        button.disabled = false;
+        button.textContent = "Login";
+    }
+}
+</script>
+
+</body>
+</html>

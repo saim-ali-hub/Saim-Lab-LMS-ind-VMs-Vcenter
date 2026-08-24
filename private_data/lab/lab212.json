@@ -1,0 +1,112 @@
+{
+  "lab_id": "lab212",
+  "title": "Lab 212 - Grep & Find Commands",
+  "description": "Find Files and Directories, and Use grep to Find Strings or Patterns in the Linux Filesystem",
+
+  "lab_objective": {
+    "description": "By the end of this lab, you should be able to:",
+
+    "objectives": [
+      "Understand the purpose of the find command.",
+      "Search for files and directories by name.",
+      "Search for files based on their type.",
+      "Search for files based on their size.",
+      "Search for files based on their modification time.",
+      "Search for files based on ownership.",
+      "Understand the purpose of the grep command.",
+      "Use grep to search for specific text.",
+      "Display lines that do not contain a specified word.",
+      "Perform searches without being affected by uppercase or lowercase letters."
+    ],
+
+    "scenario": "You are a Linux Systems Administrator responsible for maintaining an application server used by the development and operations teams. The server contains application configuration files, logs, reports, scripts, temporary files, and backup data. The operations team requires you to locate files based on specific names, sizes, permissions, and contents, identify configuration and log files containing specific information, and locate older files that may require cleanup. Your task is to use the find command to efficiently locate and filter files based on different attributes, and the grep command to search file contents and extract specific information. You must use the appropriate find and grep options for each task and verify your results without manually opening individual files."
+  },
+
+  "tasks": [
+
+    {
+      "task_number": 1,
+      "title": "Copy ‘search_lab’ from /tmp Directory",
+      "steps": [
+        "Copy search_lab from the /tmp directory into your home directory.",
+        "Make sure the directory is copied successfully and that you are the owner.",
+        "Change to the search_lab directory.",
+        "Remain inside the search_lab directory unless explicitly instructed to change directories."
+      ]
+    },
+
+    {
+      "task_number": 2,
+      "title": "Practice find – Search by File Name",
+      "steps": [
+        "From the search_lab directory, use the find command to locate files named app.conf, application.log, and database.conf.",
+        "Search recursively from the current directory.",
+        "Display the full path of every matching file.",
+        "Use only the find command for this task.",
+        "Redirect the output to tmp/file-name.txt."
+      ]
+    },
+
+    {
+      "task_number": 3,
+      "title": "Practice find – Search for Files and Directories by Type",
+      "steps": [
+        "Use find to display only directories under search_lab.",
+        "Run the command again and redirect the output to tmp/search-dir.txt.",
+        "Use find to display only regular files under search_lab.",
+        "Run the command again and redirect the output to tmp/search-file.txt."
+      ]
+    },
+
+    {
+      "task_number": 4,
+      "title": "Practice find – Search by File Size",
+      "steps": [
+        "Use the appropriate find option to locate files smaller than 100M in the logs directory.",
+        "Redirect the output to tmp/small-size.txt.",
+        "Use the appropriate find option to locate files larger than 100M in the logs directory.",
+        "Redirect the output to tmp/large-size.txt.",
+        "Understand how the -size option can help administrators identify unusually large files."
+      ]
+    },
+
+    {
+      "task_number": 5,
+      "title": "Practice find – Search by Modification Time",
+      "steps": [
+        "Use find to locate files modified within the last 30 days in the search_lab directory.",
+        "Redirect the output to tmp/time-day.txt.",
+        "Use find to locate files modified within the last 1 minute.",
+        "Redirect the output to tmp/time-min.txt.",
+        "Understand the difference between searching by days and searching by minutes."
+      ]
+    },
+
+    {
+      "task_number": 6,
+      "title": "Practice grep – Search for Text",
+      "steps": [
+        "Make sure you are inside the search_lab directory.",
+        "Task 6: Search the archive/passwd file for all lines containing the string operator and append the output to tmp/grep.txt.",
+        "Task 7: Search the archive/group file for all lines containing the string polkitd and append the output to tmp/grep.txt.",
+        "Task 8: Search the archive/passwd file for all lines containing the string shutdown and append the output to tmp/grep.txt.",
+        "Task 9: Search the archive/group file for all lines containing the string mail and append the output to tmp/grep.txt.",
+        "Task 10: From the archive/resolv.conf file, extract all lines except those containing the string search and append the output to tmp/grep.txt.",
+        "Understand that grep searches inside files, while find searches for files and directories."
+      ]
+    },
+
+    {
+      "task_number": 7,
+      "title": "Practice grep Options",
+      "steps": [
+        "Task 11: Use grep -n to search the archive/passwd file for lines containing the string bash. Display the matching lines along with their line numbers. Append the output to tmp/option.txt.",
+        "Task 12: Use grep -i to search the archive/group file for the string MAIL. The search should match the string regardless of whether it appears in uppercase, lowercase, or mixed case. Append the output to tmp/option.txt.",
+        "Task 13: Use grep -v to display all lines from the archive/resolv.conf file that do not contain the string nameserver. Append the output to tmp/option.txt."
+      ]
+    }
+
+  ],
+
+  "completion_message": "Excellent work! You have successfully completed Lab 212 - Find and grep commands in Linux. You practiced using find to search for files and directories and used grep to find strings and patterns in files."
+}

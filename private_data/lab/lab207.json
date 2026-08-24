@@ -1,0 +1,167 @@
+{
+  "lab_id": "lab207",
+  "title": "Lab 207 - Ownership and Group Management",
+  "description": "Ownership and Group Management",
+
+  "lab_objective": {
+    "description": "In this lab, you will develop practical skills in managing Linux file and directory ownership and group ownership using chown and chgrp, including recursive ownership changes.",
+
+    "scenario": "You are a Linux Systems Administrator working on a server where multiple users and groups are used to manage access to application files and directories. As part of your administrative responsibilities, you need to practice changing file and directory ownership and group ownership. For this lab, you have been given restricted sudo access to chown and chgrp. Your sudo permissions allow ownership and group changes only inside your own home directory. You must perform all work under your own home directory and must not attempt to modify files or directories outside your home directory.",
+
+    "prerequisites": [
+      "Access to a Linux server",
+      "Valid Linux user account",
+      "SSH access to the Linux server",
+      "Basic understanding of Linux filesystem navigation",
+      "Basic understanding of Linux files and directories",
+      "Basic understanding of Linux ownership",
+      "Basic understanding of Linux groups",
+      "Basic understanding of chown",
+      "Basic understanding of chgrp",
+      "Basic understanding of recursive commands"
+    ],
+
+    "objectives": [
+      "Understand Linux file and directory ownership.",
+      "Identify the owner and group of files and directories.",
+      "Use chown to change file ownership.",
+      "Use chown :GROUP to change only the group ownership.",
+      "Use chown USER:GROUP to change both owner and group ownership.",
+      "Use chgrp to change group ownership.",
+      "Use chown to change directory ownership.",
+      "Use chown -R to recursively change ownership.",
+      "Change ownership of multiple files using a single command.",
+      "Verify ownership and group changes using ls -l and ls -ld.",
+      "Work safely within the user's own home directory using restricted sudo access."
+    ]
+  },
+
+  "tasks": [
+
+    {
+      "task_number": 1,
+      "title": "Create the Lab Directory Structure",
+
+      "steps": [
+        "From your home directory, create a directory named ownership_lab.",
+        "Change directory to ownership_lab.",
+        "Inside the ownership_lab directory, create four files named file1.txt, file2.txt, file3.txt, and file4.txt.",
+        "Inside the ownership_lab directory, create five directories named application, database, project1, project2, and backup.",
+        "Inside the backup directory, create two files named backup1.txt and backup2.txt.",
+        "Verify that all required files and directories were created successfully."
+      ]
+    },
+
+    {
+      "task_number": 2,
+      "title": "Change Only the Owner",
+
+      "steps": [
+        "From the ownership_lab directory, change only the owner of file1.txt from your username to john.",
+        "Use chown without specifying a group for this task.",
+        "Use the syntax sudo chown USER FILE to change only the owner.",
+        "Verify that the owner of file1.txt is now john and that the group remains unchanged."
+      ]
+    },
+
+    {
+      "task_number": 3,
+      "title": "Change Only the Group Using chown",
+
+      "steps": [
+        "Using the chown command, change only the group of file2.txt to developers.",
+        "Do not change the owner of file2.txt during this task.",
+        "Use the syntax sudo chown :GROUP FILE to change only the group.",
+        "Verify that the group of file2.txt is now developers and that the owner remains unchanged."
+      ]
+    },
+
+    {
+      "task_number": 4,
+      "title": "Change Only the Group Using chgrp",
+
+      "steps": [
+        "Using the chgrp command, change only the group of file3.txt to developers.",
+        "Do not change the owner of file3.txt during this task.",
+        "Use the syntax sudo chgrp GROUP FILE to change only the group.",
+        "Verify that the group of file3.txt is now developers and that the owner remains unchanged."
+      ]
+    },
+
+    {
+      "task_number": 5,
+      "title": "Change Both Owner and Group",
+
+      "steps": [
+        "Using the chown command, change both the owner and group of file4.txt.",
+        "Set the new owner of file4.txt to john and the group to developers.",
+        "Use the syntax sudo chown USER:GROUP FILE to change both the owner and group at the same time.",
+        "Verify that the owner of file4.txt is john and the group is developers."
+      ]
+    },
+
+    {
+      "task_number": 6,
+      "title": "Change Only the Owner of a Directory",
+
+      "steps": [
+        "Using the chown command, change only the owner of the application directory to smith.",
+        "Do not specify a group when changing the ownership of the directory.",
+        "Use the syntax sudo chown USER DIRECTORY to change only the owner.",
+        "Verify that the owner of the application directory is now smith and that the group remains unchanged."
+      ]
+    },
+
+    {
+      "task_number": 7,
+      "title": "Change Only the Group of a Directory Using chown",
+
+      "steps": [
+        "Using the chown command, change only the group of the database directory to admins.",
+        "Do not change the owner of the database directory during this task.",
+        "Use the syntax sudo chown :GROUP DIRECTORY to change only the group.",
+        "Verify that the group of the database directory is now admins and that the owner remains unchanged."
+      ]
+    },
+
+    {
+      "task_number": 8,
+      "title": "Change Only the Group of a Directory Using chgrp",
+
+      "steps": [
+        "Using the chgrp command, change only the group of the project1 directory to admins.",
+        "Do not change the owner of the project1 directory during this task.",
+        "Use the syntax sudo chgrp GROUP DIRECTORY to change only the group.",
+        "Verify that the group of the project1 directory is now admins and that the owner remains unchanged."
+      ]
+    },
+
+    {
+      "task_number": 9,
+      "title": "Change Both Owner and Group of a Directory",
+
+      "steps": [
+        "Using the chown command, change both the owner and group of the project2 directory.",
+        "Set the new owner of the project2 directory to smith and the group to admins.",
+        "Use the syntax sudo chown USER:GROUP DIRECTORY to change both the owner and group at the same time.",
+        "Verify that the owner of the project2 directory is smith and the group is admins."
+      ]
+    },
+
+    {
+      "task_number": 10,
+      "title": "Change Owner and Group Recursively",
+
+      "steps": [
+        "Using the chown command with the recursive -R option, change both the owner and group of the backup directory and all files inside it.",
+        "Set the owner of the backup directory and all of its contents to smith.",
+        "Set the group of the backup directory and all of its contents to admins.",
+        "Use the syntax sudo chown -R USER:GROUP DIRECTORY to perform the recursive ownership change.",
+        "Verify that the backup directory, backup1.txt, and backup2.txt are all owned by smith and associated with the admins group."
+      ]
+    }
+
+  ],
+
+  "completion_message": "Excellent work! You have successfully completed Lab 207 - Ownership and Group Management and practiced changing Linux file and directory ownership and group ownership using chown, chgrp, and recursive chown operations."
+}

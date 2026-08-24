@@ -1,0 +1,314 @@
+{
+  "lab_id": "lab208",
+  "title": "Lab 208 - Linux File Links: Hard Links and Soft Links",
+  "description": "Linux File Links: Hard Links and Soft Links",
+
+  "lab_objective": {
+    "description": "In this lab, you will develop practical skills in managing hard links and symbolic (soft) links in the Linux file system and understand their relationship with files, pathnames, and inodes.",
+
+    "scenario": "You are a Linux Systems Administrator working on a server where application files, reports, logs, and configuration files are stored in different directories. The application team wants to access the same files from multiple locations without creating unnecessary copies of the data. You have been asked to implement and manage both hard links and symbolic (soft) links. During this lab, you will create files and directories under your own home directory and practice creating different types of links. You will also investigate what happens when the original file is modified, deleted, moved, or recreated. For this lab, all work must be performed inside your own home directory. Do not modify system files or directories outside your home directory.",
+
+    "prerequisites": [
+      "Access to a Linux server",
+      "Valid Linux user account",
+      "SSH access to the Linux server",
+      "Basic understanding of Linux filesystem navigation",
+      "Basic understanding of Linux files and directories",
+      "Basic understanding of Linux commands",
+      "Basic understanding of Linux inodes",
+      "Basic understanding of ls and cat commands"
+    ],
+
+    "objectives": [
+      "Understand what a link is in the Linux file system.",
+      "Understand the difference between a hard link and a symbolic (soft) link.",
+      "Understand the relationship between a file name and an inode.",
+      "Create hard links using the ln command.",
+      "Create symbolic links using the ln -s command.",
+      "Identify symbolic links using ls -l.",
+      "Identify inode numbers using ls -i or ls -li.",
+      "Verify that a hard link and the original file share the same inode.",
+      "Understand that a hard link references the same underlying file object.",
+      "Understand that a symbolic link references a pathname.",
+      "Understand what happens when the original file is deleted.",
+      "Understand what happens when the target of a symbolic link is deleted.",
+      "Create symbolic links to directories.",
+      "Understand how links can be used in real-world Linux administration scenarios.",
+      "Distinguish between a hard link, symbolic link, and file copy.",
+      "Remove links safely without removing the original data.",
+      "Verify link relationships using ls, ls -l, ls -li, stat, and readlink."
+    ]
+  },
+
+  "tasks": [
+
+    {
+      "task_number": 1,
+      "title": "Create the Lab Directory Structure",
+
+      "steps": [
+        "From your home directory, create a directory named links_lab.",
+        "Change directory to links_lab.",
+        "Inside the links_lab directory create five directories named, data, reports, backup, tmp, and application.",
+        "Inside the data directory create two files named, customer.txt and application.log.",
+        "Verify that all required directories and files were created successfully."
+      ]
+    },
+
+    {
+      "task_number": 2,
+      "title": "Create and Verify the Original File",
+
+      "steps": [
+        "From the links_lab directory, add the following exact content to data/customer.txt:",
+        "echo Customer Database >> data/customer.txt",
+        "echo Application: Customer Portal >> data/customer.txt",
+        "echo Environment: Production >> data/customer.txt",
+        "Display the contents of customer.txt using the cat command.",
+        "Use ls -l to verify the file.",
+        "Use ls -li to display the inode number of customer.txt.",
+        "Record the inode number because you will compare it with the inode number of a hard link later."
+      ]
+    },
+
+    {
+      "task_number": 3,
+      "title": "Create a Hard Link",
+
+      "steps": [
+        "The reporting team needs to access the customer database file from the reports directory.",
+        "They do not want a second copy of the file. They need another filename that refers to the same underlying file.",
+        "From the links_lab directory, create a hard link named reports/customer_hard.txt.",
+        "The hard link must reference data/customer.txt.",
+        "Do not use cp for this task.",
+        "Use the ln command to create the hard link. Use syntax ln <source> <link>.",
+        "Verify that the hard link was created successfully."
+      ]
+    },
+
+    {
+      "task_number": 4,
+      "title": "Verify That the Hard Link Uses the Same Inode",
+
+      "steps": [
+        "Use ls -li to display information about data/customer.txt and reports/customer_hard.txt.",
+        "Compare the inode numbers of both files.",
+        "Verify that both filenames have the same inode number.",
+        "Understand that both filenames now refer to the same underlying file object."
+      ]
+    },
+
+    {
+      "task_number": 5,
+      "title": "Modify the Original File Through Its Original Name",
+
+      "steps": [
+        "The application team updates the customer database information.",
+        "Add the following line to data/customer.txt:",
+        "echo Last Updated: 2026-08-16 >> data/customer.txt",
+        "Display the contents of data/customer.txt.",
+        "Then display the contents of reports/customer_hard.txt.",
+        "Verify that the new line is visible through both filenames.",
+        "Copy data/customer.txt to tmp/task5_customer.txt.",
+        "Understand that the hard link is not a separate copy of the file."
+      ]
+    },
+
+    {
+      "task_number": 6,
+      "title": "Modify the File Through the Hard Link",
+
+      "steps": [
+        "The reporting team decides to update the same customer database using its reporting filename.",
+        "Using reports/customer_hard.txt, append the following line:",
+        "echo Updated By: Reporting Team >> reports/customer_hard.txt",
+        "Then display the contents of data/customer.txt.",
+        "Verify that the change is visible through both filenames.",
+        "Copy the current contents of data/customer.txt to tmp/task6_customer.txt.",
+        "Explain why modifying one filename changes the data accessed through the other filename."
+      ]
+    },
+
+    {
+      "task_number": 7,
+      "title": "Create a Symbolic Link",
+
+      "steps": [
+        "The application support team wants a convenient reference to the customer database from the application directory.",
+        "Unlike the hard link, they want a link that points to the file using its pathname.",
+        "Create a symbolic link named application/customer_soft.txt.",
+        "Use the ln -s command to create the symbolic (soft) link. Use the syntax ln -s <source> <link>.",
+        "For this task, use ../data/customer.txt as the source and application/customer_soft.txt as the symbolic link.",
+        "Verify the symbolic link using ls -l.",
+        "Confirm that the output displays an arrow (->) showing the target."
+      ]
+    },
+
+    {
+      "task_number": 8,
+      "title": "Compare the Original File, Hard Link, and Soft Link",
+
+      "steps": [
+        "Use ls -li to display the inode information for data/customer.txt, reports/customer_hard.txt, and application/customer_soft.txt.",
+        "Compare the inode numbers.",
+        "Verify that customer.txt and customer_hard.txt have the same inode number.",
+        "Verify that customer_soft.txt has a different inode number.",
+        "Use ls -l to identify the symbolic link.",
+        "Use readlink command to display the target of customer_soft.txt. Use syntax readlink <link>.",
+        "Understand that a symbolic link is a separate file-system object that contains a pathname to another object."
+      ]
+    },
+
+    {
+      "task_number": 9,
+      "title": "Create a Hard Link to the Application Log",
+
+      "steps": [
+        "The operations team needs another name for the application log in the backup directory.",
+        "Add the following content to data/application.log:",
+        "echo Application: Started >> data/application.log",
+        "echo Database Connection: Successful >> data/application.log",
+        "echo Application Status: Running >> data/application.log",
+        "Create a hard link named backup/application_hard.log.",
+        "The hard link must reference data/application.log.",
+        "Verify the link using ls -li.",
+        "Confirm that both files have the same inode number."
+      ]
+    },
+
+    {
+      "task_number": 10,
+      "title": "Create a Symbolic Link to the Application Log",
+
+      "steps": [
+        "The monitoring team wants to access the application log from the reports directory using a simple name.",
+        "Create a symbolic link named reports/application_soft.log.",
+        "The symbolic link must point to ../data/application.log.",
+        "Verify the symbolic link using ls -l.",
+        "Use readlink command to display the target. Use syntax readlink <link>.",
+        "Display the contents using the symbolic-link path."
+      ]
+    },
+
+    {
+      "task_number": 11,
+      "title": "Compare Hard Link, Soft Link, and Copy",
+
+      "steps": [
+        "A junior administrator believes that a hard link is the same as copying a file.",
+        "You need to demonstrate the difference.",
+        "Create a normal copy of data/application.log named backup/application_copy.log.",
+        "Add a line in data/application.log:",
+        "echo \"Here is new update\" >> data/application.log",
+        "Use ls -li to compare inode numbers of data/application.log, backup/application_hard.log, reports/application_soft.log, and backup/application_copy.log.",
+        "Identify which files have the same inode.",
+        "Identify which file has a different inode.",
+        "Verify that the hard link shares the inode with the original.",
+        "Verify that the symbolic link has its own inode.",
+        "Verify that the copied file has its own inode.",
+        "Use cat to display data/application.log, backup/application_hard.log, reports/application_soft.log, and backup/application_copy.log.",
+        "Verify that the line Here is new update appears in data/application.log, backup/application_hard.log, and reports/application_soft.log but cannot be seen in backup/application_copy.log.",
+        "Understand the difference between cp, ln, and ln -s."
+      ]
+    },
+
+    {
+      "task_number": 12,
+      "title": "Delete the Original File and Test the Hard Link",
+
+      "steps": [
+        "The original filename for the customer database is no longer required. The administrator removes it but wants to know whether the data is still accessible through the hard link.",
+        "Remove data/customer.txt.",
+        "Do not remove reports/customer_hard.txt.",
+        "Display the contents of reports/customer_hard.txt.",
+        "Verify that the customer data is still accessible.",
+        "Use ls -li to display the inode information of the hard link.",
+        "Understand that the hard link continues to provide access because it still references the same inode."
+      ]
+    },
+
+    {
+      "task_number": 13,
+      "title": "Test the Symbolic Link After the Target Is Deleted",
+
+      "steps": [
+        "The symbolic link customer_soft.txt was pointing to the original customer database file.",
+        "The original file has now been deleted.",
+        "Attempt to display application/customer_soft.txt.",
+        "Use ls -l to inspect the symbolic link.",
+        "Use readlink command to display its target. Use syntax readlink <link>.",
+        "Verify that the symbolic link is now broken because its target pathname no longer exists.",
+        "Understand the difference between what happened to the hard link and what happened to the symbolic link."
+      ]
+    },
+
+    {
+      "task_number": 14,
+      "title": "Re-create the Original Filename and Test the Soft Link",
+
+      "steps": [
+        "The application team restores the customer database using the same filename.",
+        "Re-create data/customer.txt. Add the following content:",
+        "echo Customer Database >> data/customer.txt",
+        "echo Application: Customer Portal >> data/customer.txt",
+        "echo Environment: Production >> data/customer.txt",
+        "echo Status: Restored >> data/customer.txt.",
+        "Display the contents through application/customer_soft.txt.",
+        "Verify whether the symbolic link works again.",
+        "Use ls -li to compare the inode of the newly created customer.txt with the inode of reports/customer_hard.txt.",
+        "Understand that recreating a file with the same name does not recreate the original inode."
+      ]
+    },
+
+    {
+      "task_number": 15,
+      "title": "Create a Symbolic Link to a Directory",
+
+      "steps": [
+        "The application team frequently accesses the data directory and wants a convenient path named production_data.",
+        "From the links_lab directory, attempt to create a hard link named data_production_hard to the data directory.",
+        "Expected: 'In: data: hard link not allowed for directory'. Now worries - the failure is expected. Move forward to the next task.",
+        "Now from the links_lab directory, create a symbolic link named production_data.",
+        "The symbolic link must point to data.",
+        "Verify the symbolic link using ls -l.",
+        "Use the symbolic-link path to list the files inside the data directory.",
+        "Verify that symbolic links can be used to provide alternate paths to directories."
+      ]
+    },
+
+    {
+      "task_number": 16,
+      "title": "Investigate What Happens When a Symbolic-Link Target Is Moved",
+
+      "steps": [
+        "The application team moves the application log to the backup directory.",
+        "Move data/application.log to backup/application.log.",
+        "Check the existing symbolic link reports/application_soft.log.",
+        "Determine whether the symbolic link still works.",
+        "Use ls -l and readlink to investigate the link.",
+        "Verify whether the symbolic link has become broken.",
+        "Explain why moving the target file can break a symbolic link."
+      ]
+    },
+
+    {
+      "task_number": 17,
+      "title": "Safely Remove Links",
+
+      "steps": [
+        "The testing is complete. The administrator must clean up the links without deleting the actual data files.",
+        "Identify all hard links and symbolic links created during this lab. Use syntax rm <link>.",
+        "Remove the symbolic links application/customer_soft.txt, reports/application_soft.log, and production_data.",
+        "Remove the hard links reports/customer_hard.txt and backup/application_hard.log.",
+        "Do not remove the original data files unless specifically instructed.",
+        "Do not remove the data, reports, backup, tmp or application directories.",
+        "After removing the links, verify the remaining files using ls -li.",
+        "Confirm that the actual data files still exist.",
+        "Understand that removing a link does not necessarily remove the underlying data when another directory entry still references the inode."
+      ]
+    }
+
+  ],
+
+  "completion_message": "Excellent work! You have successfully completed Lab 208 - Linux File Links: Hard Links and Soft Links. You practiced creating, verifying, comparing, testing, and safely removing hard links and symbolic links, and demonstrated your understanding of inodes, pathnames, and the differences between links and file copies."
+}

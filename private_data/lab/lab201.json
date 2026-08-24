@@ -1,0 +1,260 @@
+{
+  "lab_id": "lab201",
+  "title": "Lab 201 - Linux Basic Commands and System Information",
+  "description": "Linux Basic Commands and System Information",
+
+  "lab_objective": {
+    "description": "By the end of this lab, you will be able to understand commonly used Linux administration commands, collect system information, verify user identity and group membership, navigate the Linux filesystem, and perform a basic Linux server health assessment.",
+
+    "scenario": "Your company has deployed a new Linux server for a production application. Before the application team begins deployment, the Linux administration team must perform an initial server assessment. As a Linux System Administrator, you are responsible for gathering system information, verifying hardware and resource availability, reviewing user access, and analyzing the filesystem structure. The senior administrator has provided a list of assessment requirements but has not specified the commands to use. You must identify and execute the appropriate Linux commands to complete each task and document the required findings for review.",
+
+    "prerequisites": [
+      "Access to a Linux server",
+      "Valid Linux user account",
+      "SSH or console access to the server",
+      "Basic understanding of Linux command-line interface"
+    ],
+
+    "objectives": [
+      "Understand the purpose of commonly used Linux administration commands.",
+      "Collect CPU, memory, disk, kernel, and uptime information from a Linux server.",
+      "Verify user identity and group membership.",
+      "Navigate through the Linux filesystem using absolute and relative paths.",
+      "List files and directories with different levels of detail.",
+      "Review file permissions and ownership information.",
+      "Practice Linux troubleshooting and system assessment skills.",
+      "Develop the ability to identify the correct command based on a requirement.",
+      "Perform a basic Linux server health check."
+    ]
+  },
+
+  "tasks": [
+
+    {
+      "task_number": 1,
+      "title": "Verify Your Login Information",
+
+      "steps": [
+        "Make sure you are in your home directory before starting the lab. Do not change directories unless explicitly instructed to do so.",
+        "Confirm which user account is currently logged into the Linux server.",
+        "Use the appropriate Linux commands to collect identity information.",
+        "Hint: whoami, id",
+        "Verify the current user name.",
+        "Verify your user ID (UID).",
+        "Verify your primary group ID (GID).",
+        "Verify your group memberships.",
+        "Great job!!! Now direct the output of both commands to the ‘~/server-report’ file"
+      ]
+    },
+
+    {
+      "task_number": 2,
+      "title": "Identify Your Current Working Directory",
+
+      "steps": [
+        "Identify the complete path of the directory you are currently working in.",
+        "The output should display the absolute path of your current directory.",
+        "Hint - pwd",
+        "Append the output of the command to the '~/server-report' file without overwriting its existing contents."
+      ]
+    },
+
+    {
+      "task_number": 3,
+      "title": "Collect CPU Information",
+
+      "steps": [
+        "Collect CPU information from the Linux server.",
+        "Hint - lscpu",
+        "Determine how many CPUs or processors are available.",
+        "Collect detailed processor information.",
+        "Identify the CPU architecture.",
+        "Identify the CPU model information.",
+        "Identify the number of CPU cores.",
+        "Identify the number of CPU threads.",
+        "Append the output of the command to the '~/server-report' file without overwriting its existing contents."
+      ]
+    },
+
+    {
+      "task_number": 4,
+      "title": "Analyze Server Memory Resources",
+
+      "steps": [
+        "Collect memory utilization information from the Linux server. (Hint - free)",
+        "Display memory information in human-readable format. (Hint - free -h)",
+        "Display memory information in megabytes. (Hint - free -m)",
+        "Display memory information in gigabytes. (Hint - free -g)",
+        "Identify total memory.",
+        "Identify used memory.",
+        "Identify free memory.",
+        "Identify available memory.",
+        "Identify swap memory.",
+        "Now Append the output of all above commands to the '~/server-report' file without overwriting its existing contents."
+      ]
+    },
+
+    {
+      "task_number": 5,
+      "title": "Identify Block Devices and Filesystems",
+
+      "steps": [
+        "Identify and review the block devices connected to the Linux server.",
+        "Hint: lsblk",
+        "Display the available disks.",
+        "Identify disk partitions.",
+        "Identify disk sizes.",
+        "Identify mounted filesystems.",
+        "Append the output of the command to the '~/server-report' file without overwriting its existing contents."
+      ]
+    },
+
+    {
+      "task_number": 6,
+      "title": "Collect Kernel Information",
+
+      "steps": [
+        "Collect complete kernel information from the Linux server.",
+        "Hint: uname -a, uname -r",
+        "Display complete kernel information.",
+        "Identify the kernel release version.",
+        "Identify the system architecture.",
+        "Append the output of both command to the '~/server-report' file without overwriting its existing contents."
+      ]
+    },
+
+    {
+      "task_number": 7,
+      "title": "Check Server Availability and Uptime",
+
+      "steps": [
+        "Check how long the Linux server has been running.",
+        "Hint: uptime",
+        "Identify the server uptime.",
+        "Identify the system load average.",
+        "Verify the number of currently logged-in users.",
+        "Append the output of the command to the '~/server-report' file without overwriting its existing contents."
+      ]
+    },
+
+    {
+      "task_number": 8,
+      "title": "Review the User Home Directory",
+
+      "steps": [
+        "Make sure you are in the logged-in user's home directory.",
+        "Display the contents of your current directory. (Hint - pwd)",
+        "Display files and directories using a normal listing. (Hint - ls)",
+        "Display detailed file information. (Hint - ls -l)",
+        "Display hidden files. (Hint - ls -al)",
+        "Review file permissions.",
+        "Review ownership information.",
+        "Understand the difference between normal, detailed, and hidden-file listings.",
+        "Now Append the output of all above commands to the '~/server-report' file without overwriting its existing contents."
+      ]
+    },
+
+    {
+      "task_number": 9,
+      "title": "Navigate to the Root Filesystem",
+
+      "steps": [
+        "Navigate to the root filesystem. (Hint - cd /)",
+        "Understand that / is the starting point of the Linux filesystem hierarchy.",
+        "Verify your current location. (Hint - pwd)",
+        "Display the directories available under the root filesystem. (Hint – ls  /)",
+        "Now Append the output of later both commands to the '~/server-report' file without overwriting its existing contents."
+      ]
+    },
+
+    {
+      "task_number": 10,
+      "title": "Explore Important Linux Directories",
+
+      "steps": [
+        "Navigate to each of the following directories using absolute paths.",
+        "Verify your current location after each movement and append output in '~/server-report' file without overwriting its existing contents..",
+        "Hint: cd for navigation and pwd for current directory.",
+        "Navigate to /etc and identify it as the system configuration directory.",
+        "Navigate to /opt and identify it as the optional software directory.",
+        "Navigate to /var and identify it as the variable data directory.",
+        "Navigate to /home and identify it as the user home directory.",
+        "Navigate to /tmp and identify it as the temporary directory."
+      ]
+    },
+
+    {
+      "task_number": 11,
+      "title": "Return to the User Home Directory",
+
+      "steps": [
+        "Return to your user home directory. (Hint - cd)",
+        "Do not use an absolute path.",
+        "Use the appropriate Linux command to return to your home directory.",
+        "Understand that Linux provides multiple ways to reach the user's home directory.",
+        "Now Append your current location to the '~/server-report' file without overwriting its existing contents. (Hint - pwd)."
+      ]
+    },
+
+    {
+      "task_number": 12,
+      "title": "Move to the Parent Directory",
+
+      "steps": [
+        "Move one directory level backward. (Hint - cd ..)",
+        "Verify your new location. (Hint - pwd)",
+        "Cool!! Now you understand that .. represents the parent directory.",
+        "Now Append your current location to the '~/server-report' file without overwriting its existing contents. (Hint - pwd)."
+      ]
+    },
+
+    {
+      "task_number": 13,
+      "title": "Navigate to /var/log and Move Two Levels Back",
+
+      "steps": [
+        "Navigate to /var/log. (Hint - cd /var/log)",
+        "Verify your current working directory and append output to '~/server-report' file. (Hint - pwd)",
+        "Move two directory levels backward.",
+        "Do not use an absolute path for moving backward.",
+        "Hint: cd ../../",
+        "Verify your new working directory and append your current location to the '~/server-report' file without overwriting its existing contents. (Hint - pwd)"
+      ]
+    },
+
+    {
+      "task_number": 14,
+      "title": "Switch to the Previously Visited Directory",
+
+      "steps": [
+        "Quickly switch to the previously visited directory.",
+	"Use the appropriate Linux command.",
+        "Hint: cd -",
+	"Make sure your current directory should be (/var/log)",
+        "Verify that your current directory is /var/log and append your current location to the '~/server-report' file without overwriting its existing contents. (Hint - pwd)"
+      ]
+    },
+
+    {
+      "task_number": 15,
+      "title": "Perform a Basic Server Health Check",
+
+      "steps": [
+        "No command hints are provided for this task.",
+        "Identify and execute the appropriate Linux commands based on each requirement.",
+        "Make sure you are in your home directory.",
+        "Perform a basic health assessment of the Linux server and append to the '~/server-review-report' file without overwriting its existing contents.",
+        "Append your current location information",
+        "Collect CPU details.",
+        "Collect human-readable format memory usage information.",
+        "Collect block storage information.",
+        "Collect kernel details.",
+        "Collect uptime information.",
+        "Collect the username of the current shell user information"
+      ]
+    }
+
+  ],
+
+  "completion_message": "Cool!!!! Great Job. You have successfully completed Lab 201 - Linux Basic Commands and System Information."
+}

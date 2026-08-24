@@ -1,0 +1,194 @@
+{
+  "lab_id": "lab203",
+  "title": "Lab 203 - Linux Basic Commands & Navigation",
+  "description": "Linux Basic Commands & Navigation",
+
+  "lab_objective": {
+    "description": "By the end of this lab, you will be able to perform basic Linux commands, navigate the Linux filesystem, create files and directories, move and copy files, create nested directory structures, and collect and document basic server information.",
+
+    "scenario": "You are working as a Linux System Administrator and have been asked to perform a basic server assessment and filesystem management exercise. While working from your home directory, you must collect important server information, create and organize files and directories, navigate the filesystem, and document the required command outputs for review.",
+
+    "prerequisites": [
+      "Access to a Linux server",
+      "Valid Linux user account",
+      "SSH access to the Linux server",
+      "Basic understanding of Linux command-line interface"
+    ],
+
+    "objectives": [
+      "Understand and use basic Linux commands.",
+      "Display and verify the current working directory.",
+      "Check and display the Linux kernel version.",
+      "List files with detailed information.",
+      "Display hidden files and their detailed information.",
+      "Create files and directories using Linux commands.",
+      "Navigate through the Linux filesystem.",
+      "Move and copy files between directories.",
+      "Create nested directory structures using mkdir.",
+      "Use the tree command to display directory structures.",
+      "Redirect and append command output to files.",
+      "Document basic server information for review."
+    ]
+  },
+
+  "tasks": [
+
+    {
+      "task_number": 1,
+      "title": "Display Current Working Directory",
+
+      "steps": [
+        "While you are in your home directory, display your current working directory.",
+        "Append the output of the command to a file named server_info located in your home directory.",
+        "Do not overwrite existing content in server_info."
+      ]
+    },
+
+    {
+      "task_number": 2,
+      "title": "Check Kernel Version",
+
+      "steps": [
+        "Check and display the kernel version of the server.",
+        "Append the output of the command to the server_info file.",
+        "Do not overwrite existing content in server_info."
+      ]
+    },
+
+    {
+      "task_number": 3,
+      "title": "Display Detailed File Listing",
+
+      "steps": [
+        "Display a detailed listing of the files in the current directory.",
+        "The output should include permissions, ownership, and file size.",
+        "Append the output of the command to the server_info file.",
+        "Do not overwrite existing content in server_info."
+      ]
+    },
+
+    {
+      "task_number": 4,
+      "title": "Display Hidden Files",
+
+      "steps": [
+        "List all files, including hidden files, with detailed information.",
+        "Append the output of the command to the server_info file.",
+        "Do not overwrite existing content in server_info."
+      ]
+    },
+
+    {
+      "task_number": 5,
+      "title": "Create and Navigate to Linux Directory",
+
+      "steps": [
+        "Create a directory named Linux.",
+        "Navigate into the 'Linux' directory."
+      ]
+    },
+
+    {
+      "task_number": 6,
+      "title": "Verify Linux Directory",
+
+      "steps": [
+        "While you are inside 'Linux' Directory Verify that you are inside the Linux directory.",
+        "Display the present working directory and redirect the output to '~/server_info'."
+      ]
+    },
+
+    {
+      "task_number": 7,
+      "title": "Create Linux Subdirectories",
+
+      "steps": [
+        "Inside the Linux directory, create the following subdirectories:",
+        "Redhat",
+        "oel",
+        "debian"
+      ]
+    },
+
+    {
+      "task_number": 8,
+      "title": "Return to Home Directory",
+
+      "steps": [
+        "Move back to your home directory using cd...",
+        "Verify your current working directory.",
+        "Append the output of the command to the server_info file.",
+        "Do not overwrite existing content in server_info."
+      ]
+    },
+
+    {
+      "task_number": 9,
+      "title": "Create Empty Files",
+
+      "steps": [
+        "While in your home directory, create the following empty files:",
+        "file1.txt",
+        "pic.jpg",
+        "clip.avi"
+      ]
+    },
+
+    {
+      "task_number": 10,
+      "title": "Create Directories and Organize Files",
+
+      "steps": [
+        "Create the following directories in your home directory:",
+        "documents",
+        "images",
+        "media",
+        "Move file1.txt to the documents directory.",
+        "Move pic.jpg to the images directory.",
+        "Move clip.avi to the media directory."
+      ]
+    },
+
+    {
+      "task_number": 11,
+      "title": "Create Nested Directory Structure",
+
+      "steps": [
+        "Using a single mkdir command with the appropriate option, create the following nested directory structure:",
+        "office/hobby/personal"
+      ]
+    },
+
+    {
+      "task_number": 12,
+      "title": "Copy file1.txt",
+
+      "steps": [
+        "Copy file1.txt from the documents directory to the office directory."
+      ]
+    },
+
+    {
+      "task_number": 13,
+      "title": "Copy pic.jpg",
+
+      "steps": [
+        "Copy pic.jpg from the images directory to the office/hobby directory."
+      ]
+    },
+
+    {
+      "task_number": 14,
+      "title": "Display and Save Office Directory Structure",
+
+      "steps": [
+        "Display the directory structure of the office directory using the tree command.",
+        "Save the output in a file named office_tree.",
+        "The office_tree file must be located in office/hobby/personal/."
+      ]
+    }
+
+  ],
+
+  "completion_message": "Cool!!!! Great Job. You have successfully completed Linux Basic Commands & Navigation Lab."
+}

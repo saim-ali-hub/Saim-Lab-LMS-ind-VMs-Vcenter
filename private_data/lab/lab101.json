@@ -1,0 +1,282 @@
+{
+  "lab_id": "lab101",
+  "title": "Lab 101 - 2026",
+  "description": "Launch an AWS EC2 Linux Instance (Amazon Linux 2023)",
+
+  "lab_objective": {
+    "description": "By the end of this lab, you will be able to:",
+    "objectives": [
+      "Log in to the AWS Management Console",
+      "Launch an Amazon EC2 Linux instance",
+      "Configure networking and security",
+      "Connect to the instance using SSH",
+      "Configure Apache webserver",
+      "Verify the instance and webserver is working",
+      "Terminate the instance to avoid unnecessary charges"
+    ]
+  },
+
+
+  "tasks": [
+
+    {
+      "task_number": 1,
+      "title": "Login to AWS Management Console",
+      "steps": [
+        "Open your browser",
+        "Go to https://console.aws.amazon.com",
+        "Login using your AWS credentials",
+        "After login you will see the AWS Console"
+      ]
+    },
+
+
+    {
+      "task_number": 2,
+      "title": "Select AWS Region",
+
+      "steps": [
+        "Select US East (N. Virginia) Region",
+        "Region Code: us-east-1",
+        "Keep the same region throughout the lab"
+      ]
+    },
+
+
+    {
+      "task_number": 3,
+      "title": "Open EC2 Dashboard",
+
+      "steps": [
+        "Search for EC2",
+        "Open the EC2 Dashboard"
+      ]
+    },
+
+
+    {
+      "task_number": 4,
+      "title": "Launch EC2 Instance",
+
+      "steps": [
+        "Click on Launch Instance and choose following",
+        "Name - webserver01",
+        "AMI - Red Hat Enterprise Linux 9",
+        "Architecture - 64-bit (x86)",
+        "Instance Type - t3.micro"
+      ]
+    },
+
+
+    {
+      "task_number": 5,
+
+      "title": "Create a new Key Pair",
+
+      "steps": [
+        "Click on create a new Key Pair",
+        "Key Pair Name - webserver01-key",
+        "Key Pair Type - RSA",
+        "Private Key Format - .pem",
+        "Download and save the private key"
+       ]
+    },
+
+
+    {
+      "task_number": 6,
+
+      "title": "Configure Network Settings",
+
+      "steps": [
+        "VPC - Default VPC",
+        "Subnet - Public Subnet",
+        "Auto Assign Public IP - Enabled"
+      ]
+
+    },
+
+
+    {
+      "task_number": 7,
+
+      "title": "Create a new Security Group",
+
+      "steps": [
+        "Name - my-sg1",
+        "Add inbound_rule",
+        "Type - SSH",
+        "Protocol - TCP",
+        "Port - 22",
+        "Source - MY IP"
+      ]
+    },
+
+
+    {
+      "task_number": 8,
+
+      "title": "Configure Storage - Leave the defualt stoarge configuration as:",
+
+      "steps": [
+        "Volume Size - 8 GB",
+        "Volume Type - gp3"
+       ]
+     },
+
+
+    {
+      "task_number": 9,
+
+      "title": "Launch Instance",
+      "steps": [
+        "Click on launch instance and wait"
+      ]
+     },
+
+     {
+      "task_number": 10,
+
+      "title": "Open the Instances page and wait until instance shows",
+
+      "steps": [
+        "Instance State - Running",
+        "Status Checks - 3/3 check Passed"
+      ]
+     },
+
+    {
+      "task_number": 11,
+
+      "title": "Copy Public IPv4 Address",
+
+      "steps": [
+
+        "Copy Public IPv4 Address of the instance",
+        "Use this address for SSH connection and web testing"
+
+      ]
+
+    },
+
+
+    {
+      "task_number": 12,
+
+      "title": "Connect EC2 Instance Using Private Key",
+
+      "steps": [
+
+        "Open Mobaxterm",
+        "Click Session",
+        "Click SSH",
+        "Enter Public IP as Remote host",
+        "Enter username ec2-user",
+        "Open Advanced SSH Settings",
+        "Enable Use private key",
+        "Select webserver01-key.pem",
+        "Click OK",
+        "Verify successful login",
+        "Note: Mac Users should use Terminal for ssh connection"
+      ]
+
+    },
+
+
+    {
+      "task_number": 13,
+
+      "title": "Test SSH Access From Command Line",
+
+      "steps": [
+          "Open CMD and use following command",
+          "ssh  -i  C:\\<path>\\webserver01-key.pem  ec2-user@<Public-IP>"
+       ]
+    },
+
+
+    {
+      "task_number": 14,
+
+      "title": "Explore EC2 Linux Instance",
+
+      "steps": [
+
+          "It’s time to play around with your webserver01 instance. Use following commands",
+          "Verify logged-in user - whoami",
+          "Display hostname - hostname",
+          "Display operating system information - cat /etc/os-release",
+          "Display kernel version - uname -r",
+          "Display disk usage - df -h",
+          "Display memory usage - free -h"
+       ]
+     },
+
+    {
+      "task_number": 15,
+
+      "title": "Disconnect From EC2 Instance",
+
+      "steps": [
+
+        "Disconnect ssh connection from Mobaxterm, CLI, or Terminal"
+      ]
+    },
+
+    {
+      "task_number": 16,
+
+      "title": "Terminate EC2 Instance",
+
+      "steps": [
+
+        "Return to EC2 Console",
+        "Select Instance",
+        "Click Instance State",
+        "Choose Terminate Instance"
+
+      ]
+
+    },
+
+
+    {
+      "task_number": 17,
+
+      "title": "Delete Security Group",
+
+      "steps": [
+
+        "Open EC2 Console",
+        "Make sure instance is terminated",
+        "Navigate to Security Groups",
+        "Select my-sg1",
+        "Delete Security Group"
+
+      ]
+
+    },
+
+
+    {
+      "task_number": 18,
+
+      "title": "Delete Key Pair",
+
+      "steps": [
+
+        "Open EC2 Console",
+        "Navigate to Key Pairs",
+        "Select webserver01-key",
+        "Delete Key Pair"
+
+      ]
+
+    }
+
+  ],
+
+
+  "completion_message": "Cool!!!! Great job."
+
+}

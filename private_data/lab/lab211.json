@@ -1,0 +1,233 @@
+{
+  "lab_id": "lab211",
+  "title": "Lab 211 – Production Customer Portal File Management and Backup",
+  "description": "Production Customer Portal File Management and Backup",
+
+  "lab_objective": {
+    "description": "By completing this lab, students will gain hands-on experience with:",
+    "objectives": [
+      "Understanding read, write, and execute permissions for files and directories.",
+      "Managing permissions for the owner, group, and other users.",
+      "Using numeric (octal) and symbolic permission methods with chmod.",
+      "Changing file and directory ownership using chown and chgrp.",
+      "Understanding the relationship between filenames and inodes.",
+      "Creating hard links using the ln command.",
+      "Creating symbolic links using the ln -s command.",
+      "Comparing hard links, symbolic links, and file copies.",
+      "Creating TAR archives using the tar command.",
+      "Listing the contents of TAR archives.",
+      "Extracting files from TAR archives.",
+      "Creating compressed TAR archives."
+    ],
+
+  "scenario": "You are a Linux Systems Administrator supporting a production Customer Portal environment. The application, operations, and reporting teams share the server, but each team requires different levels of access to application files, scripts, reports, and customer data.\n\nA new copy of the Customer Portal environment, lab211_review, has been provided in /tmp for a production readiness review. Your job is to prepare the environment, apply the required permissions and ownership, provide appropriate access through hard and symbolic links, and create and restore backups using TAR."
+},
+
+  "tasks": [
+
+    {
+      "task_number": 1,
+      "title": "Prepare and Verify the Review Environment",
+      "steps": [
+        "The operations team has provided a review copy of the Customer Portal environment.",
+        "Copy lab211_review from /tmp into your home directory.",
+        "Verify that the copied directory is owned by you.",
+        "Display the complete directory structure.",
+        "Verify the required application, data, logs, reports, scripts, shared, backup, archive, and tmp directories.",
+        "Verify the existing files and subdirectories.",
+        "Do not create duplicate files or directories."
+      ]
+    },
+
+    {
+      "task_number": 2,
+      "title": "Secure the Application Environment",
+      "steps": [
+        "The application team requires controlled access to the application files.",
+        "Navigate to the application directory.",
+        "Configure README.txt so the owner can read/write, group can read, and others have no access.",
+        "Configure bin so the owner has full access, Group members can just list the contents of bin and enter/traverse the directory, and others have no access.",
+        "Configure config so the owner has full access, group can read, enter/traverse the directory, and others have no access.",
+        "Use numeric permissions only.",
+        "Verify the final permissions."
+      ]
+    },
+
+    {
+      "task_number": 3,
+      "title": "Prepare the Operations Scripts",
+      "steps": [
+        "The operations team manages the administrative scripts.",
+        "Navigate to scripts.",
+        "The directory contains backup.sh, cleanup.sh, and monitor.sh.",
+        "Use symbolic permission notation only.",
+        "Configure each scripts so that the owner has read, write, and execute permissions.",
+        "Configure the group to have read and execute permissions.",
+        "Remove all permissions from other users.",
+        "Do not use numeric permission notation.",
+        "Verify the permissions of all three scripts."
+      ]
+    },
+
+    {
+      "task_number": 4,
+      "title": "Protect the Reporting Environment",
+      "steps": [
+        "The reporting team needs controlled access to daily and monthly reports.",
+        "Navigate to reports.",
+        "Review the daily and monthly directories and their files.",
+        "Recursively configure the report hierarchy so the owner has full access.",
+        "Allow the appropriate group users to read and execute the reports.",
+        "Prevent other users from accessing the reports.",
+        "Use a recursive permission operation.",
+        "Verify the permissions throughout both report hierarchies."
+      ]
+    },
+
+    {
+      "task_number": 5,
+      "title": "Assign the Operations Team Ownership",
+      "steps": [
+        "The operations team is now responsible for maintaining the administrative scripts.",
+        "Change the owner of backup.sh, cleanup.sh, and monitor.sh to smith.",
+        "Change their group ownership to admins.",
+        "Verify the owner and group owner of all three files using ls -l."
+      ]
+    },
+
+    {
+      "task_number": 6,
+      "title": "Configure the Shared Team Directory",
+      "steps": [
+        "The shared directory contains information used by multiple developers.",
+        "Change the group ownership of shared and its contents to developers.",
+        "Configure the directory so the owner and group have full access while other users have no permissions.",
+        "Verify the ownership and permissions using ls -l."
+      ]
+    },
+
+    {
+      "task_number": 7,
+      "title": "Provide the Reporting Team with Customer Data Access",
+      "steps": [
+        "The reporting team needs another filename for the customer database but does not want a second copy of the data.",
+        "From lab211_review, create a hard link to data/customers/customers.txt.",
+        "Create the link as reports/daily/customer_data.txt.",
+        "Do not use cp.",
+        "Verify that the link was created successfully."
+      ]
+    },
+
+    {
+      "task_number": 8,
+      "title": "Provide Application Support with an Alternate Path",
+      "steps": [
+        "Application support needs a convenient pathname to the customer database.",
+        "Create a symbolic link named customer_data inside application/config.",
+        "The link must point to data/customers/customers.txt.",
+        "Verify the link using ls -l.",
+        "Confirm that the symbolic-link arrow (->) is displayed."
+      ]
+    },
+
+    {
+      "task_number": 9,
+      "title": "Create the Initial Application Backup",
+      "steps": [
+        "The operations team wants a backup of the application and customer data.",
+        "From lab211_review, create an uncompressed TAR archive named appdata.tar.",
+        "Include only application and data directories.",
+        "Store the archive inside the archive directory.",
+        "Do not include any other directory.",
+        "Verify that the archive was created."
+      ]
+    },
+
+    {
+      "task_number": 10,
+      "title": "Update the Existing Backup",
+      "steps": [
+        "The operations team realizes that the shared directory must be included in existing backup.",
+        "Add the shared directory to the existing archive/appdata.tar.",
+        "Do not recreate the archive.",
+        "Do not delete the existing archive.",
+        "Verify that the archive now contains application, data and shared directories."
+      ]
+    },
+
+    {
+      "task_number": 11,
+      "title": "Review the Backup Contents",
+      "steps": [
+        "Before sending the backup to storage:",
+        "Display the contents of archive/appdata.tar without extracting it.",
+        "Verify the expected directory structure.",
+        "Redirect the listing output to tmp/appdata_tar.",
+        "Verify the output file."
+      ]
+    },
+
+    {
+      "task_number": 12,
+      "title": "Test the Application Backup",
+      "steps": [
+        "The operations team wants to confirm that the backup can be restored.",
+        "Extract archive/appdata.tar into the restore directory.",
+        "Verify the restored directory structure.",
+        "Compare selected restored files with the originals.",
+        "Verify that the contents were successfully restored."
+      ]
+    },
+
+    {
+      "task_number": 13,
+      "title": "Back Up the Application Logs",
+      "steps": [
+        "The operations team now needs a compressed backup of the application logs.",
+        "Create a gzip-compressed TAR archive named logs.tar.gz inside archive.",
+        "Include the entire logs directory.",
+        "Do not modify or delete the original logs directory.",
+        "Verify that the archive was created successfully."
+      ]
+    },
+
+    {
+      "task_number": 14,
+      "title": "Restore the Compressed Log Backup",
+      "steps": [
+        "The log backup must now be tested.",
+        "Remain in the lab211_review directory.",
+        "Extract logs.tar.gz into the backup directory.",
+        "Use the appropriate TAR option for gzip compression.",
+        "Verify that the logs directory and its contents were restored successfully."
+      ]
+    },
+
+    {
+      "task_number": 15,
+      "title": "Create a Bzip2-Compressed Report Backup",
+      "steps": [
+        "The reporting team requires a separate compressed backup.",
+        "From lab211_review, create a bzip2-compressed TAR archive named reports.tar.bz2.",
+        "Include the entire reports directory and store in archive directory.",
+        "Do not modify or delete the original reports directory.",
+        "Verify that the archive was created successfully."
+      ]
+    },
+
+    {
+      "task_number": 16,
+      "title": "Restore the Report Backup",
+      "steps": [
+        "The reporting backup must also be tested.",
+        "Remain in lab211_review.",
+        "Extract reports.tar.bz2 into the tmp directory.",
+        "Use verbose mode.",
+        "Verify that the reports directory and all of its contents were restored successfully."
+      ]
+    }
+
+  ],
+
+  "completion_message": "Excellent work! You have successfully completed Lab 211 – Production Customer Portal File Management and Backup. You practiced Linux permissions, ownership, hard links, symbolic links, and TAR backup and restoration operations."
+}

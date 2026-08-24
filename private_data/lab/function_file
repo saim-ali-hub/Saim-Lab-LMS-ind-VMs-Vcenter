@@ -1,0 +1,1455 @@
+validate_lab211_global_regular_expression() {
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "Checking Lab 211 - Global Regular Expression (Grep)..."
+
+    HOME_DIR="/home/$STUDENT_NAME"
+    BASE="$HOME_DIR/search_lab"
+    ARCHIVE="$BASE/archive"
+
+    TOTAL_TASKS=20
+    PASSED=0
+
+    LAB_NAME="Lab 211 - Global Regular Expression (Grep)"
+    DATE=$(date "+%F %T")
+
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    GREP="$BASE/tmp/grep.txt"
+    OPTION="$BASE/tmp/option.txt"
+    RECURSIVE="$BASE/tmp/recursive.txt"
+    REGEXP="$BASE/tmp/regexp.txt"
+
+    # TASK 1 - OPERATOR
+    if [ -f "$GREP" ] &&
+       grep -Fqx "$(grep "operator" "$ARCHIVE/passwd")" "$GREP"
+    then
+        pass "Task 1: operator search completed successfully"
+    else
+        fail "Task 1: operator search failed"
+    fi
+
+    # TASK 2 - POLKITD
+    if [ -f "$GREP" ] &&
+       grep -Fqx "$(grep "polkitd" "$ARCHIVE/group")" "$GREP"
+    then
+        pass "Task 2: polkitd search completed successfully"
+    else
+        fail "Task 2: polkitd search failed"
+    fi
+
+    # TASK 3 - SHUTDOWN
+    if [ -f "$GREP" ] &&
+       grep -Fqx "$(grep "shutdown" "$ARCHIVE/passwd")" "$GREP"
+    then
+        pass "Task 3: shutdown search completed successfully"
+    else
+        fail "Task 3: shutdown search failed"
+    fi
+
+    # TASK 4 - MAIL
+    if [ -f "$GREP" ] &&
+       grep -Fqx "$(grep "mail" "$ARCHIVE/group")" "$GREP"
+    then
+        pass "Task 4: mail search completed successfully"
+    else
+        fail "Task 4: mail search failed"
+    fi
+
+    # TASK 5 - GREP -v SEARCH
+    if [ -f "$GREP" ] &&
+       grep -Fq "$(grep -v "search" "$ARCHIVE/resolv.conf" | head -n 1)" "$GREP"
+    then
+        pass "Task 5: grep -v search completed successfully"
+    else
+        fail "Task 5: grep -v search failed"
+    fi
+
+    # TASK 6 - GREP -n BASH
+    if [ -f "$OPTION" ] &&
+       grep -Fq "$(grep -n "bash" "$ARCHIVE/passwd" | head -n 1)" "$OPTION"
+    then
+        pass "Task 6: grep -n bash completed successfully"
+    else
+        fail "Task 6: grep -n bash failed"
+    fi
+
+    # TASK 7 - GREP -i MAIL
+    if [ -f "$OPTION" ] &&
+       grep -Fq "$(grep -i "MAIL" "$ARCHIVE/group" | head -n 1)" "$OPTION"
+    then
+        pass "Task 7: grep -i MAIL completed successfully"
+    else
+        fail "Task 7: grep -i MAIL failed"
+    fi
+
+    # TASK 8 - GREP -v NAMESERVER
+    if [ -f "$OPTION" ] &&
+       grep -Fq "$(grep -v "nameserver" "$ARCHIVE/resolv.conf" | head -n 1)" "$OPTION"
+    then
+        pass "Task 8: grep -v nameserver completed successfully"
+    else
+        fail "Task 8: grep -v nameserver failed"
+    fi
+
+    # TASK 9 - GREP -c NOLOGIN
+    COUNT=$(grep -c "nologin" "$ARCHIVE/passwd" 2>/dev/null)
+
+    if [ -f "$OPTION" ] &&
+       grep -Fxq "$COUNT" "$OPTION"
+    then
+        pass "Task 9: grep -c nologin completed successfully"
+    else
+        fail "Task 9: grep -c nologin failed"
+    fi
+
+    # TASK 10 - GREP -i -n PERMIT
+    if [ -f "$OPTION" ] &&
+       grep -Fq "$(grep -i -n "permit" "$ARCHIVE/sshd_config" | head -n 1)" "$OPTION"
+    then
+        pass "Task 10: grep -i -n permit completed successfully"
+    else
+        fail "Task 10: grep -i -n permit failed"
+    fi
+
+    # TASK 11 - grep -l localhost
+    TASK11_OK=1
+    OUTPUT="$BASE/tmp/option.txt"
+
+    [ -f "$OUTPUT" ] || TASK11_OK=0
+
+    if [ "$TASK11_OK" -eq 1 ]; then
+        grep -Eq '^archive/.*' "$OUTPUT" || TASK11_OK=0
+    fi
+
+    if [ "$TASK11_OK" -eq 1 ]; then
+        pass "Task 11: grep -l localhost completed successfully"
+    else
+        fail "Task 11: grep -l localhost failed"
+    fi
+
+    # TASK 12 - Recursive grep Production
+    TASK12_OK=1
+    OUTPUT="$BASE/tmp/recursive.txt"
+
+    [ -f "$OUTPUT" ] || TASK12_OK=0
+
+    if [ "$TASK12_OK" -eq 1 ]; then
+        grep -q "Production" "$OUTPUT" || TASK12_OK=0
+        grep -Eq '^(application|configuration)/' "$OUTPUT" || TASK12_OK=0
+    fi
+
+    if [ "$TASK12_OK" -eq 1 ]; then
+        pass "Task 12: recursive grep for Production completed successfully"
+    else
+        fail "Task 12: recursive grep for Production failed"
+    fi
+
+    # TASK 13 - Recursive grep customerdb
+    TASK13_OK=1
+
+    [ -f "$OUTPUT" ] || TASK13_OK=0
+
+    if [ "$TASK13_OK" -eq 1 ]; then
+        grep -q "customerdb" "$OUTPUT" || TASK13_OK=0
+        grep -Eq '^(application|configuration)/' "$OUTPUT" || TASK13_OK=0
+    fi
+
+    if [ "$TASK13_OK" -eq 1 ]; then
+        pass "Task 13: recursive grep for customerdb completed successfully"
+    else
+        fail "Task 13: recursive grep for customerdb failed"
+    fi
+
+    # TASK 14 - Recursive grep 8080
+    TASK14_OK=1
+
+    [ -f "$OUTPUT" ] || TASK14_OK=0
+
+    if [ "$TASK14_OK" -eq 1 ]; then
+        grep -q "8080" "$OUTPUT" || TASK14_OK=0
+        grep -Eq '^(application|configuration)/' "$OUTPUT" || TASK14_OK=0
+    fi
+
+    if [ "$TASK14_OK" -eq 1 ]; then
+        pass "Task 14: recursive grep for 8080 completed successfully"
+    else
+        fail "Task 14: recursive grep for 8080 failed"
+    fi
+
+    # TASK 15 - Recursive grep root
+    TASK15_OK=1
+
+    [ -f "$OUTPUT" ] || TASK15_OK=0
+
+    if [ "$TASK15_OK" -eq 1 ]; then
+        grep -q "root" "$OUTPUT" || TASK15_OK=0
+        grep -q "^archive/" "$OUTPUT" || TASK15_OK=0
+    fi
+
+    if [ "$TASK15_OK" -eq 1 ]; then
+       pass "Task 15: recursive grep for root completed successfully"
+    else
+       fail "Task 15: recursive grep for root failed"
+    fi
+
+    # TASK 16 - Recursive grep nameserver
+    TASK16_OK=1
+
+    [ -f "$OUTPUT" ] || TASK16_OK=0
+
+    if [ "$TASK16_OK" -eq 1 ]; then
+        grep -q "archive/" "$OUTPUT" || TASK16_OK=0
+        grep -q "resolv.conf" "$OUTPUT" || TASK16_OK=0
+    fi
+
+    if [ "$TASK16_OK" -eq 1 ]; then
+        pass "Task 16: recursive grep for nameserver completed successfully"
+    else
+        fail "Task 16: recursive grep for nameserver failed"
+    fi
+
+    # TASK 17 - EMPTY LINES
+    if [ -f "$REGEXP" ] &&
+       grep -Fq "$(grep -n '^$' "$ARCHIVE/sshd_config" | head -n 1)" "$REGEXP"
+    then
+        pass "Task 17: empty lines with line numbers completed successfully"
+    else
+        fail "Task 17: empty lines with line numbers failed"
+    fi
+
+    # TASK 18 - START WITH #
+    if [ -f "$REGEXP" ] &&
+       grep -Fq "$(grep '^#' "$ARCHIVE/sshd_config" | head -n 1)" "$REGEXP"
+    then
+        pass "Task 18: lines starting with # completed successfully"
+    else
+        fail "Task 18: lines starting with # failed"
+    fi
+
+    # TASK 19 - START WITH # WITH LINE NUMBERS
+    if [ -f "$REGEXP" ] &&
+       grep -Fq "$(grep -n '^#' "$ARCHIVE/sshd_config" | head -n 1)" "$REGEXP"
+    then
+        pass "Task 19: lines starting with # with line numbers completed successfully"
+    else
+        fail "Task 19: lines starting with # with line numbers failed"
+    fi
+
+    # TASK 20 - COUNT #
+    COUNT=$(grep -c '^#' "$ARCHIVE/sshd_config" 2>/dev/null)
+
+    if [ -f "$REGEXP" ] &&
+       grep -Fxq "$COUNT" "$REGEXP"
+    then
+        pass "Task 20: count of lines starting with # completed successfully"
+    else
+        fail "Task 20: count of lines starting with # failed"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+
+# =================================================================
+
+validate_lab212_tar_backup_management() {
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "Checking Lab 212 - Tape Archive (TAR) & backup Management..."
+
+    HOME_DIR="/home/$STUDENT_NAME"
+    BASE="$HOME_DIR/search_lab"
+
+    TOTAL_TASKS=10
+    PASSED=0
+
+    LAB_NAME="Lab 212 - Tape Archive (TAR) & backup Management"
+    DATE=$(date "+%F %T")
+
+    # ============================================================
+    # HELPERS
+    # ============================================================
+
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # ============================================================
+    # PATHS
+    # ============================================================
+
+    APPLICATION="$BASE/application"
+    CONFIGURATION="$BASE/configuration"
+    LOGS="$BASE/logs"
+    REPORTS="$BASE/reports"
+    SCRIPTS="$BASE/scripts"
+
+    BACKUP="$BASE/backup"
+    ARCHIVE="$BASE/archive"
+    TMP="$BASE/tmp"
+
+    APPLICATION_TAR="$BACKUP/application_backup.tar"
+    CONFIGURATION_TAR="$BACKUP/configuration_backup.tar.gz"
+    LOGS_TAR="$BACKUP/logs_backup.tar.bz2"
+    REPORTS_TAR="$BACKUP/reports_backup.tar.xz"
+
+    RESTORE_APP="$TMP/restore_app"
+    RESTORE_CONFIG="$TMP/restore_config"
+
+    FINAL_REPORT1="$TMP/final_report1.txt"
+    FINAL_REPORT2="$TMP/final_report2.txt"
+    FINAL_ARCHIVE="$ARCHIVE/search_lab_backup.tar.gz"
+    FINAL_RESTORE="$TMP/final_restore"
+
+    # TASK 1 - CREATE APPLICATION TAR ARCHIVE
+    TASK1_OK=1
+
+    if [ ! -f "$APPLICATION_TAR" ]; then
+        TASK1_OK=0
+    fi
+
+    if [ -f "$APPLICATION_TAR" ]; then
+
+        # Verify valid tar archive
+        if ! tar -tf "$APPLICATION_TAR" >/dev/null 2>&1; then
+            TASK1_OK=0
+        fi
+
+        # Verify application directory exists in archive
+        if ! tar -tf "$APPLICATION_TAR" 2>/dev/null |
+            grep -Eq '(^|/)application(/|$)'; then
+            TASK1_OK=0
+        fi
+
+        # Verify all application files are included
+        if [ -d "$APPLICATION" ]; then
+
+            while IFS= read -r FILE; do
+
+                RELATIVE="${FILE#$BASE/}"
+
+                if ! tar -tf "$APPLICATION_TAR" 2>/dev/null |
+                    grep -Fxq "$RELATIVE"; then
+                    TASK1_OK=0
+                    break
+                fi
+
+            done < <(find "$APPLICATION" -type f 2>/dev/null)
+
+        else
+            TASK1_OK=0
+        fi
+
+    fi
+
+    # Verify original application files still exist
+    if [ ! -d "$APPLICATION" ]; then
+        TASK1_OK=0
+    fi
+
+    if [ "$TASK1_OK" -eq 1 ]; then
+        pass "Task 1: application tar archive created and verified successfully"
+    else
+        fail "Task 1: application tar archive is missing or incomplete"
+    fi
+
+    # TASK 2 - GZIP COMPRESSED CONFIGURATION ARCHIVE
+    TASK2_OK=1
+
+    if [ ! -f "$CONFIGURATION_TAR" ]; then
+        TASK2_OK=0
+    fi
+
+    if [ -f "$CONFIGURATION_TAR" ]; then
+
+        if ! gzip -t "$CONFIGURATION_TAR" >/dev/null 2>&1; then
+            TASK2_OK=0
+        fi
+
+        if ! tar -tzf "$CONFIGURATION_TAR" >/dev/null 2>&1; then
+            TASK2_OK=0
+        fi
+
+        if ! tar -tzf "$CONFIGURATION_TAR" 2>/dev/null |
+            grep -Eq '(^|/)configuration(/|$)'; then
+            TASK2_OK=0
+        fi
+
+        if [ -d "$CONFIGURATION" ]; then
+
+            while IFS= read -r FILE; do
+
+                RELATIVE="${FILE#$BASE/}"
+
+                if ! tar -tzf "$CONFIGURATION_TAR" 2>/dev/null |
+                    grep -Fxq "$RELATIVE"; then
+                    TASK2_OK=0
+                    break
+                fi
+
+            done < <(find "$CONFIGURATION" -type f 2>/dev/null)
+
+        else
+            TASK2_OK=0
+        fi
+
+    fi
+
+    if [ "$TASK2_OK" -eq 1 ]; then
+        pass "Task 2: gzip-compressed configuration archive created and verified"
+    else
+        fail "Task 2: gzip-compressed configuration archive is missing or incomplete"
+    fi
+
+    # TASK 3 - BZIP2 COMPRESSED LOGS ARCHIVE
+    TASK3_OK=1
+
+    if [ ! -f "$LOGS_TAR" ]; then
+        TASK3_OK=0
+    fi
+
+    if [ -f "$LOGS_TAR" ]; then
+
+        if ! bzip2 -t "$LOGS_TAR" >/dev/null 2>&1; then
+            TASK3_OK=0
+        fi
+
+        if ! tar -tjf "$LOGS_TAR" >/dev/null 2>&1; then
+            TASK3_OK=0
+        fi
+
+        if ! tar -tjf "$LOGS_TAR" 2>/dev/null |
+            grep -Eq '(^|/)logs(/|$)'; then
+            TASK3_OK=0
+        fi
+
+        if [ -d "$LOGS" ]; then
+
+            while IFS= read -r FILE; do
+
+                RELATIVE="${FILE#$BASE/}"
+
+                if ! tar -tjf "$LOGS_TAR" 2>/dev/null |
+                    grep -Fxq "$RELATIVE"; then
+                    TASK3_OK=0
+                    break
+                fi
+
+            done < <(find "$LOGS" -type f 2>/dev/null)
+
+        else
+            TASK3_OK=0
+        fi
+
+    fi
+
+    if [ "$TASK3_OK" -eq 1 ]; then
+        pass "Task 3: bzip2-compressed logs archive created and verified"
+    else
+        fail "Task 3: bzip2-compressed logs archive is missing or incomplete"
+    fi
+
+    # TASK 4 - XZ COMPRESSED REPORTS ARCHIVE
+    TASK4_OK=1
+
+    if [ ! -f "$REPORTS_TAR" ]; then
+        TASK4_OK=0
+    fi
+
+    if [ -f "$REPORTS_TAR" ]; then
+
+        if ! xz -t "$REPORTS_TAR" >/dev/null 2>&1; then
+            TASK4_OK=0
+        fi
+
+        if ! tar -tJf "$REPORTS_TAR" >/dev/null 2>&1; then
+            TASK4_OK=0
+        fi
+
+        if ! tar -tJf "$REPORTS_TAR" 2>/dev/null |
+            grep -Eq '(^|/)reports(/|$)'; then
+            TASK4_OK=0
+        fi
+
+        if [ -d "$REPORTS" ]; then
+
+            while IFS= read -r FILE; do
+
+                RELATIVE="${FILE#$BASE/}"
+
+                if ! tar -tJf "$REPORTS_TAR" 2>/dev/null |
+                    grep -Fxq "$RELATIVE"; then
+                    TASK4_OK=0
+                    break
+                fi
+
+            done < <(find "$REPORTS" -type f 2>/dev/null)
+
+        else
+            TASK4_OK=0
+        fi
+
+    fi
+
+    if [ "$TASK4_OK" -eq 1 ]; then
+        pass "Task 4: xz-compressed reports archive created and verified"
+    else
+        fail "Task 4: xz-compressed reports archive is missing or incomplete"
+    fi
+
+    # TASK 5 - EXTRACT APPLICATION ARCHIVE
+    TASK5_OK=1
+    ARCHIVE="$BASE/backup/application_backup.tar"
+    RESTORE="$BASE/tmp/restore_app"
+
+    [ -f "$ARCHIVE" ] || TASK5_OK=0
+    [ -d "$RESTORE" ] || TASK5_OK=0
+
+    if [ "$TASK5_OK" -eq 1 ]; then
+
+    # Verify application directory was restored
+    [ -d "$RESTORE/application" ] || TASK5_OK=0
+
+    # Verify restored files match original files
+    if [ "$TASK5_OK" -eq 1 ]; then
+        diff -qr "$BASE/application" "$RESTORE/application" >/dev/null 2>&1 || TASK5_OK=0
+    fi
+
+    fi
+
+    if [ "$TASK5_OK" -eq 1 ]; then
+        pass "Task 5: application archive extracted and verified successfully"
+    else
+        fail "Task 5: application archive extraction or verification failed"
+    fi
+
+    # TASK 6 - EXTRACT CONFIGURATION ARCHIVE
+    TASK6_OK=1
+
+    if [ ! -d "$RESTORE_CONFIG" ]; then
+        TASK6_OK=0
+    fi
+
+    if [ -d "$RESTORE_CONFIG" ]; then
+
+        if [ ! -d "$RESTORE_CONFIG/configuration" ]; then
+            TASK6_OK=0
+        fi
+
+        if [ -d "$CONFIGURATION" ] &&
+           [ -d "$RESTORE_CONFIG/configuration" ]; then
+
+            while IFS= read -r FILE; do
+
+                RELATIVE="${FILE#$CONFIGURATION/}"
+                RESTORED="$RESTORE_CONFIG/configuration/$RELATIVE"
+
+                if [ ! -f "$RESTORED" ]; then
+                    TASK6_OK=0
+                    break
+                fi
+
+                if ! cmp -s "$FILE" "$RESTORED"; then
+                    TASK6_OK=0
+                    break
+                fi
+
+            done < <(find "$CONFIGURATION" -type f 2>/dev/null)
+
+        else
+            TASK6_OK=0
+        fi
+
+    fi
+
+    if [ "$TASK6_OK" -eq 1 ]; then
+        pass "Task 6: configuration archive extracted and files verified successfully"
+    else
+        fail "Task 6: configuration archive extraction or verification failed"
+    fi
+
+
+    # TASK 7 - FIND LOG FILES AND LONG LIST
+    TASK7_OK=1
+    OUTPUT="$BASE/tmp/final_report1.txt"
+
+    [ -f "$OUTPUT" ] || TASK7_OK=0
+
+    if [ "$TASK7_OK" -eq 1 ]; then
+        grep -q "\.log" "$OUTPUT" || TASK7_OK=0
+    fi
+
+    if [ "$TASK7_OK" -eq 1 ]; then
+        pass "Task 7: log files located and stored in final_report1.txt"
+    else
+        fail "Task 7: final_report1.txt is missing or log file output is missing"
+    fi
+
+    # TASK 8 - FIND .CONF FILES AND GREP DATABASE
+    TASK8_OK=1
+    OUTPUT="$BASE/tmp/final_report2.txt"
+
+    [ -f "$OUTPUT" ] || TASK8_OK=0
+
+    if [ "$TASK8_OK" -eq 1 ]; then
+        grep -q "\.conf" "$OUTPUT" || TASK8_OK=0
+    fi
+
+    if [ "$TASK8_OK" -eq 1 ]; then
+        pass "Task 8: configuration files containing DATABASE identified successfully"
+    else
+        fail "Task 8: final_report2.txt is missing or configuration output is missing"
+    fi
+
+    # TASK 9 - CREATE FINAL COMPRESSED ARCHIVE
+    TASK9_OK=1
+
+    if [ ! -f "$FINAL_ARCHIVE" ]; then
+        TASK9_OK=0
+    fi
+
+    if [ -f "$FINAL_ARCHIVE" ]; then
+
+        # Verify gzip archive
+        if ! gzip -t "$FINAL_ARCHIVE" >/dev/null 2>&1; then
+            TASK9_OK=0
+        fi
+
+        # Verify tar archive
+        if ! tar -tzf "$FINAL_ARCHIVE" >/dev/null 2>&1; then
+            TASK9_OK=0
+        fi
+
+        # Required directories
+        for DIR in \
+            application \
+            configuration \
+            logs \
+            reports \
+            scripts
+        do
+
+            if ! tar -tzf "$FINAL_ARCHIVE" 2>/dev/null |
+                grep -Eq "^${DIR}(/|$)"; then
+                TASK9_OK=0
+            fi
+
+        done
+
+        # Verify all files from required directories
+        for DIR in \
+            application \
+            configuration \
+            logs \
+            reports \
+            scripts
+        do
+
+            SOURCE_DIR="$BASE/$DIR"
+
+            if [ -d "$SOURCE_DIR" ]; then
+
+                while IFS= read -r FILE; do
+
+                    RELATIVE="${FILE#$BASE/}"
+
+                    if ! tar -tzf "$FINAL_ARCHIVE" 2>/dev/null |
+                        grep -Fxq "$RELATIVE"; then
+                        TASK9_OK=0
+                        break
+                    fi
+
+                done < <(find "$SOURCE_DIR" -type f 2>/dev/null)
+
+            fi
+
+        done
+
+        # backup must NOT be included
+        if tar -tzf "$FINAL_ARCHIVE" 2>/dev/null |
+            grep -Eq '(^|/)backup(/|$)'; then
+            TASK9_OK=0
+        fi
+
+        # archive must NOT be included
+        if tar -tzf "$FINAL_ARCHIVE" 2>/dev/null |
+            grep -Eq '(^|/)archive(/|$)'; then
+            TASK9_OK=0
+        fi
+
+        # tmp must NOT be included
+        if tar -tzf "$FINAL_ARCHIVE" 2>/dev/null |
+            grep -Eq '(^|/)tmp(/|$)'; then
+            TASK9_OK=0
+        fi
+
+    fi
+
+    if [ "$TASK9_OK" -eq 1 ]; then
+        pass "Task 9: final compressed archive created and verified successfully"
+    else
+        fail "Task 9: final archive is missing, incomplete, or contains excluded directories"
+    fi
+
+    # TASK 10 - EXTRACT FINAL ARCHIVE
+    TASK10_OK=1
+
+    if [ ! -d "$FINAL_RESTORE" ]; then
+        TASK10_OK=0
+    fi
+
+    if [ -d "$FINAL_RESTORE" ]; then
+
+        # Verify required directories were restored
+        for DIR in \
+            application \
+            configuration \
+            logs \
+            reports \
+            scripts
+        do
+
+            if [ ! -d "$FINAL_RESTORE/$DIR" ]; then
+                TASK10_OK=0
+            fi
+
+        done
+
+        # Verify files from each required directory
+        for DIR in \
+            application \
+            configuration \
+            logs \
+            reports \
+            scripts
+        do
+
+            SOURCE_DIR="$BASE/$DIR"
+
+            if [ -d "$SOURCE_DIR" ]; then
+
+                while IFS= read -r FILE; do
+
+                    RELATIVE="${FILE#$BASE/}"
+                    RESTORED="$FINAL_RESTORE/$RELATIVE"
+
+                    if [ ! -f "$RESTORED" ]; then
+                        TASK10_OK=0
+                        break
+                    fi
+
+                    if ! cmp -s "$FILE" "$RESTORED"; then
+                        TASK10_OK=0
+                        break
+                    fi
+
+                done < <(find "$SOURCE_DIR" -type f 2>/dev/null)
+
+            fi
+
+        done
+
+    fi
+
+    if [ "$TASK10_OK" -eq 1 ]; then
+        pass "Task 10: final archive extracted and restored files verified successfully"
+    else
+        fail "Task 10: final archive extraction or file verification failed"
+    fi
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+
+# =================================================================
+
+validate_lab213_find_files() {
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "Checking Lab 213 - Find Files and Directories in Linux Filesystem..."
+
+    HOME_DIR="/home/$STUDENT_NAME"
+    BASE="$HOME_DIR/search_lab"
+
+    TOTAL_TASKS=10
+    PASSED=0
+
+    LAB_NAME="Lab 213 - Find Files and Directories in Linux Filesystem"
+    DATE=$(date "+%F %T")
+
+    # ============================================================
+    # HELPERS
+    # ============================================================
+
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+
+    # TASK 1 - SEARCH_LAB DIRECTORY
+    TASK1_OK=1
+
+    if [ ! -d "$BASE" ]; then
+        TASK1_OK=0
+    fi
+
+    if [ -d "$BASE" ]; then
+        OWNER=$(stat -c "%U" "$BASE" 2>/dev/null)
+
+        if [ "$OWNER" != "$STUDENT_NAME" ]; then
+            TASK1_OK=0
+        fi
+    fi
+
+    if [ "$TASK1_OK" -eq 1 ]; then
+        pass "Task 1: search_lab directory copied successfully and owned by the student"
+    else
+        fail "Task 1: search_lab directory is missing or ownership is incorrect"
+    fi
+
+    # TASK 2 - SEARCH BY FILE NAME
+    TASK2_OK=1
+    OUTPUT="$BASE/tmp/file-name.txt"
+
+    [ -f "$OUTPUT" ] || TASK2_OK=0
+
+    if [ -f "$OUTPUT" ]; then
+        grep -q "app.conf" "$OUTPUT" || TASK2_OK=0
+        grep -q "application.log" "$OUTPUT" || TASK2_OK=0
+        grep -q "database.conf" "$OUTPUT" || TASK2_OK=0
+    fi
+
+    if [ "$TASK2_OK" -eq 1 ]; then
+        pass "Task 2: find by file name completed successfully"
+    else
+        fail "Task 2: file-name.txt is missing or required file names are missing"
+    fi
+
+    # TASK 3 - SEARCH BY FILE TYPE
+    TASK3_OK=1
+
+    [ -f "$BASE/tmp/search-dir.txt" ] || TASK3_OK=0
+    [ -f "$BASE/tmp/search-file.txt" ] || TASK3_OK=0
+
+    if [ "$TASK3_OK" -eq 1 ]; then
+        grep -q "$BASE" "$BASE/tmp/search-dir.txt" || \
+            grep -q "\./" "$BASE/tmp/search-dir.txt" || TASK3_OK=0
+
+        grep -q "$BASE" "$BASE/tmp/search-file.txt" || \
+            grep -q "\./" "$BASE/tmp/search-file.txt" || TASK3_OK=0
+    fi
+
+    if [ "$TASK3_OK" -eq 1 ]; then
+        pass "Task 3: find by file type completed successfully"
+    else
+        fail "Task 3: search-dir.txt or search-file.txt is missing or empty"
+    fi
+
+    # TASK 4 - SEARCH BY FILE EXTENSION
+    TASK4_OK=1
+    OUTPUT="$BASE/tmp/extension.txt"
+
+    [ -f "$OUTPUT" ] || TASK4_OK=0
+
+    if [ -f "$OUTPUT" ]; then
+        grep -q "\.log" "$OUTPUT" || TASK4_OK=0
+        grep -q "\.conf" "$OUTPUT" || TASK4_OK=0
+        grep -q "\.properties" "$OUTPUT" || TASK4_OK=0
+    fi
+
+    if [ "$TASK4_OK" -eq 1 ]; then
+        pass "Task 4: find by file extension completed successfully"
+    else
+        fail "Task 4: extension.txt is missing or required extensions are missing"
+    fi
+
+    # TASK 5 - SEARCH BY FILE SIZE
+    TASK5_OK=1
+
+    [ -f "$BASE/tmp/small-size.txt" ] || TASK5_OK=0
+    [ -f "$BASE/tmp/large-size.txt" ] || TASK5_OK=0
+
+    if [ "$TASK5_OK" -eq 1 ]; then
+        pass "Task 5: find by file size completed successfully"
+    else
+        fail "Task 5: small-size.txt or large-size.txt is missing"
+    fi
+
+    # TASK 6 - SEARCH BY MODIFICATION TIME
+    TASK6_OK=1
+
+    [ -f "$BASE/tmp/time-day.txt" ] || TASK6_OK=0
+    [ -f "$BASE/tmp/time-min.txt" ] || TASK6_OK=0
+
+    if [ ! -f "$BASE/tmp/time-day.txt" ] && [ ! -f "/tmp/time-day.txt" ]; then
+        TASK6_OK=0
+    fi
+
+    if [ ! -f "$BASE/tmp/time-min.txt" ] && [ ! -f "/tmp/time-min.txt" ]; then
+        TASK6_OK=0
+    fi
+
+    if [ "$TASK6_OK" -eq 1 ]; then
+        pass "Task 6: find by modification time completed successfully"
+    else
+        fail "Task 6: time-day.txt or time-min.txt is missing"
+    fi
+
+    # TASK 7 - SEARCH BY PERMISSIONS
+    TASK7_OK=1
+    OUTPUT="$BASE/tmp/permission.txt"
+
+    [ -f "$OUTPUT" ] || TASK7_OK=0
+
+    if [ -f "$OUTPUT" ]; then
+
+        # Check that permission search produced long-list output
+        grep -Eq "^-.*[x].*[x].*" "$OUTPUT" || TASK7_OK=0
+
+        # Check for SGID indicator
+        find "$BASE/scripts" -type f -perm -2000 2>/dev/null |
+            grep -q . || true
+    fi
+
+    if [ "$TASK7_OK" -eq 1 ]; then
+        pass "Task 7: find by permissions completed successfully"
+    else
+        fail "Task 7: permission.txt is missing or required permission output is missing"
+    fi
+
+    # TASK 8 - FIND WITH -EXEC
+    TASK8_OK=1
+    OUTPUT="$BASE/tmp/exec1.txt"
+
+    [ -f "$OUTPUT" ] || TASK8_OK=0
+
+    if [ -f "$OUTPUT" ]; then
+        # ls -l output should contain .log files
+        grep -q "\.log" "$OUTPUT" || TASK8_OK=0
+
+        # Long listing normally contains permissions and ownership
+        grep -Eq "^-|^l" "$OUTPUT" || TASK8_OK=0
+    fi
+
+    if [ "$TASK8_OK" -eq 1 ]; then
+        pass "Task 8: find with -exec completed successfully"
+    else
+        fail "Task 8: exec.txt is missing or .log long-list output is missing"
+    fi
+
+    # TASK 9 - MULTIPLE CONDITIONS
+    TASK9_OK=1
+    OUTPUT="$BASE/tmp/exec2.txt"
+
+    [ -f "$OUTPUT" ] || TASK9_OK=0
+
+    if [ "$TASK9_OK" -eq 1 ]; then
+
+    for FILE in $(find "$BASE" -type f -name "*.sh" -perm -u=x -perm -g=x ! -path "$BASE/tmp/*" 2>/dev/null)
+    do
+        NAME=$(basename "$FILE")
+
+        if ! grep -q "$NAME" "$OUTPUT"; then
+            TASK9_OK=0
+            break
+        fi
+    done
+
+    fi
+
+    if [ "$TASK9_OK" -eq 1 ]; then
+        pass "Task 9: find with multiple conditions completed successfully"
+    else
+        fail "Task 9: required .sh files are missing from exec2.txt"
+    fi
+
+    # TASK 10 - MULTIPLE CONDITIONS WITH -EXEC CP
+    TASK10_OK=1
+    EXEC_DIR="$BASE/tmp/exec-dir"
+
+    [ -d "$EXEC_DIR" ] || TASK10_OK=0
+
+    for FILE in $(find "$BASE" -type f -name "*.sh" -perm -u=x -perm -g=x ! -path "$EXEC_DIR/*" 2>/dev/null)
+    do
+    NAME=$(basename "$FILE")
+
+    if [ ! -f "$EXEC_DIR/$NAME" ]; then
+        TASK10_OK=0
+        break
+    fi
+    done
+
+    if [ "$TASK10_OK" -eq 1 ]; then
+        pass "Task 10: matching .sh files copied successfully"
+    else
+        fail "Task 10: required .sh files are missing from exec-dir"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#==========================================================================

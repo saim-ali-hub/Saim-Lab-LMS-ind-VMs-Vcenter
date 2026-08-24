@@ -1,0 +1,160 @@
+
+{
+  "lab_id": "lab1",
+  "title": "Lab 1 - 2026",
+  "description": "Linux Basic Commands & Navigation",
+
+  "lab_objective": {
+
+    "description": "By the end of this lab, you will be able to navigate the Linux file system, manage files and directories, and use basic Linux commands to collect and organize system information.",
+
+    "scenario": "You have recently joined the Linux Administration team. Your manager has asked you to become familiar with the Linux file system by collecting server information, creating directories and files, organizing data, and verifying your work using basic Linux commands.",
+
+    "prerequisites": [
+      "Linux server",
+      "Terminal access",
+      "User account with sudo privileges (recommended)"
+    ],
+
+    "objectives": [
+      "Navigate the Linux file system.",
+      "Display the current working directory.",
+      "View files and directories using different ls options.",
+      "Create and remove directories.",
+      "Create and organize files.",
+      "Copy and move files between directories.",
+      "Create nested directory structures.",
+      "Display directory hierarchy using the tree command.",
+      "Collect server information and append it to a file."
+    ]
+  },
+
+  "tasks": [
+
+    {
+      "task_number": 1,
+      "title": "Prepare the Working Environment",
+      "steps": [
+        "Login to the Linux server.",
+        "Open the Terminal.",
+        "Navigate to your home directory.",
+        "Throughout this lab, append the output of each required command to a file named 'server_info' located in your home directory."
+      ]
+    },
+
+    {
+      "task_number": 2,
+      "title": "Display Present Working Directory",
+      "steps": [
+        "Display your current working directory.",
+        "Append the output to the 'server_info' file."
+      ]
+    },
+
+    {
+      "task_number": 3,
+      "title": "Check Linux Kernel Version",
+      "steps": [
+        "Display the Linux kernel version.",
+        "Append the output to the 'server_info' file."
+      ]
+    },
+
+    {
+      "task_number": 4,
+      "title": "Display Directory Contents",
+      "steps": [
+        "Display detailed information about files in the current directory.",
+        "Append the output to the 'server_info' file.",
+        "Display all files including hidden files with detailed information.",
+        "Append the output to the 'server_info' file."
+      ]
+    },
+
+    {
+      "task_number": 5,
+      "title": "Create and Navigate Directories",
+      "steps": [
+        "Create a directory named 'Linux'.",
+        "Navigate into the 'Linux' directory.",
+        "Verify your location by displaying the present working directory.",
+        "Append the output to the 'server_info' file."
+      ]
+    },
+
+    {
+      "task_number": 6,
+      "title": "Create Subdirectories",
+      "steps": [
+        "Inside the 'Linux' directory, create the following directories:",
+        "Redhat",
+        "oel",
+        "debian"
+      ]
+    },
+
+    {
+      "task_number": 7,
+      "title": "Navigate Back to Home Directory",
+      "steps": [
+        "Move one directory up.",
+        "Verify your present working directory.",
+        "Append the output to the 'server_info' file."
+      ]
+    },
+
+    {
+      "task_number": 8,
+      "title": "Create Empty Files",
+      "steps": [
+        "Create the following empty files in your home directory:",
+        "file1.txt",
+        "pic.jpg",
+        "clip.avi"
+      ]
+    },
+
+    {
+      "task_number": 9,
+      "title": "Create Directories and Move Files",
+      "steps": [
+        "Create the following directories:",
+        "documents",
+        "images",
+        "media",
+        "Move file1.txt into the documents directory.",
+        "Move pic.jpg into the images directory.",
+        "Move clip.avi into the media directory."
+      ]
+    },
+
+    {
+      "task_number": 10,
+      "title": "Create Nested Directory Structure",
+      "steps": [
+        "Create the directory structure office/hobby/personal using a single mkdir command with the appropriate option."
+      ]
+    },
+
+    {
+      "task_number": 11,
+      "title": "Copy Files",
+      "steps": [
+        "Copy file1.txt from the documents directory into the office directory.",
+        "Copy pic.jpg from the images directory into the hobby directory."
+      ]
+    },
+
+    {
+      "task_number": 12,
+      "title": "Display Directory Tree",
+      "steps": [
+        "Display the directory structure of the office directory using the tree command.",
+        "Save the output in a file named 'office_tree' located inside office/hobby/personal."
+      ]
+    }
+
+  ],
+
+  "completion_message": "Cool!!!! Great Job. You have successfully completed Linux Basic Commands & Navigation Lab."
+}

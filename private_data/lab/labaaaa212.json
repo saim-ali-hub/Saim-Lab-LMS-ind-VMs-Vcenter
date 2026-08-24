@@ -1,0 +1,104 @@
+{
+"lab_id": "lab212",
+"title": "Lab 212 - Tape Archive (TAR) & backup Management",
+"description": "Tape Archive (TAR) & backup Management",
+
+"lab_objective": {
+"description": "By the end of this lab, you should be able to:",
+
+```
+"objectives": [
+  "Understand the purpose of the tar command.",
+  "Create tar archives.",
+  "Create compressed tar archives using gzip.",
+  "Create compressed tar archives using bzip2 and xz.",
+  "List the contents of an archive without extracting it.",
+  "Extract files from a tar archive.",
+  "Extract an archive to a specific directory.",
+  "Verify archive contents.",
+  "Use find, grep, and tar together in practical Linux administration scenarios."
+],
+
+"scenario": "You are a Linux Systems Administrator responsible for maintaining an application server used by the development and operations teams. The server contains application configuration files, log files, reports, scripts, temporary files, and backup data. The operations team has asked you to perform several administrative tasks:",
+
+"scenario_tasks": [
+  "Create backups of application data.",
+  "Compress backup files to reduce storage usage.",
+  "Inspect existing archives.",
+  "Restore files from an archive.",
+  "Verify that archived data can be successfully recovered."
+]
+```
+
+},
+
+"tasks": [
+
+```
+{
+  "task_number": 1,
+  "title": "Copy ‘search_lab’ from /tmp directory",
+  "steps": [
+    "Copy search_lab from /tmp directory inside your home directory.",
+    "If directory already exists and you are the owner of the directory.",
+    "Change directory to search_lab and stay in this directory unless not instructed explicitly."
+  ]
+},
+
+{
+  "task_number": 2,
+  "title": "Create a Tar Archive",
+  "steps": [
+    "The application team wants a backup of the entire application directory.",
+    "Task 1: From the search_lab directory, create a tar archive named backup/application_backup.tar.",
+    "Include the complete application directory and all files beneath it.",
+    "Do not delete the original application files.",
+    "Use the tar command.",
+    "List the contents of the archive without extracting it.",
+    "Verify that all application files are included."
+  ]
+},
+
+{
+  "task_number": 3,
+  "title": "Create Compressed Tar Archives",
+  "steps": [
+    "Task 2: Create a gzip-compressed archive of the configuration directory named backup/configuration_backup.tar.gz.",
+    "Task 3: Create a bzip2-compressed archive of the logs directory named backup/logs_backup.tar.bz2.",
+    "Task 4: Create an xz-compressed archive of the reports directory named backup/reports_backup.tar.xz.",
+    "Use the appropriate tar options for each compression method.",
+    "List the contents of each archive. Verify that the correct directories and files are stored inside each archive."
+  ]
+},
+
+{
+  "task_number": 4,
+  "title": "Extract and Verify an Archive",
+  "steps": [
+    "Task 5: Extract backup/application_backup.tar into the tmp/restore_app directory.",
+    "Verify that the application directory was restored.",
+    "Compare the restored files with the original files.",
+    "Task 6: Extract backup/configuration_backup.tar.gz into restore_config directory under tmp.",
+    "Verify that the configuration files were restored successfully."
+  ]
+},
+
+{
+  "task_number": 5,
+  "title": "Complete Administrator Backup",
+  "steps": [
+    "The operations team has requested a final backup and verification of the search_lab environment.",
+    "Perform the following tasks:",
+    "Task 7: Use find to locate all .log files under the search_lab directory, long-list the output and store output in tmp/final_report1.txt.",
+    "Task 8: Use find to locate all files with the .conf extension under the search_lab directory. Then use grep to search the matching configuration files for the string DATABASE, and save the paths of the files containing the match to tmp/final_report2.txt.",
+    "Task 9: Create a final compressed archive named archive/search_lab_backup.tar.gz. Include the directories application, configuration, logs, reports, and scripts. Do not include the backup, archive and tmp directories inside the final archive. List the contents of the final archive without extracting it and verify that the expected directories and files are present.",
+    "Task 10: Extract the final archive into tmp/final_restore."
+  ]
+}
+```
+
+],
+
+"completion_message": "Excellent work! You have successfully completed Lab 212 - Tape Archive (TAR) & backup Management. You practiced creating tar archives, creating compressed tar archives using gzip, bzip2, and xz, listing archive contents, extracting archives, verifying archived data, and using find, grep, and tar together in practical Linux administration scenarios."
+}
+

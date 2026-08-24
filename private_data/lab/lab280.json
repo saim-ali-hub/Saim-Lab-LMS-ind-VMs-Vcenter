@@ -1,0 +1,393 @@
+{
+  "lab_id": "lab212",
+  "title": "Lab 212 - A Linux Detective Case",
+  "description": "Last night at 02:47 AM, an intruder broke into the company's Linux server and stole the customer database. The security team preserved everything they found at the digital crime scene: /tmp/crime_scene. You are a newly hired investigator in the Cyber Crime Unit. Using only the Linux skills you have learned in Labs 201-206, you will open an official case file, document the server, collect the evidence, hunt the hacker through hundreds of log lines, name the culprit in your final report, and seal the case so nobody can tamper with it.",
+
+  "lab_objective": {
+    "description": "This is a live follow-along review lab. By the end of this lab, you will have used navigation with absolute and relative paths, directory and file creation, identity and system commands, file management, evidence analysis, output redirection, and file permissions.",
+
+    "scenario": "Turn your VPN on and ssh into 192.168.111.165 using your LDAP credentials. Make sure you are in your home directory. Linux is case-sensitive: type every name exactly as written. Follow along as the instructor demonstrates each step live.",
+
+    "prerequisites": [
+      "Linux server or virtual machine",
+      "Valid Linux user account",
+      "Basic Linux command knowledge",
+      "Access to a terminal or SSH client",
+      "Basic understanding of Linux files, directories, permissions, and common commands"
+    ]
+  },
+
+  "objectives": [
+    "Navigate using absolute and relative paths.",
+    "Create directories and files using mkdir, mkdir -p, and touch.",
+    "Use whoami, id, uname, uptime, and free to collect system information.",
+    "Manage files using ls, cp, cp -r, and mv.",
+    "Analyze files using cat, head, tail, and grep.",
+    "Use output redirection with > and >>.",
+    "Understand and modify Linux permissions using chmod.",
+    "Use symbolic and numeric permission notation.",
+    "Verify file and directory permissions using ls -l and ls -ld.",
+    "Apply permissions recursively using chmod -R."
+  ],
+
+  "tasks": [
+
+    {
+      "task_number": 1,
+      "title": "Open the Case File - Inspect the Crime Scene",
+      "steps": [
+        "Make sure you are currently in your home directory.",
+        "Verify your current location using the pwd command.",
+        "List the contents of /tmp/crime_scene in long format.",
+        "Observe the ownership and permissions of the evidence files.",
+        "Use: pwd",
+        "Use: ls -l /tmp/crime_scene"
+      ]
+    },
+
+    {
+      "task_number": 2,
+      "title": "Read the Security Briefing",
+      "steps": [
+        "Read the briefing note located at /tmp/crime_scene/README_FIRST.txt.",
+        "Do not copy the file.",
+        "Read the file directly from its original location.",
+        "Use cat with the absolute path."
+      ]
+    },
+
+    {
+      "task_number": 3,
+      "title": "Create the Official Case Directory",
+      "steps": [
+        "Make sure you are in your home directory.",
+        "Create a directory named case_212.",
+        "Move into the case_212 directory.",
+        "Use mkdir and cd."
+      ]
+    },
+
+    {
+      "task_number": 4,
+      "title": "Build the Case File Structure",
+      "steps": [
+        "Inside case_212, create three directories named evidence, suspects, and reports.",
+        "Using a single command, create a directory named archive inside a directory named notes.",
+        "Neither notes nor archive exists yet.",
+        "Use mkdir and mkdir -p."
+      ]
+    },
+
+    {
+      "task_number": 5,
+      "title": "Create and Verify the Case Structure",
+      "steps": [
+        "Create an empty file named final_report.txt inside the reports directory.",
+        "Display the complete case structure in detailed list format.",
+        "Verify that all required directories and files exist.",
+        "Use touch and ls -l.",
+        "Bonus: try the tree command if it is available."
+      ]
+    },
+
+    {
+      "task_number": 6,
+      "title": "Record Your Identity",
+      "steps": [
+        "Stay inside the case_212 directory.",
+        "Create the file evidence/chain_of_custody.txt by appending command output.",
+        "Record your username using whoami.",
+        "Record your complete user and group information using id.",
+        "Do not overwrite the file.",
+        "Use: whoami >> evidence/chain_of_custody.txt",
+        "Use: id >> evidence/chain_of_custody.txt"
+      ]
+    },
+
+    {
+      "task_number": 7,
+      "title": "Record Your Current Location",
+      "steps": [
+        "Record your current filesystem location in evidence/chain_of_custody.txt.",
+        "Append the output instead of overwriting the existing information.",
+        "Use pwd with >>."
+      ]
+    },
+
+    {
+      "task_number": 8,
+      "title": "Record Server Information",
+      "steps": [
+        "Record the server kernel information.",
+        "Record how long the server has been running.",
+        "Record the server memory information in human-readable format.",
+        "Append the output of each command to evidence/chain_of_custody.txt.",
+        "Use uname -a.",
+        "Use uptime.",
+        "Use free -h."
+      ]
+    },
+
+    {
+      "task_number": 9,
+      "title": "Verify the Chain of Custody",
+      "steps": [
+        "Display the complete evidence/chain_of_custody.txt file.",
+        "Then display only the first 3 lines.",
+        "Use cat and head -3."
+      ]
+    },
+
+    {
+      "task_number": 10,
+      "title": "Collect the Access Log",
+      "steps": [
+        "Stay inside the case_212 directory.",
+        "Copy access_log.txt from /tmp/crime_scene into the evidence directory.",
+        "Use a relative destination path.",
+        "Use: cp /tmp/crime_scene/access_log.txt evidence/"
+      ]
+    },
+
+    {
+      "task_number": 11,
+      "title": "Collect the Suspect List",
+      "steps": [
+        "Copy suspects.txt from /tmp/crime_scene into the suspects directory.",
+        "Verify that the copied file exists."
+      ]
+    },
+
+    {
+      "task_number": 12,
+      "title": "Collect the Hacker Note",
+      "steps": [
+        "Copy note_from_hacker.txt from /tmp/crime_scene into your evidence directory.",
+        "Write the destination as an absolute path.",
+        "The destination is ~/case_212/evidence/.",
+        "Verify that the file exists in the evidence directory."
+      ]
+    },
+
+    {
+      "task_number": 13,
+      "title": "Create a Working Evidence Backup",
+      "steps": [
+        "Copy evidence/access_log.txt to notes/archive/access_log_backup.txt.",
+        "Use one command that copies and renames the file at the destination.",
+        "Verify that access_log_backup.txt exists inside notes/archive."
+      ]
+    },
+
+    {
+      "task_number": 14,
+      "title": "Archive the Evidence Directory",
+      "steps": [
+        "Create a backup copy of the entire evidence directory.",
+        "Place the backup inside notes/archive.",
+        "Name the backup evidence_backup.",
+        "Use the special cp option required to copy a complete directory.",
+        "Verify that notes/archive/evidence_backup exists."
+      ]
+    },
+
+    {
+      "task_number": 15,
+      "title": "Read the Hacker Note",
+      "steps": [
+        "Read evidence/note_from_hacker.txt.",
+        "Do not modify the file.",
+        "Use cat to display its contents.",
+        "Read the hacker's message carefully because it provides clues for the investigation."
+      ]
+    },
+
+    {
+      "task_number": 16,
+      "title": "Inspect the Access Log",
+      "steps": [
+        "Display the first 5 lines of evidence/access_log.txt.",
+        "Display the last 5 lines of evidence/access_log.txt.",
+        "Normal activity appears at the beginning and end of the log.",
+        "The crime happened at approximately 02:47 AM somewhere in the middle.",
+        "Use: head -5 evidence/access_log.txt",
+        "Use: tail -5 evidence/access_log.txt"
+      ]
+    },
+
+    {
+      "task_number": 17,
+      "title": "Find Failed Break-In Attempts",
+      "steps": [
+        "Search the access log for every line containing FAILED.",
+        "Determine which username repeatedly appears in the failed attempts.",
+        "Use grep to search the file.",
+        "Hint: grep \"FAILED\" evidence/access_log.txt"
+      ]
+    },
+
+    {
+      "task_number": 18,
+      "title": "Investigate the Exact Crime Time",
+      "steps": [
+        "Search the access log for every line containing 02:4.",
+        "Find the event that occurred at exactly 02:47:11.",
+        "Determine what the intruder did at that time.",
+        "Determine what the intruder did immediately afterward.",
+        "Use: grep \"02:4\" evidence/access_log.txt"
+      ]
+    },
+
+    {
+      "task_number": 19,
+      "title": "Unmask the Hacker",
+      "steps": [
+        "Use the alias discovered in the access log.",
+        "Search suspects/suspects.txt for the alias.",
+        "The alias is shadowfox.",
+        "Determine the hacker's real name from the matching suspect record.",
+        "Use: grep \"shadowfox\" suspects/suspects.txt"
+      ]
+    },
+
+    {
+      "task_number": 20,
+      "title": "Build the Official Evidence Extract",
+      "steps": [
+        "Create reports/evidence_extract.txt.",
+        "Redirect all access-log lines containing the hacker's alias into the file using >.",
+        "Append the matching line from the suspects list using >>.",
+        "Do not overwrite the first search result.",
+        "Display the completed evidence extract using cat.",
+        "Use grep with > for the first command and grep with >> for the second command."
+      ]
+    },
+
+    {
+      "task_number": 21,
+      "title": "Write the Final Investigation Conclusion",
+      "steps": [
+        "Write the investigation conclusion into reports/final_report.txt using echo and append redirection.",
+        "Add this exact conclusion:",
+        "echo \"The intruder is shadowfox - Victor Vale.\" >> reports/final_report.txt",
+        "Add your name using:",
+        "echo \"Solved by: YOUR_NAME\" >> reports/final_report.txt",
+        "Replace YOUR_NAME with your actual username."
+      ]
+    },
+
+    {
+      "task_number": 22,
+      "title": "Mark the Case as Solved",
+      "steps": [
+        "The investigation is complete.",
+        "Rename reports/final_report.txt to reports/case_212_SOLVED.txt.",
+        "Use the mv command.",
+        "Verify that the renamed report exists."
+      ]
+    },
+
+    {
+      "task_number": 23,
+      "title": "Inspect the Final Report Permissions",
+      "steps": [
+        "Check the current permissions of reports/case_212_SOLVED.txt.",
+        "Read the permission string out loud.",
+        "Identify the owner permissions.",
+        "Identify the group permissions.",
+        "Identify the others permissions.",
+        "Use ls -l."
+      ]
+    },
+
+    {
+      "task_number": 24,
+      "title": "Seal the Final Report",
+      "steps": [
+        "Change the permissions of reports/case_212_SOLVED.txt using numeric notation.",
+        "The owner must have read permission only.",
+        "The group must have no permissions.",
+        "Others must have no permissions.",
+        "Verify the resulting permissions.",
+        "Use: chmod 400 reports/case_212_SOLVED.txt",
+        "Then use ls -l to verify."
+      ]
+    },
+
+    {
+      "task_number": 25,
+      "title": "Test the Sealed Report",
+      "steps": [
+        "Try to append the line \"tampered!\" to the sealed report.",
+        "Use echo and >>.",
+        "Read the resulting error message.",
+        "Explain why the operation failed based on the permission string.",
+        "Confirm that you can still read the report using cat.",
+        "The report should be readable by the owner but not writable."
+      ]
+    },
+
+    {
+      "task_number": 26,
+      "title": "Restore Owner Write Permission",
+      "steps": [
+        "A judge requests one correction to the report.",
+        "Give the owner write permission back using symbolic notation.",
+        "Do not modify group or others permissions.",
+        "Use: chmod u+w reports/case_212_SOLVED.txt",
+        "Verify the resulting permissions using ls -l."
+      ]
+    },
+
+    {
+      "task_number": 27,
+      "title": "Lock the Complete Case File",
+      "steps": [
+        "Protect the entire ~/case_212 directory from your classmates.",
+        "The owner must have full access.",
+        "Group and others must have no access.",
+        "Apply the permissions recursively to the case directory and everything inside it.",
+        "Use: chmod -R 700 ~/case_212",
+        "Verify the case directory using: ls -ld ~/case_212"
+      ]
+    },
+
+    {
+      "task_number": 28,
+      "title": "Close the Case and Validate",
+      "steps": [
+        "Review your completed case file.",
+        "Make sure the required evidence, suspect, backup, extract, and final report files exist.",
+        "Make sure the required permissions have been applied.",
+        "Click VALIDATE to validate your lab.",
+        "If you scored 8/8, the unit certifies you on the spot.",
+        "If not, the inspector tells you exactly what to fix.",
+        "Fix the reported issue and run the validation again."
+      ]
+    }
+
+  ],
+
+  "final_verification": {
+    "title": "Final Case Verification",
+    "steps": [
+      "Verify that ~/case_212 exists.",
+      "Verify that the evidence directory exists.",
+      "Verify that the suspects directory exists.",
+      "Verify that the reports directory exists.",
+      "Verify that the notes/archive directory exists.",
+      "Verify that evidence/chain_of_custody.txt exists.",
+      "Verify that evidence/access_log.txt exists.",
+      "Verify that evidence/note_from_hacker.txt exists.",
+      "Verify that suspects/suspects.txt exists.",
+      "Verify that notes/archive/access_log_backup.txt exists.",
+      "Verify that notes/archive/evidence_backup exists.",
+      "Verify that reports/evidence_extract.txt exists.",
+      "Verify that reports/case_212_SOLVED.txt exists.",
+      "Verify that the final case directory has owner-only permissions.",
+      "Verify that the final report contains the investigation conclusion."
+    ]
+  },
+
+  "completion_message": "Congratulations, Investigator! You navigated the filesystem, managed evidence files, searched the access logs, identified the hacker, controlled permissions, and closed the case. These are the exact skills of a real Linux administrator."
+}

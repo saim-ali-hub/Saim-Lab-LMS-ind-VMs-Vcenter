@@ -1,0 +1,206 @@
+{
+  "lab_id": "lab210",
+  "title": "Lab 210 - Tape Archive (TAR) & backup Management",
+  "description": "Tape Archive (TAR) & backup Management",
+
+  "lab_objective": {
+    "description": "By the end of this lab, you should be able to:",
+    "objectives": [
+      "Explain what TAR (Tape Archive) is and why it is used.",
+      "Understand the difference between archiving and compression.",
+      "Create an uncompressed TAR archive.",
+      "View and verify the contents of a TAR archive without extracting it.",
+      "Extract an entire archive.",
+      "Extract an archive into a specific directory.",
+      "Extract specific files or directories from an archive.",
+      "Add files and directories to an existing TAR archive.",
+      "Work with compressed TAR archives using gzip, bzip2, and xz.",
+      "Understand and use common TAR options.",
+      "Compare archive sizes before and after compression.",
+      "Apply TAR commands to common Linux backup and restoration scenarios."
+    ],
+
+    "scenario": "You are a Linux Systems Administrator responsible for maintaining an application server used by the Development and Operations teams. The server contains application documentation, images, log files, reports, administrative scripts, and other project data. The Operations team has asked you to perform a series of backup and restoration tasks.",
+
+    "scenario_tasks": [
+      "Create an archive of application data.",
+      "Inspect and verify the contents of an archive before restoration.",
+      "Restore archived data to designated backup and restore locations.",
+      "Create compressed backups using different compression methods.",
+      "Compare the size of compressed and uncompressed archives.",
+      "Archive selected directories together.",
+      "Add additional data to an existing archive.",
+      "Verify that archived data can be successfully recovered."
+    ]
+
+  },
+
+  "tasks": [
+
+    {
+      "task_number": 1,
+      "title": "Copy ‘tar_lab’ from /tmp directory",
+      "steps": [
+        "Copy tar_lab from /tmp into your home directory.",
+        "Make sure you are the owner of the copied directory and its contents.",
+        "Change your current directory to tar_lab.",
+        "Remain inside the tar_lab directory unless a task explicitly instructs you to change directories.",
+        "important_note: Do not delete or modify any original directory or its contents unless a task explicitly instructs you to do so." 
+      ]
+    },
+
+    {
+      "task_number": 2,
+      "title": "Create an Uncompressed TAR Archive",
+      "steps": [
+        "From the tar_lab directory, create an uncompressed TAR archive named project.tar containing the entire project directory.",
+        "Do not delete or modify the original project directory.",
+        "Create the archive using verbose mode.",
+        "Verify that project.tar was created.",
+        "Use ls -l to verify that both project/ and project.tar are present.",
+        "Remember that TAR does not normally move or delete the original files when creating an archive. It creates another file containing them."
+      ]
+    },
+
+    {
+      "task_number": 3,
+      "title": "View the Contents of a TAR Archive",
+      "steps": [
+        "Inspect project.tar without extracting it.",
+        "List the contents of the project.tar archive.",
+        "Do not extract the archive.",
+        "Verify that the directories and files from the project directory are included.",
+        "Redirect the listing output to activity/project_tar.txt."
+      ]
+    },
+
+    {
+      "task_number": 4,
+      "title": "Extract a TAR Archive",
+      "steps": [
+        "Change to the backup directory.",
+        "Restore project.tar into the backup directory.",
+        "Extract project.tar using verbose mode.",
+        "Verify that the project directory and its contents were successfully restored.",
+        "Use ls -l to verify the restored directory."
+      ]
+    },
+
+    {
+      "task_number": 5,
+      "title": "Extract an Archive to a Specific Directory",
+      "steps": [
+        "Return to the tar_lab directory.",
+        "Verify your current working directory.",
+        "Without changing into the restore directory, extract project.tar into the restore directory.",
+        "Use the -C option to specify the destination directory.",
+        "The -C option tells TAR to change to the specified directory before performing the operation.",
+        "Verify that the project directory was extracted under restore."
+      ]
+    },
+
+    {
+      "task_number": 6,
+      "title": "Create a gzip-Compressed TAR Archive",
+      "steps": [
+        "From the tar_lab directory, create a gzip-compressed TAR archive named project.tar.gz.",
+        "Include the entire project directory.",
+        "Do not delete or modify the original project directory.",
+        "Verify that the compressed archive was created.",
+        "Compare the size of project/, project.tar, and project.tar.gz.",
+        "Remember that TAR performs the archiving, while gzip performs the compression."
+      ]
+    },
+
+    {
+      "task_number": 7,
+      "title": "View the Contents of a gzip-Compressed TAR Archive",
+      "steps": [
+        "List the contents of project.tar.gz.",
+        "Do not extract the archive.",
+        "Verify that the expected directories and files are present.",
+        "Redirect the listing output to activity/project_tar_gz.txt.",
+        "Verify the saved output using cat activity/project_tar_gz.txt."
+      ]
+    },
+
+    {
+      "task_number": 8,
+      "title": "Extract a gzip-Compressed Archive",
+      "steps": [
+        "Remain in the tar_lab directory.",
+        "Extract project.tar.gz into the activity directory.",
+        "Use verbose mode.",
+        "Verify that the project directory was successfully extracted under activity."
+      ]
+    },
+
+    {
+      "task_number": 9,
+      "title": "Create a bzip2-Compressed TAR Archive",
+      "steps": [
+        "From the tar_lab directory, create a bzip2-compressed TAR archive named logs.tar.bz2.",
+        "Archive the entire project/logs directory.",
+        "Do not delete or modify the original project/logs directory.",
+        "Verify that logs.tar.bz2 was created.",
+        "Compare the size of the original project/logs directory with the resulting archive.",
+        "Remember that the -j option tells TAR to use bzip2 compression."
+      ]
+    },
+
+    {
+      "task_number": 10,
+      "title": "View the Contents of a bzip2-Compressed TAR Archive",
+      "steps": [
+        "Inspect logs.tar.bz2 without extracting it.",
+        "List the contents of logs.tar.bz2.",
+        "Do not extract the archive.",
+        "Verify that the expected log files are present.",
+        "Redirect the listing output to activity/logs_tar_bz2.txt.",
+        "Verify the saved output using cat activity/logs_tar_bz2.txt."
+      ]
+    },
+
+    {
+      "task_number": 11,
+      "title": "Extract the bzip2-Compressed Archive",
+      "steps": [
+        "Remain in the tar_lab directory.",
+        "Extract logs.tar.bz2 into the backup directory.",
+        "Use verbose mode.",
+        "Verify that the project/logs directory and its contents were restored successfully.",
+        "Use ls -l backup to verify the restored directory."
+      ]
+    },
+
+    {
+      "task_number": 12,
+      "title": "Create an Archive from Multiple Directories",
+      "steps": [
+        "From the tar_lab directory, create an uncompressed TAR archive named collaboration.tar.",
+        "Include both project/reports and project/scripts.",
+        "Do not delete or modify the original directories.",
+        "List the contents of collaboration.tar.",
+        "Verify that both directories and their files are present.",
+        "Redirect the contents of collaboration.tar to activity/collaborative_tar1.txt."
+      ]
+    },
+
+    {
+      "task_number": 13,
+      "title": "Add a File or Directory to an Existing TAR Archive",
+      "steps": [
+        "Remain in the tar_lab directory.",
+        "Add the entire project/images/ directory to the existing collaboration.tar archive.",
+        "Do not recreate the archive.",
+        "Do not delete the existing archive.",
+        "List the contents of collaboration.tar.",
+        "Verify that it now contains project/reports/, project/scripts/, and project/images/.",
+        "Redirect the contents of collaboration.tar to activity/collaborative_tar2.txt."
+      ]
+    }
+
+  ],
+
+  "completion_message": "Excellent work! You have successfully completed Lab 210 - Tape Archive (TAR) & backup Management. You practiced creating uncompressed TAR archives, viewing archive contents, extracting archives, extracting archives to specific directories, creating gzip and bzip2 compressed TAR archives, comparing archive sizes, archiving multiple directories, and adding a directory to an existing TAR archive."
+}

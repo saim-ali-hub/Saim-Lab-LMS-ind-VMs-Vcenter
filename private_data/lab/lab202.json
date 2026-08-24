@@ -1,0 +1,235 @@
+{
+  "lab_id": "lab202",
+  "title": "Lab 202 - Linux File System Navigation and File Management",
+  "description": "Linux File System Navigation and File Management",
+
+  "lab_objective": {
+    "description": "By the end of this lab, you will be able to understand absolute and relative paths, navigate the Linux filesystem, create directories and files, copy and move files and directories, rename files and directories, and organize files into a proper directory structure.",
+
+    "scenario": "You have recently joined your company's Linux Administration team. Your manager has assigned you to prepare a workspace for a new project. Your responsibilities include creating the required directory structure, organizing project files, copying templates, renaming files, and moving resources into their correct locations. Throughout this lab, you must correctly use both absolute and relative paths to complete the assigned tasks.",
+
+    "prerequisites": [
+      "Access to a Linux server",
+      "Valid LDAP credentials",
+      "VPN access",
+      "SSH client",
+      "Basic understanding of Linux command-line interface"
+    ],
+
+    "objectives": [
+      "Understand the difference between absolute and relative paths.",
+      "Navigate the Linux filesystem using both path types.",
+      "Create directories using mkdir.",
+      "Create files using touch.",
+      "Copy files and directories using cp.",
+      "Move and rename files and directories using mv.",
+      "Organize files into a proper directory structure."
+    ]
+  },
+
+  "tasks": [
+
+    {
+      "task_number": 1,
+      "title": "Create the Linux Lab Directory",
+
+      "steps": [
+        "First of all ssh into “192.168.111.165” using your ldap (VPN) credentials.",
+        "Make sure your VPN is turned on.",
+        "Make sure you are in your home directory.",
+        "Create a directory named linux_lab."
+      ]
+    },
+
+    {
+      "task_number": 2,
+      "title": "Move into the Linux Lab Directory",
+
+      "steps": [
+        "Move into the linux_lab directory."
+      ]
+    },
+
+    {
+      "task_number": 3,
+      "title": "Create Project Directories",
+
+      "steps": [
+        "Create the following directories inside linux_lab:",
+        "projects",
+        "backups"
+      ]
+    },
+
+    {
+      "task_number": 4,
+      "title": "Create Project1 and Project2 Directories",
+
+      "steps": [
+        "While stay inside linux_lab directory, create following directories inside projects directory:",
+        "project1",
+        "project2"
+      ]
+    },
+
+    {
+      "task_number": 5,
+      "title": "Create Additional Directory Structure",
+
+      "steps": [
+        "Create the following directory structure:",
+        "Create scripts directory inside the documents directory, which should be located within the linux_lab directory.",
+        "Create notes directory inside the reports directory, which should be located within the linux_lab directory."
+      ]
+    },
+
+    {
+      "task_number": 6,
+      "title": "Create inventory.txt",
+
+      "steps": [
+        "Create an empty file named inventory.txt inside project1."
+      ]
+    },
+
+    {
+      "task_number": 7,
+      "title": "Create daily.sh",
+
+      "steps": [
+        "Create an empty file named daily.sh inside scripts."
+      ]
+    },
+
+    {
+      "task_number": 8,
+      "title": "Create summary.txt",
+
+      "steps": [
+        "Create an empty file named summary.txt inside reports."
+      ]
+    },
+
+    {
+      "task_number": 9,
+      "title": "Create users.txt",
+
+      "steps": [
+        "Create a file named users.txt inside the project1 directory with the following content:",
+        "“Linux is my backbone and I really love Linux.”"
+      ]
+    },
+
+    {
+      "task_number": 10,
+      "title": "Copy inventory.txt Using a Relative Path",
+
+      "steps": [
+        "Copy inventory.txt from project1 to project2 using a relative path."
+      ]
+    },
+
+    {
+      "task_number": 11,
+      "title": "Copy users.txt Using an Absolute Path",
+
+      "steps": [
+        "Copy users.txt from project1 to reports using an absolute path."
+      ]
+    },
+
+    {
+      "task_number": 12,
+      "title": "Copy summary.txt to notes",
+
+      "steps": [
+        "Copy summary.txt from reports to notes."
+      ]
+    },
+
+    {
+      "task_number": 13,
+      "title": "Copy daily.sh into project1",
+
+      "steps": [
+        "Copy daily.sh into project1."
+      ]
+    },
+
+    {
+      "task_number": 14,
+      "title": "Copy the Entire project1 Directory",
+
+      "steps": [
+        "Copy the entire project1 directory into backups."
+      ]
+    },
+
+    {
+      "task_number": 15,
+      "title": "Rename inventory.txt",
+
+      "steps": [
+        "Rename inventory.txt in project2 to inventory_backup.txt."
+      ]
+    },
+
+    {
+      "task_number": 16,
+      "title": "Rename daily.sh",
+
+      "steps": [
+        "Rename backups/project1/daily.sh to startup.sh."
+      ]
+    },
+
+    {
+      "task_number": 17,
+      "title": "Move users.txt",
+
+      "steps": [
+        "Move users.txt from reports into project2."
+      ]
+    },
+
+    {
+      "task_number": 18,
+      "title": "Rename project2",
+
+      "steps": [
+        "Rename project2 to production."
+      ]
+    },
+
+    {
+      "task_number": 19,
+      "title": "Navigate to notes Using an Absolute Path",
+
+      "steps": [
+        "Execute command cd and go to your home directory.",
+        "Navigate to the notes directory using an absolute path."
+      ]
+    },
+
+    {
+      "task_number": 20,
+      "title": "Return to linux_lab Using a Relative Path",
+
+      "steps": [
+        "Return to linux_lab using a relative path."
+      ]
+    },
+
+    {
+      "task_number": 21,
+      "title": "Navigate to production Using a Relative Path",
+
+      "steps": [
+        "From linux_lab, navigate to production using a relative path."
+      ]
+    }
+
+  ],
+
+  "completion_message": "Cool!!!! Great Job. You have successfully completed Linux File System Navigation and File Management Lab."
+}

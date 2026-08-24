@@ -1,0 +1,300 @@
+{
+  "lab_id": "lab205",
+  "title": "Lab 205 - 2026",
+  "description": "Linux File Permissions",
+
+  "lab_objective": {
+    "description": "By the end of this lab, you will be able to understand Linux file and directory permissions, modify permissions using symbolic and numeric notation, and troubleshoot access-related issues based on assigned permissions.",
+
+    "scenario": "You have recently joined a Linux infrastructure team as a Junior Linux Systems Administrator. Your team has provided you with a working directory where you must create and manage a small project structure named 'my_own_dir'. During this exercise, you will configure file and directory permissions for owners, groups, and others, intentionally restrict access, test the resulting behavior, and then restore the required permissions. You will use both symbolic and numeric notation and observe how permissions affect reading, writing, creating, deleting, and accessing files and directories.",
+
+    "prerequisites": [
+      "Linux server or virtual machine",
+      "Valid Linux user account",
+      "Basic knowledge of Linux commands",
+      "Access to a terminal or SSH client",
+      "Basic understanding of files and directories"
+    ],
+
+    "objectives": [
+      "Understand the meaning of read (r), write (w), and execute (x) permissions.",
+      "Understand owner, group, and others permissions.",
+      "Modify file and directory permissions using symbolic notation.",
+      "Modify file and directory permissions using numeric notation.",
+      "Understand how directory permissions affect navigation and file creation.",
+      "Understand how directory permissions affect file access and management.",
+      "Test file read and write access based on assigned permissions.",
+      "Apply permissions recursively to directories and their contents.",
+      "Use Linux commands such as ls, chmod, mkdir, cd, cat, echo, cp, and output redirection.",
+      "Verify and troubleshoot permission-related errors."
+    ]
+  },
+
+  "tasks": [
+
+    {
+      "task_number": 1,
+      "title": "Create the Working Directory",
+      "steps": [
+        "Make sure you are currently in your home directory.",
+        "Verify your present working directory using the pwd command.",
+        "Create a directory named 'my_own_dir'.",
+        "Verify the permissions of the directory using 'ls -ld my_own_dir'."
+      ]
+    },
+
+    {
+      "task_number": 2,
+      "title": "Modify Directory Permissions Using Symbolic Notation",
+      "steps": [
+        "Change the permissions of 'my_own_dir' using symbolic notation.",
+        "Set the owner permissions to read and write only.",
+        "Set the group permissions to read only.",
+        "Set the others permissions to read only.",
+        "Verify the resulting permissions using 'ls -ld my_own_dir'.",
+        "Run 'ls my_own_dir' and carefully observe the result.",
+        "Notice that the directory may be listed even though execute permission is not available.",
+        "Use this observation to understand that read permission on a directory allows the contents of the directory to be listed, while execute permission is required to access and navigate through the directory."
+      ]
+    },
+
+    {
+      "task_number": 3,
+      "title": "Test Directory Navigation",
+      "steps": [
+        "While in your home directory, try to change into 'my_own_dir' using 'cd my_own_dir'.",
+        "Observe the result of the command.",
+        "The command should fail because execute permission is not available on the directory.",
+        "Return to your home directory using 'cd ~' if necessary."
+      ]
+    },
+
+    {
+      "task_number": 4,
+      "title": "Test Directory Creation Permissions",
+      "steps": [
+        "While in your home directory, attempt to create a directory named 'Redhat' inside 'my_own_dir'.",
+        "Run 'mkdir my_own_dir/Redhat'.",
+        "Observe the result of the command.",
+        "The command should fail because the required write and execute permissions are not available on 'my_own_dir'.",
+        "Use the error message to identify the permission-related problem."
+      ]
+    },
+
+    {
+      "task_number": 5,
+      "title": "Restore Directory Permissions",
+      "steps": [
+        "Modify the permissions of 'my_own_dir' using symbolic notation.",
+        "Set the owner permissions to read, write, and execute.",
+        "Set the group permissions to read, write, and execute.",
+        "Set the others permissions to read and execute.",
+        "Verify the permissions using 'ls -ld my_own_dir'.",
+        "Create a directory named 'Redhat' inside 'my_own_dir'.",
+        "Create another directory named 'OEL' inside 'my_own_dir'.",
+        "Verify that both directories were created successfully using command ls -ld."
+      ]
+    },
+
+    {
+      "task_number": 6,
+      "title": "Apply Permissions Recursively Using Numeric Notation",
+      "steps": [
+        "Use a single chmod command with numeric notation to recursively apply permissions to 'my_own_dir' and everything inside it.",
+        "Set the owner permissions to read, write, and execute.",
+        "Set the group permissions to read, write, and execute.",
+        "Set the others permissions to read and execute.",
+        "Use the appropriate recursive option with the numeric permission mode.",
+        "Verify the permissions of 'my_own_dir' and its contents using appropriate ls commands."
+      ]
+    },
+
+    {
+      "task_number": 7,
+      "title": "Create a File and Directory",
+      "steps": [
+        "Change into 'my_own_dir' using 'cd ~/my_own_dir'.",
+        "Create a file named 'file_1.txt'.",
+        "Add exactly the following text to the file: 'I love Linux'.",
+        "Create a directory named 'dir_1'.",
+        "Verify that both 'file_1.txt' and 'dir_1' were created successfully."
+      ]
+    },
+
+    {
+      "task_number": 8,
+      "title": "Remove Read Permission from the File",
+      "steps": [
+        "Remove read permission from the owner of 'file_1.txt' using symbolic notation.",
+        "Remove read permission from the group of 'file_1.txt'.",
+        "Remove read permission from others.",
+        "Do not remove the existing write or execute permissions.",
+        "Verify the resulting permissions using 'ls -l file_1.txt'."
+      ]
+    },
+
+    {
+      "task_number": 9,
+      "title": "Test File Read Access",
+      "steps": [
+        "Attempt to display the contents of 'file_1.txt' using 'cat file_1.txt'.",
+        "Observe the result of the command.",
+        "The command should fail because read permission has been removed from the file.",
+        "Use the permission string from 'ls -l' to explain why the command failed."
+      ]
+    },
+
+    {
+      "task_number": 10,
+      "title": "Restore Read Permission",
+      "steps": [
+        "Restore read permission for the owner of 'file_1.txt'.",
+        "Restore read permission for the group.",
+        "Restore read permission for others.",
+        "Use symbolic notation to modify the permissions.",
+        "Verify the resulting permissions using 'ls -l file_1.txt'.",
+        "Run 'cat file_1.txt'.",
+        "Confirm that the file contents can now be displayed successfully."
+      ]
+    },
+
+    {
+      "task_number": 11,
+      "title": "Remove Write Permission from Owner and Group",
+      "steps": [
+        "Remove write permission from the owner of 'file_1.txt'.",
+        "Remove write permission from the group of 'file_1.txt'.",
+        "Do not modify the write permission of others.",
+        "Keep all other existing permissions unchanged.",
+        "Use symbolic notation.",
+        "Verify the resulting permissions using 'ls -l file_1.txt'."
+      ]
+    },
+
+    {
+      "task_number": 12,
+      "title": "Test File Write Access",
+      "steps": [
+        "Attempt to append the following text to 'file_1.txt': 'File permission setting is fun'.",
+        "Run 'echo \"File permission setting is fun\" >> file_1.txt'.",
+        "Observe the result of the command.",
+        "The command should fail because the owner and group do not have write permission.",
+        "Use the permission string to explain why the write operation failed."
+      ]
+    },
+
+    {
+      "task_number": 13,
+      "title": "Restore Write Permission",
+      "steps": [
+        "Restore write permission for the owner of 'file_1.txt'.",
+        "Restore write permission for the group.",
+        "Do not change the other permissions.",
+        "Use symbolic notation to modify the permissions.",
+        "Verify the resulting permissions using 'ls -l file_1.txt'."
+      ]
+    },
+
+    {
+      "task_number": 14,
+      "title": "Verify File Write Access",
+      "steps": [
+        "Run 'echo \"File permission setting is fun\" >> file_1.txt' again.",
+        "The command should now succeed because the owner and group have write permission.",
+        "Display the contents of the file using 'cat file_1.txt'.",
+        "Verify that the original text and the newly appended text are present."
+      ]
+    },
+
+    {
+      "task_number": 15,
+      "title": "Add Execute Permission to the File Owner",
+      "steps": [
+        "Add execute permission only for the owner of 'file_1.txt'.",
+        "Use symbolic notation.",
+        "Do not modify the group or others permissions.",
+        "Verify the resulting permissions using 'ls -l file_1.txt'."
+      ]
+    },
+
+    {
+      "task_number": 16,
+      "title": "Modify Directory Permissions",
+      "steps": [
+        "Modify the permissions of 'dir_1' using the command line.",
+        "Remove read permission from the owner.",
+        "Remove execute permission from the group.",
+        "Remove execute permission from others.",
+        "Keep all other existing permissions unchanged.",
+        "Verify the resulting permissions using 'ls -ld dir_1'.",
+        "Carefully review the permission string and identify the changes made to each permission class."
+      ]
+    },
+
+    {
+      "task_number": 17,
+      "title": "Redirect Directory Information to a File",
+      "steps": [
+        "While inside '~/my_own_dir', display the detailed permissions of 'dir_1'.",
+        "Redirect the output of 'ls -ld dir_1' to a file named 'new_info'.",
+        "Store the 'new_info' file inside '~/my_own_dir/Redhat'.",
+        "Verify that 'new_info' was created successfully.",
+        "Verify the contents of the file using an appropriate command."
+      ]
+    },
+
+    {
+      "task_number": 18,
+      "title": "Copy the Information File to OEL",
+      "steps": [
+        "Use the cp command to perform the copy operation.",
+	"While inside '~/my_own_dir', copy 'Redhat/new_info' into the 'OEL' directory.",
+        "Verify that the copied file exists inside the 'OEL' directory.",
+        "Confirm the file name and permissions using 'ls -l OEL'."
+      ]
+    },
+
+    {
+      "task_number": 19,
+      "title": "Set Full Permissions on dir_1 Using Numeric Notation",
+      "steps": [
+        "Use the appropriate numeric permission mode.",
+ 	"Modify the permissions of 'dir_1' using numeric notation.",
+        "Give the owner read, write, and execute permissions.",
+        "Give the group read, write, and execute permissions.",
+        "Give others read, write, and execute permissions.",
+        "Verify the resulting permissions using 'ls -ld dir_1'."
+      ]
+    },
+
+    {
+      "task_number": 20,
+      "title": "Create and Verify the Final OEL Contents",
+      "steps": [
+        "While still inside '~/my_own_dir', work with the 'OEL' directory.",
+        "Copy 'OEL/new_info' and create a new file named 'new_info.txt' inside the same 'OEL' directory.",
+        "Verify the contents using 'ls -l OEL'.",
+        "Confirm that both files exist and have the expected permissions."
+      ]
+    }
+
+  ],
+
+  "final_verification": {
+    "title": "Final Verification",
+    "steps": [
+      "Verify the complete directory structure using 'ls -lR ~/my_own_dir'.",
+      "If the tree command is available, run 'tree ~/my_own_dir'.",
+      "Confirm that 'Redhat' exists.",
+      "Confirm that 'OEL' exists.",
+      "Confirm that 'dir_1' exists.",
+      "Confirm that 'file_1.txt' exists.",
+      "Confirm that 'OEL/new_info' exists.",
+      "Confirm that 'OEL/new_info.txt' exists.",
+      "Confirm that the required permissions were applied.",
+      "Verify that 'file_1.txt' contains the expected text."
+    ]
+  },
+
+  "completion_message": "Cool!!!! Great Job. You have successfully completed Linux File Permissions Lab."
+}

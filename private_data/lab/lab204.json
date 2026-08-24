@@ -1,0 +1,145 @@
+{
+  "lab_id": "lab204",
+  "title": "Lab 204 - Review Linux File System Navigation and Basic Commands",
+  "description": "Review Linux File System Navigation and Basic Commands",
+
+  "lab_objective": {
+    "description": "In this lab, you will review Linux filesystem navigation and practice using basic Linux commands for directory and file management, viewing file contents, filtering text, copying files, and redirecting command output.",
+
+    "scenario": "You are working as a Linux System Administrator and need to review your Linux filesystem navigation and basic command skills. In this lab, you will create directory structures, create and manage files, view file contents, filter text using grep, copy files, and redirect or append command output to specific files. You must follow the directory and file names exactly as provided and remember that Linux is case-sensitive.",
+
+    "prerequisites": [
+      "Access to a Linux server",
+      "Valid Linux user account",
+      "SSH access to the Linux server",
+      "Basic understanding of Linux filesystem navigation",
+      "Basic understanding of Linux file and directory management commands"
+    ],
+
+    "objectives": [
+      "Review Linux filesystem navigation.",
+      "Practice using basic Linux commands for directory and file management.",
+      "Create nested directory structures.",
+      "Create and manage files.",
+      "View file contents using the cat command.",
+      "Filter text using the grep command.",
+      "Copy files using the cp command.",
+      "Redirect standard output to a file.",
+      "Append command output to an existing file.",
+      "Practice using the head and tail commands."
+    ]
+  },
+
+  "tasks": [
+
+    {
+      "task_number": 1,
+      "title": "Create vars Directory Structure",
+
+      "steps": [
+        "From your home directory, create the following nested directory structure:",
+        "vars/systems/logs"
+      ]
+    },
+
+    {
+      "task_number": 2,
+      "title": "Create passwd_tail and group_head Files",
+
+      "steps": [
+        "Inside the vars/systems directory, create the following two empty files:",
+        "passwd_tail",
+        "group_head"
+      ]
+    },
+
+    {
+      "task_number": 3,
+      "title": "Create and Populate file1.txt",
+
+      "steps": [
+        "Inside the vars/systems/logs directory, create a file named file1.txt.",
+        "Add the following exact text to the file:",
+        "I love linux and excited to join the DevOps course",
+        "Remember: Linux is case-sensitive. Make sure the text matches exactly as provided."
+      ]
+    },
+
+    {
+      "task_number": 4,
+      "title": "Create vars/os/configs Directory Structure",
+
+      "steps": [
+        "From your home directory, create the following nested directory structure:",
+        "vars/os/configs"
+      ]
+    },
+
+    {
+      "task_number": 5,
+      "title": "Copy the hosts File",
+
+      "steps": [
+        "Copy the /etc/hosts file into the vars directory."
+      ]
+    },
+
+    {
+      "task_number": 6,
+      "title": "Display and Redirect hosts File Contents",
+
+      "steps": [
+        "Use the cat command to display the contents of the hosts file located in the vars directory.",
+        "Redirect the standard output to the following file:",
+        "vars/os/hosts.bak"
+      ]
+    },
+
+    {
+      "task_number": 7,
+      "title": "Search /etc/passwd for chrony",
+
+      "steps": [
+        "Use the cat command to read /etc/passwd.",
+        "Use grep to search for the string chrony.",
+        "Redirect the matching output to:",
+        "vars/os/configs/chrony_info"
+      ]
+    },
+
+    {
+      "task_number": 8,
+      "title": "Copy and Rename file1.txt",
+
+      "steps": [
+        "Copy file1.txt from vars/systems/logs to the vars/os directory.",
+        "During the copy operation, rename the file to new_file1.txt."
+      ]
+    },
+
+    {
+      "task_number": 9,
+      "title": "Append Last 10 Lines of /etc/passwd",
+
+      "steps": [
+        "Use the tail command to display the last 10 lines of /etc/passwd.",
+        "Append the output to the existing file vars/systems/passwd_tail.",
+        "Important: Do not overwrite the existing file."
+      ]
+    },
+
+    {
+      "task_number": 10,
+      "title": "Append First 10 Lines of /etc/group",
+
+      "steps": [
+        "Use the head command to display the first 10 lines of /etc/group.",
+        "Append the output to the existing file vars/systems/group_head.",
+        "Important: Do not overwrite the existing file."
+      ]
+    }
+
+  ],
+
+  "completion_message": "Cool!!!! Great Job. You have successfully completed Review Linux File System Navigation and Basic Commands Lab."
+}

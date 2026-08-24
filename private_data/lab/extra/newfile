@@ -1,0 +1,2531 @@
+[root@student-linux-01 lab]# bash myscript
+===== Validating abdullah.anjum =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt created with the exact required text – Pass
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: file1.txt copied and renamed to new_file1.txt – Pass
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = abdullah.anjum
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 10
+PERCENTAGE = 100%
+</div>
+<h3>==================================</h3>
+
+===== Validating abdulrahman.alshehri =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt created with the exact required text – Pass
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: file1.txt copied and renamed to new_file1.txt – Pass
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = abdulrahman.alshehri
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 8
+PERCENTAGE = 80%
+</div>
+<h3>==================================</h3>
+
+===== Validating adeel.khan =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = adeel.khan
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating adil.hafeez =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = adil.hafeez
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating adil.zafar =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = adil.zafar
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 6
+PERCENTAGE = 60%
+</div>
+<h3>==================================</h3>
+
+===== Validating ahmed.mohammed =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: file1.txt copied and renamed to new_file1.txt – Pass
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = ahmed.mohammed
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 9
+PERCENTAGE = 90%
+</div>
+<h3>==================================</h3>
+
+===== Validating alina.muukhtar =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt created with the exact required text – Pass
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = alina.muukhtar
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 9
+PERCENTAGE = 90%
+</div>
+<h3>==================================</h3>
+
+===== Validating ali.qaisar =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = ali.qaisar
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 4
+PERCENTAGE = 40%
+</div>
+<h3>==================================</h3>
+
+===== Validating ali.raza =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt created with the exact required text – Pass
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = ali.raza
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 9
+PERCENTAGE = 90%
+</div>
+<h3>==================================</h3>
+
+===== Validating amandar.qanoongo =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt created with the exact required text – Pass
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: file1.txt copied and renamed to new_file1.txt – Pass
+Task 9: Required passwd output stored correctly – Pass
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = amandar.qanoongo
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 9
+PERCENTAGE = 90%
+</div>
+<h3>==================================</h3>
+
+===== Validating amir =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = amir
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating amir.test =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = amir.test
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating amna.bajwa =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = amna.bajwa
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating anas.khan =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = anas.khan
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 7
+PERCENTAGE = 70%
+</div>
+<h3>==================================</h3>
+
+===== Validating anum.nasim =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = anum.nasim
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 5
+PERCENTAGE = 50%
+</div>
+<h3>==================================</h3>
+
+===== Validating aqsa.mian =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt created with the exact required text – Pass
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = aqsa.mian
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 3
+PERCENTAGE = 30%
+</div>
+<h3>==================================</h3>
+
+===== Validating arjun.singh =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = arjun.singh
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 3
+PERCENTAGE = 30%
+</div>
+<h3>==================================</h3>
+
+===== Validating asada =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = asada
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating asfiya.umair =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = asfiya.umair
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 3
+PERCENTAGE = 30%
+</div>
+<h3>==================================</h3>
+
+===== Validating auroba.ahmad =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = auroba.ahmad
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating awais.afzal =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = awais.afzal
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating awais.ahmed =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = awais.ahmed
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating awais.sattar =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = awais.sattar
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 2
+PERCENTAGE = 20%
+</div>
+<h3>==================================</h3>
+
+===== Validating ayesha.abdullah =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = ayesha.abdullah
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 6
+PERCENTAGE = 60%
+</div>
+<h3>==================================</h3>
+
+===== Validating ayesha.aslam =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = ayesha.aslam
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating ayshsa.iqbal =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = ayshsa.iqbal
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating babar.temoor =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = babar.temoor
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating cloud-user =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = cloud-user
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating danial.ahmed =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = danial.ahmed
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating danyal.khan =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: file1.txt copied and renamed to new_file1.txt – Pass
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = danyal.khan
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 9
+PERCENTAGE = 90%
+</div>
+<h3>==================================</h3>
+
+===== Validating david.salame =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = david.salame
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 8
+PERCENTAGE = 80%
+</div>
+<h3>==================================</h3>
+
+===== Validating erum.malik =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = erum.malik
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating fakhr.rabbani =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt created with the exact required text – Pass
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = fakhr.rabbani
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 7
+PERCENTAGE = 70%
+</div>
+<h3>==================================</h3>
+
+===== Validating fathima.sundus =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt created with the exact required text – Pass
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: file1.txt copied and renamed to new_file1.txt – Pass
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = fathima.sundus
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 9
+PERCENTAGE = 90%
+</div>
+<h3>==================================</h3>
+
+===== Validating fatima.tabusum =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = fatima.tabusum
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 3
+PERCENTAGE = 30%
+</div>
+<h3>==================================</h3>
+
+===== Validating gurmat.kaur =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = gurmat.kaur
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating hajra.iftikhar =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = hajra.iftikhar
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating hammas.salam =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = hammas.salam
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 4
+PERCENTAGE = 40%
+</div>
+<h3>==================================</h3>
+
+===== Validating hamza.bashir =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt created with the exact required text – Pass
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: file1.txt copied and renamed to new_file1.txt – Pass
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = hamza.bashir
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 8
+PERCENTAGE = 80%
+</div>
+<h3>==================================</h3>
+
+===== Validating harinderpreet.kaur =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = harinderpreet.kaur
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 2
+PERCENTAGE = 20%
+</div>
+<h3>==================================</h3>
+
+===== Validating haroon.elahi =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = haroon.elahi
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating hashim.mannan =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = hashim.mannan
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating hasnat.kamal =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = hasnat.kamal
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 1
+PERCENTAGE = 10%
+</div>
+<h3>==================================</h3>
+
+===== Validating hershey.tripathi =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = hershey.tripathi
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating isbah.noor =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: Required passwd output stored correctly – Pass
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = isbah.noor
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 5
+PERCENTAGE = 50%
+</div>
+<h3>==================================</h3>
+
+===== Validating janit.rashid =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = janit.rashid
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 3
+PERCENTAGE = 30%
+</div>
+<h3>==================================</h3>
+
+===== Validating jenny.salman =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = jenny.salman
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 3
+PERCENTAGE = 30%
+</div>
+<h3>==================================</h3>
+
+===== Validating kamaljeet.kaur =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt created with the exact required text – Pass
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = kamaljeet.kaur
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 3
+PERCENTAGE = 30%
+</div>
+<h3>==================================</h3>
+
+===== Validating kashif.zaman =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = kashif.zaman
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 2
+PERCENTAGE = 20%
+</div>
+<h3>==================================</h3>
+
+===== Validating kevin.on =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt created with the exact required text – Pass
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: file1.txt copied and renamed to new_file1.txt – Pass
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = kevin.on
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 10
+PERCENTAGE = 100%
+</div>
+<h3>==================================</h3>
+
+===== Validating khawar.abbas =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt created with the exact required text – Pass
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = khawar.abbas
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 6
+PERCENTAGE = 60%
+</div>
+<h3>==================================</h3>
+
+===== Validating kinza.afzal =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt created with the exact required text – Pass
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = kinza.afzal
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 9
+PERCENTAGE = 90%
+</div>
+<h3>==================================</h3>
+
+===== Validating lubna.nazir =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = lubna.nazir
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating mamoona.ijaz =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = mamoona.ijaz
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating mehedi.hasan =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = mehedi.hasan
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating mohammad.muneeb =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = mohammad.muneeb
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 2
+PERCENTAGE = 20%
+</div>
+<h3>==================================</h3>
+
+===== Validating mohammad.shoaib =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = mohammad.shoaib
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating mohsin.mahmood =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = mohsin.mahmood
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating muhammad.annam =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt created with the exact required text – Pass
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: file1.txt copied and renamed to new_file1.txt – Pass
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = muhammad.annam
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 10
+PERCENTAGE = 100%
+</div>
+<h3>==================================</h3>
+
+===== Validating muhammad.bilal =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt created with the exact required text – Pass
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: file1.txt copied and renamed to new_file1.txt – Pass
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = muhammad.bilal
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 9
+PERCENTAGE = 90%
+</div>
+<h3>==================================</h3>
+
+===== Validating muhammad.danial =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = muhammad.danial
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 6
+PERCENTAGE = 60%
+</div>
+<h3>==================================</h3>
+
+===== Validating muhammad.jahanzaib =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = muhammad.jahanzaib
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 1
+PERCENTAGE = 10%
+</div>
+<h3>==================================</h3>
+
+===== Validating muhammad.khan =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt created with the exact required text – Pass
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: file1.txt copied and renamed to new_file1.txt – Pass
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = muhammad.khan
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 10
+PERCENTAGE = 100%
+</div>
+<h3>==================================</h3>
+
+===== Validating muhammad.mateen =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = muhammad.mateen
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 4
+PERCENTAGE = 40%
+</div>
+<h3>==================================</h3>
+
+===== Validating muhammad.rafiq =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = muhammad.rafiq
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating muhammad.shoaib =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = muhammad.shoaib
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 4
+PERCENTAGE = 40%
+</div>
+<h3>==================================</h3>
+
+===== Validating muhammad.sulaman =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = muhammad.sulaman
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating muhammad.usman =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = muhammad.usman
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating mukhtar.mohammed =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: Required passwd output stored correctly – Pass
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = mukhtar.mohammed
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 6
+PERCENTAGE = 60%
+</div>
+<h3>==================================</h3>
+
+===== Validating muneeb.ayub =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = muneeb.ayub
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 6
+PERCENTAGE = 60%
+</div>
+<h3>==================================</h3>
+
+===== Validating nabila.dass =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt created with the exact required text – Pass
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: file1.txt copied and renamed to new_file1.txt – Pass
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = nabila.dass
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 9
+PERCENTAGE = 90%
+</div>
+<h3>==================================</h3>
+
+===== Validating nazmeen.faryad =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = nazmeen.faryad
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating nimat.ullah =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = nimat.ullah
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating nimrah.nawaz =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt created with the exact required text – Pass
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: Required passwd output stored correctly – Pass
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = nimrah.nawaz
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 7
+PERCENTAGE = 70%
+</div>
+<h3>==================================</h3>
+
+===== Validating noor.fatima =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = noor.fatima
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 4
+PERCENTAGE = 40%
+</div>
+<h3>==================================</h3>
+
+===== Validating rabia.tariq =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = rabia.tariq
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 2
+PERCENTAGE = 20%
+</div>
+<h3>==================================</h3>
+
+===== Validating raza.ali =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: file1.txt copied and renamed to new_file1.txt – Pass
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = raza.ali
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 9
+PERCENTAGE = 90%
+</div>
+<h3>==================================</h3>
+
+===== Validating rikza.ali =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = rikza.ali
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 3
+PERCENTAGE = 30%
+</div>
+<h3>==================================</h3>
+
+===== Validating rupinder.kaur =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = rupinder.kaur
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating saad.mohiuddin =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: file1.txt copied and renamed to new_file1.txt – Pass
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = saad.mohiuddin
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 9
+PERCENTAGE = 90%
+</div>
+<h3>==================================</h3>
+
+===== Validating saba.akhtar =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = saba.akhtar
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating saba.nawaz =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = saba.nawaz
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating sadia.rafiq =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = sadia.rafiq
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 3
+PERCENTAGE = 30%
+</div>
+<h3>==================================</h3>
+
+===== Validating saeed.anwar =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt created with the exact required text – Pass
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = saeed.anwar
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 6
+PERCENTAGE = 60%
+</div>
+<h3>==================================</h3>
+
+===== Validating saffi.ullah =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = saffi.ullah
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating saim =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt created with the exact required text – Pass
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: file1.txt copied and renamed to new_file1.txt – Pass
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = saim
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 10
+PERCENTAGE = 100%
+</div>
+<h3>==================================</h3>
+
+===== Validating sajjad.shafiq =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = sajjad.shafiq
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 7
+PERCENTAGE = 70%
+</div>
+<h3>==================================</h3>
+
+===== Validating salman.duggal =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: file1.txt copied and renamed to new_file1.txt – Pass
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = salman.duggal
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 9
+PERCENTAGE = 90%
+</div>
+<h3>==================================</h3>
+
+===== Validating sameer.awais =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = sameer.awais
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 3
+PERCENTAGE = 30%
+</div>
+<h3>==================================</h3>
+
+===== Validating sammy.saleh =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = sammy.saleh
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 6
+PERCENTAGE = 60%
+</div>
+<h3>==================================</h3>
+
+===== Validating sana.abbasi =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: file1.txt copied and renamed to new_file1.txt – Pass
+Task 9: Required passwd output stored correctly – Pass
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = sana.abbasi
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 8
+PERCENTAGE = 80%
+</div>
+<h3>==================================</h3>
+
+===== Validating sardar.akmal =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = sardar.akmal
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating shaan.ali =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = shaan.ali
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating shafaq.zehra =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = shafaq.zehra
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating shoaib.javid =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = shoaib.javid
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 6
+PERCENTAGE = 60%
+</div>
+<h3>==================================</h3>
+
+===== Validating suliman.ashraf =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt created with the exact required text – Pass
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: file1.txt copied and renamed to new_file1.txt – Pass
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = suliman.ashraf
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 10
+PERCENTAGE = 100%
+</div>
+<h3>==================================</h3>
+
+===== Validating sumara.abbas =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = sumara.abbas
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating syed.abdullah =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = syed.abdullah
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating syed.ali =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = syed.ali
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating syedali6908 =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = syedali6908
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 1
+PERCENTAGE = 10%
+</div>
+<h3>==================================</h3>
+
+===== Validating talha.zubair =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt created with the exact required text – Pass
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: file1.txt copied and renamed to new_file1.txt – Pass
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = talha.zubair
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 10
+PERCENTAGE = 100%
+</div>
+<h3>==================================</h3>
+
+===== Validating umaira.zaib =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: file1.txt copied and renamed to new_file1.txt – Pass
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = umaira.zaib
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 7
+PERCENTAGE = 70%
+</div>
+<h3>==================================</h3>
+
+===== Validating usman.bhatti =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = usman.bhatti
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating waleed.javed =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = waleed.javed
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 3
+PERCENTAGE = 30%
+</div>
+<h3>==================================</h3>
+
+===== Validating waqar.shah =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = waqar.shah
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+
+===== Validating waqar.zahoor =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = waqar.zahoor
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 8
+PERCENTAGE = 80%
+</div>
+<h3>==================================</h3>
+
+===== Validating waseem.abbas =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: file1.txt copied and renamed to new_file1.txt – Pass
+Task 9: Required passwd output stored correctly – Pass
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = waseem.abbas
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 8
+PERCENTAGE = 80%
+</div>
+<h3>==================================</h3>
+
+===== Validating yuliana.cuzzi =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Nested directory vars/systems/logs created – Pass
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt created with the exact required text – Pass
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts content redirected to vars/os/hosts.bak – Pass
+Task 7: chrony information stored correctly in chrony_info – Pass
+Task 8: file1.txt copied and renamed to new_file1.txt – Pass
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: First 10 lines of /etc/group appended to group_head – Pass
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = yuliana.cuzzi
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 9
+PERCENTAGE = 90%
+</div>
+<h3>==================================</h3>
+
+===== Validating zara.khan =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: Empty files passwd_tail and group_head created – Pass
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Nested directory vars/os/configs created – Pass
+Task 5: /etc/hosts copied correctly to vars/hosts – Pass
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: Required passwd output stored correctly – Pass
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = zara.khan
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 4
+PERCENTAGE = 40%
+</div>
+<h3>==================================</h3>
+
+===== Validating zunaira.akhtar =====
+Sit tight. Validation of your lab204 is in process. Good luck.....
+Checking Lab 204 - Review Linux File System Navigation and Basic Commands...
+Task 1: Directory structure vars/systems/logs missing – Fail
+Task 2: passwd_tail or group_head missing or not empty – Fail
+Task 3: file1.txt missing or text does not match exactly – Fail
+Task 4: Directory structure vars/os/configs missing – Fail
+Task 5: vars/hosts missing or does not match /etc/hosts – Fail
+Task 6: hosts.bak missing or content does not match vars/hosts – Fail
+Task 7: chrony_info missing or does not contain the required chrony entry – Fail
+Task 8: new_file1.txt missing or content does not match file1.txt – Fail
+Task 9: passwd_tail does not contain the required passwd output – Fail
+Task 10: group_head does not contain the required head output – Fail
+<h2 style='font-weight:bold;color:white;'>========== LAB RESULT SUMMARY ==========</h2>
+<div style='font-weight:bold;'>
+NAME = zunaira.akhtar
+LAB = Lab 204 - Review Linux File System Navigation and Basic Commands
+TOTAL = 10
+PASSED = 0
+PERCENTAGE = 0%
+</div>
+<h3>==================================</h3>
+

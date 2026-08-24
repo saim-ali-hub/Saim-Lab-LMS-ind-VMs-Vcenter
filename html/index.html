@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>LINOOPTek Lab Portal</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <!-- =====================================================
+         LANDING PAGE
+    ====================================================== -->
+
+    <div id="landingPage" class="landing-page">
+
+        <div class="lab-card">
+
+            <div class="logo-container">
+
+                <img
+                    src="images/image.png"
+                    alt="LINOOPTek Logo"
+                >
+
+            </div>
+
+            <h1>
+                Welcome to LINOOPTek Lab Portal
+            </h1>
+
+            <button
+                type="button"
+                class="start-btn"
+                onclick="openlab()"
+            >
+                Access Labs
+            </button>
+           
+            <button
+		type="button"
+		class="start-btn"
+		onclick="showLeaderBoard()"
+	    >
+		Leaderboard
+	    </button>
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         LAB POPUP
+    ====================================================== -->
+
+    <div
+        id="labPopup"
+        class="popup"
+        style="display:none;"
+    >
+
+        <div class="popup-content">
+
+            <h2>Available Labs</h2>
+
+            <div id="labList">
+
+                <div class="loading">
+                    Loading labs...
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                class="close-btn"
+                onclick="closeLabPopup()"
+            >
+                Close
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         LAB WORK AREA
+    ====================================================== -->
+
+    <div
+        id="work-area"
+        class="work-area"
+        style="display:none;"
+    >
+
+        <div class="question-panel">
+
+            <div id="contentArea"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script src="js/main.js"></script>
+    <script src="js/script_lab.js"></script>
+    <script src="js/script_leaderboard.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,6 @@
+while IFS= read -r user; do
+    [ -z "$user" ] && continue
+    echo "===== Validating $user ====="
+    sudo -u apache sudo -n /usr/bin/bash /var/www/private_data/lab/validate_lab.sh "$user" lab204
+    echo
+done < /var/www/private_data/lab/file1
