@@ -1,0 +1,91 @@
+
+KEY EXCHANGE SETUP ARCHITECTURE:
+#============================================================================
+192.168.111.113
+PLATFORM
+│
+├── validator private key
+│   /home/validator/.ssh/id_rsa
+│
+└── validator public key
+    ↓
+    copied to
+    ↓
+192.168.111.165
+STUDENT VM
+│
+└── /home/saim/.ssh/authorized_keys
+       │
+       └── validator public key
+
+
+#=============================================================================
+USER SETUP & SSH CONFIGURATION
+#=============================================================================
+1. Create user "linoop" platform.linoop.local (192.168.111.113)
+
+2. added in /etc/ssh/sshd_config    
+
+#Match User anoncvs
+
+Match User validator
+
+   ForceCommand /tmp/key-exchange.sh
+
+#===========================================================================
+[root@platform ~]# cat /tmp/key-exchange.sh
+#!/bin/bash
+
+set -e
+
+VALIDATOR_KEY='ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDZU5sH0iDBGd5759uLQEYRpRfX0CBY2vxYod6WmfZFnSXEsOSzUj1X4caGAnuknpfqcPiHzXyXbUGCxPFXHmH5tvevg5FJmco3Dmk6BOjeB9yHlxWEYl3Pniq7zy9QZI6jwXyXP4RKHDnr19CZ+T7tFTtrXEOqnqtCjSKXjesGO732JRwVVqWAMMEI4E8Xy/8UTWVkwlJFsb1e+/4HwbcSNGn/d0cEJaomYXKIpAjJTIarRUq1MERCpGZ7fRJ7jqerBSFb14VOstuWDKioL84RMbY9mTpAlezseiSO6kQvcAdwlb2WeYU+G0rxMoiMvWqkZ+xTgeGdiaQBDDzLQR4H validator@platform.linoop.local'
+
+echo
+echo "=========================================="
+echo "LINOOP Setup Starts now ......."
+echo "=========================================="
+echo
+
+read -p "Enter your VPN/ldap username: " USER_NAME
+USER_NAME=$(echo "$USER_NAME" | xargs)
+
+if [[ ! "$USER_NAME" =~ ^[a-zA-Z0-9._-]+$ ]]; then
+    echo "Error: Invalid username."
+    exit 1
+fi
+
+read -p "Enter your machine IP address: " MACHINE_IPV4
+MACHINE_IPV4=$(echo "$MACHINE_IPV4" | xargs)
+
+if [[ ! "$MACHINE_IPV4" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
+    echo "Error: Invalid IP address."
+    exit 1
+fi
+
+REMOTE="$USER_NAME@$MACHINE_IPV4"
+
+echo
+echo "Connecting to $REMOTE..."
+echo "Enter your STUDENT VM password when prompted."
+echo
+
+ssh \
+    -o StrictHostKeyChecking=no \
+    -o UserKnownHostsFile=/dev/null \
+    "$REMOTE" \
+    "mkdir -p ~/.ssh &&
+     chmod 700 ~/.ssh &&
+     touch ~/.ssh/authorized_keys &&
+     chmod 600 ~/.ssh/authorized_keys &&
+     grep -Fqx '$VALIDATOR_KEY' ~/.ssh/authorized_keys ||
+     echo '$VALIDATOR_KEY' >> ~/.ssh/authorized_keys"
+
+echo
+echo "=========================================="
+echo " LINOOP Set completed successfully."
+echo "=========================================="
+echo
+echo
+
+exit 0
+# ===========================================================================
