@@ -1,0 +1,94 @@
+Need package:
+=============
+dnf install php-ldap -y
+systemctl restart httpd
+
+php -r '
+require "/var/www/html/config/ldap.php";
+var_dump(authenticateStudent("YOUR_USERNAME", "YOUR_PASSWORD"));
+'
+
+You should get ---> bool(true)
+
+
+php -l /var/www/html/config/secrets.php
+
+php -l /var/www/html/config/vcenter.php
+
+sudo -u apache cat /var/www/html/config/secrets.php
+
+sudo -u apache php -r 'require "/var/www/html/config/vcenter.php"; echo "vCenter functions loaded\n";'
+
+
+
+validation:
+===========
+sudo -u validator ssh -i /home/validator/.ssh/id_rsa -o BatchMode=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null saim.ali@192.168.111.165 "whoami"
+
+
+sudo -u apache sudo -n -u validator /var/www/private_data/lab/validate_lab.sh saim.ali 192.168.111.165 lab208
+
+
+sudo -u validator ssh \
+-i /home/validator/.ssh/id_rsa \
+-o BatchMode=yes \
+-o StrictHostKeyChecking=no \
+-o UserKnownHostsFile=/dev/null \
+saim.ali@192.168.111.165 "whoami"
+
+sudo -u apache sudo -n -u validator \
+/var/www/private_data/lab/validate_lab.sh \
+saim.ali \
+192.168.111.165 \
+lab208
+
+===================================================================================================
+php -r '
+require "/var/www/html/config/config.php";
+require "/var/www/html/config/secrets.php";
+require "/var/www/html/config/vcenter.php";
+require "/var/www/html/config/functions.php";
+
+$s = vcenterLogin();
+
+echo "SESSION=" . ($s ? "OK" : "FAILED") . PHP_EOL;
+
+$vm = getVmName("amir.test");
+
+echo "VM NAME=$vm" . PHP_EOL;
+
+$id = getVmID($s, $vm);
+
+echo "VM ID=" . ($id ?: "NOT FOUND") . PHP_EOL;
+
+$ip = getGuestIP($s, $id);
+
+echo "IP=" . ($ip ?: "NOT FOUND") . PHP_EOL;
+
+===================================================================================================
+Then the validation flow becomes:
+================================
+
+Browser
+   ↓
+api.php	 		Apache/PHP on 192.168.111.113
+   ↓
+evaluate_lab.php
+   ↓
+Session = amir.test
+   ↓
+vcenterLogin()		vCenter 192.168.111.253
+   ↓
+vm-amir.test
+   ↓
+vm-48
+   ↓
+192.168.111.188
+   ↓
+sudo -n -u validator
+   ↓
+validator SSH as amir.test@192.168.111.188
+   ↓
+validate_lab.sh
+   ↓
+Lab result
