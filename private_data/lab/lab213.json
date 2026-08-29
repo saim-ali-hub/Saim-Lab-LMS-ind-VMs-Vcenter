@@ -1,0 +1,112 @@
+{
+  "lab_id": "lab213",
+  "title": "Lab 213 - Vim Editor File Management",
+  "description": "Use the Vim editor to open, navigate, modify, search, copy, delete, undo, redo, and save changes in a text file.",
+  "lab_objective": {
+    "description": "By the end of this lab, you should be able to:",
+    "objectives": [
+      "Open a text file with Vim.",
+      "Understand Normal, Insert, and Command-Line modes.",
+      "Navigate through a file using Vim commands.",
+      "Insert, append, replace, and delete text.",
+      "Search for text inside a file.",
+      "Copy and paste lines.",
+      "Undo and redo changes.",
+      "Save changes and save a file with a different name.",
+      "Review the final contents before exiting Vim.",
+      "i - insert before the cursor,  a - append after the cursor,  o - open a new line below, Esc - return to Normal mode, gg - move to the first line, G - move to the last line, 0 - move to the beginning of a line, $ - move to the end of a line, /text - search forward, n - next search match, N - previous search match, yy - copy the current line, p - paste below the current line, dd - delete the current line, u - undo, Ctrl+r - redo, :w - save, :q - quit, :wq - save and quit, :w filename - save a copy with a different name, :q! - quit without saving"
+    ],
+"scenario": "You are a Linux system administrator reviewing a practice document before it is used as internal administration guidance. The file has several lines of text that need to be updated using Vim. Complete all changes from the command line and verify the final file."
+ },
+
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Open and Navigate the File",
+      "steps": [
+	"Copy vim_practice.txt from /tmp into your home directory before starting the lab. (Hint - cp)",
+        "From your home directory, open vim_practice.txt using Vim. (Hint - vim)",
+        "Start in Normal mode. (Hint - Esc)",
+        "Move to the beginning of the file. (Hint - gg)",
+        "Move to the end of the file. (Hint - Shit + g",
+        "Return to the first line. (Hint - gg)",
+	"Cool! learnt how to go to end of the file and move to beginingn of the file."
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Enter Insert Mode",
+      "steps": [
+        "Move to the beginning of the first line. (Hint - gg)",
+        "Use Insert mode to add the word IMPORTANT before the existing text.",
+        "Return to Normal mode. (Hint - Esc)",
+        "Use Append mode to add the word TODAY at the end of the first line.  (Hint - shift + a)",
+        "Return to Normal mode and review the line. (Hint - Esc)"
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Modify Existing Text",
+      "steps": [
+        "Find the line containing 'System administrators use command-line tools every day'. (Hint - Esc and the / type required pattern and hit enter)",
+        "Change the word 'reliable' in the next sentence to 'stable'. (Hint - i)",
+        "Change the word 'important' to 'essential' in 'The Vim editor' sentence.",
+        "Return to Normal mode after each modification. (Hint - Esc)"
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Search the File",
+      "steps": [
+	"Make sure you are in Normal mode. (Hint - Esc)",      
+        "Search forward for the word 'Vim'. (Hint - Esc and the / type Vim and hit enter)",
+        "Use n to move to the next matching occurrence.",
+        "Use N to move back to the previous matching occurrence. (Hint - shift + n)",
+        "Return to the first line after completing the search. (Hint - gg)"
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Copy and Paste a Line",
+      "steps": [
+	"You should be in Normal mode and use commands to accomplish following tasks. (Hint - Esc)",      
+        "Move to the line containing 'Practice makes command-line editing faster and more accurate.' (Hint - Shift g).",
+        "Copy that complete line using a Vim line command. (Hint - yy)",
+        "Paste the copied line below the original. (Hint - p)",
+        "Verify that the line now appears twice."
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Delete and Restore Text",
+      "steps": [
+        "Use appropriate command in command mode to delete the duplicated line created in Task 5. (Hint - dd) ",
+        "Use undo to restore the deleted line. (Hint - u) ",
+        "Use redo to apply the deletion again. (Hint - ctrl + r)",
+        "Verify that only one copy of the line remains."
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "Save the Changes",
+      "steps": [
+        "Save the modified file without exiting Vim. (Hint - Esc :w)",
+        "Exit Vim. (Hint - Esc :q)",
+        "Open vim_practice.txt again and verify that your changes were saved.",
+        "Exit Vim after verification. (Hint - Esc :q)"
+      ]
+    },
+    {
+      "task_number": 8,
+      "title": "Save a Copy with a Different Name",
+      "steps": [
+        "Open vim_practice.txt again.",
+        "Save the current contents as vim_practice_final.txt using Vim's Save As capability. (Hint - Esc, then :w vim_practice_final.txt)",
+        "Do not delete or rename the original vim_practice.txt.",
+        "Exit Vim. (Hint - Esc + :wq)",
+        "Verify that both files exist in your home directory. (Hint - ls -l)"
+      ]
+    }
+  ],
+  "completion_message": "Congratulations!! Lab213 completed. You learnt different modes of Vim Normal mode: used for navigation and commands. Insert mode: used to enter or modify text. Command-Line mode: used for commands such as saving and quitting and learnt commands to edit file"
+}

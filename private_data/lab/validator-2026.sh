@@ -4986,4 +4986,1010 @@ $RESULT_ICON $RESULT_TEXT
 </div>
 HTML
 }
+
 #=================================================================
+
+validate_lab213_vim_editor() {
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "Checking Lab 213 - Vim Editor File Management..."
+
+    HOME_DIR="/home/$STUDENT_NAME"
+    FILE="$HOME_DIR/vim_practice.txt"
+    FINAL="$HOME_DIR/vim_practice_final.txt"
+
+    LAB_NAME="Lab 213 - Vim Editor File Management"
+    DATE=$(date "+%F %T")
+
+    TOTAL_TASKS=8
+    PASSED=0
+
+    # HELPER
+
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+
+    # ============================================================
+    # TASK 1 - OPEN AND NAVIGATE THE FILE
+    # ============================================================
+
+    TASK1_OK=1
+
+    if [ ! -f "$FILE" ]; then
+        TASK1_OK=0
+    fi
+
+    if [ -f "$FILE" ]; then
+        OWNER=$(stat -c "%U" "$FILE" 2>/dev/null)
+
+        if [ "$OWNER" != "$STUDENT_NAME" ]; then
+            TASK1_OK=0
+        fi
+    fi
+
+    if [ "$TASK1_OK" -eq 1 ]; then
+        pass "Task 1: vim_practice.txt copied to home directory"
+    else
+        fail "Task 1: vim_practice.txt is missing or ownership is incorrect"
+    fi
+
+
+    # ============================================================
+    # TASK 2 - ENTER INSERT MODE
+    # ============================================================
+
+    TASK2_OK=1
+
+    if [ ! -f "$FILE" ]; then
+        TASK2_OK=0
+    else
+
+        FIRST_LINE=$(head -n 1 "$FILE")
+	echo "$FIRST_LINE" | grep -Fq "IMPORTANT" || TASK2_OK=0
+        echo "$FIRST_LINE" | grep -Fq "TODAY" || TASK2_OK=0
+    fi
+
+    if [ "$TASK2_OK" -eq 1 ]; then
+        pass "Task 2: IMPORTANT added at the beginning and TODAY added at the end of the first line"
+    else
+        fail "Task 2: first line does not contain the required IMPORTANT and TODAY changes"
+    fi
+
+
+    # ============================================================
+    # TASK 3 - MODIFY EXISTING TEXT
+    # ============================================================
+
+    TASK3_OK=1
+
+    if [ ! -f "$FILE" ]; then
+        TASK3_OK=0
+    else
+        # Required stable sentence
+        grep -Fqx "System administrators use command-line tools every day to maintain stable systems." "$FILE" \
+            || TASK3_OK=0
+
+        # Required essential sentence
+        grep -Fqx "The Vim editor is an essential tool for creating and modifying configuration files." "$FILE" \
+            || TASK3_OK=0
+
+    fi
+
+    if [ "$TASK3_OK" -eq 1 ]; then
+        pass "Task 3: required text modifications completed"
+    else
+        fail "Task 3: reliable/important were not correctly changed to stable/essential"
+    fi
+
+
+    # ============================================================
+    # TASK 4 - SEARCH THE FILE
+    # ============================================================
+
+    TASK4_OK=1
+
+    if [ ! -f "$FILE" ]; then
+        TASK4_OK=0
+    else
+        # Vim search itself cannot be directly verified.
+        # Verify that the file still contains Vim references.
+        grep -q "Vim" "$FILE" || TASK4_OK=0
+    fi
+
+    if [ "$TASK4_OK" -eq 1 ]; then
+        pass "Task 4: Vim search target is present in the file"
+    else
+        fail "Task 4: required Vim search target is missing"
+    fi
+
+
+    # ============================================================
+    # TASK 5 - COPY AND PASTE A LINE
+    # ============================================================
+
+    TASK5_OK=1
+
+    PRACTICE_LINE="Practice makes command-line editing faster and more accurate."
+
+    if [ ! -f "$FILE" ]; then
+        TASK5_OK=0
+    else
+
+        COUNT=$(grep -Fxc "$PRACTICE_LINE" "$FILE")
+
+        # After Task 6 the duplicated line should have been deleted.
+        # Therefore exactly one copy must remain.
+        if [ "$COUNT" -ne 1 ]; then
+            TASK5_OK=0
+        fi
+
+    fi
+
+    if [ "$TASK5_OK" -eq 1 ]; then
+        pass "Task 5: practice line is present exactly once after copy and paste"
+    else
+        fail "Task 5: practice line is missing or appears more than once"
+    fi
+
+
+    # ============================================================
+    # TASK 6 - DELETE AND RESTORE TEXT
+    # ============================================================
+
+    TASK6_OK=1
+
+    if [ ! -f "$FILE" ]; then
+        TASK6_OK=0
+    else
+
+        COUNT=$(grep -Fxc "$PRACTICE_LINE" "$FILE")
+
+        # Final state after delete + undo + redo
+        # must contain exactly one copy.
+        if [ "$COUNT" -ne 1 ]; then
+            TASK6_OK=0
+        fi
+
+    fi
+
+    if [ "$TASK6_OK" -eq 1 ]; then
+        pass "Task 6: duplicated line was removed and final file contains one copy"
+    else
+        fail "Task 6: final practice-line state is incorrect"
+    fi
+
+
+    # ============================================================
+    # TASK 7 - SAVE THE CHANGES
+    # ============================================================
+
+    TASK7_OK=1
+
+    if [ ! -f "$FILE" ]; then
+        TASK7_OK=0 
+    else
+        FIRST_LINE=$(head -n 1 "$FILE")
+
+        if [ "$FIRST_LINE" != "IMPORTANT Linux is a powerful operating system used to manage servers, applications, and infrastructure TODAY." ]; then
+            TASK7_OK=0
+        fi
+
+        grep -Fqx "System administrators use command-line tools every day to maintain stable systems." "$FILE" || TASK7_OK=0
+
+        grep -Fqx "The Vim editor is an essential tool for creating and modifying configuration files." "$FILE" || TASK7_OK=0
+
+        grep -Fqx "Practice makes command-line editing faster and more accurate." "$FILE" || TASK7_OK=0
+
+    fi
+
+    if [ "$TASK7_OK" -eq 1 ]; then
+        pass "Task 7: modified vim_practice.txt was saved successfully"
+    else
+        fail "Task 7: saved file is missing or required changes were not saved"
+    fi
+
+
+    # ============================================================
+    # TASK 8 - SAVE A COPY WITH A DIFFERENT NAME
+    # ============================================================
+
+    TASK8_OK=1
+
+    if [ ! -f "$FILE" ]; then
+        TASK8_OK=0
+    fi
+
+    if [ ! -f "$FINAL" ]; then
+        TASK8_OK=0
+    fi
+
+    # Original file must still exist
+    if [ ! -f "$FILE" ]; then
+        TASK8_OK=0
+    fi
+
+    # Final copy must contain the same contents
+    if [ -f "$FILE" ] && [ -f "$FINAL" ]; then
+
+        if ! cmp -s "$FILE" "$FINAL"; then
+            TASK8_OK=0
+        fi
+
+    fi
+
+    if [ "$TASK8_OK" -eq 1 ]; then
+        pass "Task 8: vim_practice_final.txt created and original file preserved"
+    else
+        fail "Task 8: final copy is missing, differs from original, or original was removed"
+    fi
+
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+
+}
+
+# =================================================================
+
+validate_lab214_morning_incident() {
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "Checking Lab 214 - The Morning Incident: Linux Administrator on Duty..."
+
+    HOME_DIR="/home/$STUDENT_NAME"
+    BASE="$HOME_DIR/lab214_test"
+
+    LAB_NAME="Lab 214 - The Morning Incident: Linux Administrator on Duty"
+    DATE=$(date "+%F %T")
+
+    TOTAL_TASKS=29
+    PASSED=0
+
+    # HELPERS
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # TASK 1 - REMOTE SERVER AUDIT
+    echo "<div class='validation-section'>Task 1 - The Remote Server Audit</div>"
+
+    # 1a - lab214_test directory
+    if [ -d "$BASE" ]; then
+        pass "Task 1a: lab214_test directory exists"
+    else
+        fail "Task 1a: lab214_test directory is missing"
+    fi
+
+    # 1b - OS release
+    REMOTE_INFO="$BASE/remote_info.txt"
+
+    if [ -f "$REMOTE_INFO" ] &&
+       grep -qE "PRETTY_NAME=|NAME=" "$REMOTE_INFO"
+    then
+        pass "Task 1b: OS release information recorded"
+    else
+        fail "Task 1b: OS release information is missing"
+    fi
+
+    # 1c - DNS configuration
+    if [ -f "$REMOTE_INFO" ] &&
+       grep -qE "nameserver|search|domain" "$REMOTE_INFO"
+    then
+        pass "Task 1c: DNS configuration recorded"
+    else
+        fail "Task 1c: DNS configuration is missing"
+    fi
+
+    # 1d - block devices
+    if [ -f "$REMOTE_INFO" ] &&
+       grep -q "NAME" "$REMOTE_INFO"
+    then
+        pass "Task 1d: block device information recorded"
+    else
+        fail "Task 1d: block device information is missing"
+    fi
+
+    # 1e - group count
+    GROUP_COUNT=$(wc -l < /etc/group)
+
+    if [ -f "$REMOTE_INFO" ] &&
+       grep -Eq "^${GROUP_COUNT}( /etc/group)?$" "$REMOTE_INFO"
+    then
+        pass "Task 1e: /etc/group line count recorded correctly"
+    else
+        fail "Task 1e: /etc/group line count is missing or incorrect"
+    fi
+
+    # TASK 2 - PROJECT WORKSPACE
+    echo "<div class='validation-section'>Task 2 - Build the Project Workspace</div>"
+
+    REPORT="$BASE/report.txt"
+    DATA="$BASE/logs/archive/data"
+    COPIED_REPORT="$DATA/report.txt"
+    LOG_LINK="$BASE/logs/loglink"
+    SYS_REPORT="$BASE/sys-report"
+
+    # 2a
+    if [ -f "$REPORT" ] &&
+       grep -Fxq "technical screening is in progress" "$REPORT"
+    then
+        pass "Task 2a: report.txt created with exact required content"
+    else
+        fail "Task 2a: report.txt is missing or content is incorrect"
+    fi
+
+    # 2b
+    if [ -f "$COPIED_REPORT" ] &&
+       [ -f "$REPORT" ]; then
+        pass "Task 2b: report.txt copied into logs/archive/data"
+    else
+        fail "Task 2b: copied report.txt is missing or incorrect"
+    fi
+
+    # 2c
+    LINK_TARGET=$(readlink "$LOG_LINK")
+    if [ -L "$LOG_LINK" ] &&
+       { [ "$LINK_TARGET" = "archive" ] ||
+         [ "$LINK_TARGET" = "../logs/archive" ] ||
+         [ "$LINK_TARGET" = "$LOG_DIR/archive" ]; }    	    
+    then
+        pass "Task 2c: loglink symbolic link points to archive"
+    else
+        fail "Task 2c: loglink symbolic link is missing or points incorrectly"
+    fi
+
+    # 2d
+    if [ -f "$REPORT" ] && [ -f "$SYS_REPORT" ]; then
+        REPORT_INODE=$(stat -c "%i" "$REPORT" 2>/dev/null)
+        SYS_REPORT_INODE=$(stat -c "%i" "$SYS_REPORT" 2>/dev/null)
+
+        if [ "$REPORT_INODE" = "$SYS_REPORT_INODE" ]; then
+            pass "Task 2d: sys-report is a hard link to report.txt"
+        else
+            fail "Task 2d: sys-report exists but is not a hard link to report.txt"
+        fi
+    else
+        fail "Task 2d: report.txt or sys-report is missing"
+    fi
+
+    # TASK 3 - OWNERSHIP AND PERMISSIONS
+    echo "<div class='validation-section'>Task 3 - Secure the Project and Assign Ownership</div>"
+
+    PROJECTS="$BASE/my-projects"
+    PROJECT_FILE="$PROJECTS/project1.txt"
+    FINAL="$PROJECTS/final"
+    MODULE1="$FINAL/module1"
+    MODULE2="$FINAL/module2"
+
+    # 3a
+    if [ -f "$PROJECT_FILE" ] &&
+       [ "$(stat -c "%a" "$PROJECT_FILE" 2>/dev/null)" = "620" ]
+    then
+        pass "Task 3a: project1.txt required permissions set"
+    else
+        fail "Task 3a: project1.txt required permissions are not set"
+    fi
+
+    # 3b
+    if [ -f "$PROJECT_FILE" ] &&
+       [ "$(stat -c "%U" "$PROJECT_FILE" 2>/dev/null)" = "test-user" ] &&
+       [ "$(stat -c "%G" "$PROJECT_FILE" 2>/dev/null)" = "wheel" ]
+    then
+        pass "Task 3b: project1.txt ownership is test-user:wheel"
+    else
+        fail "Task 3b: project1.txt ownership is not test-user:wheel"
+    fi
+
+    # 3c
+    if [ -d "$FINAL" ] &&
+       [ "$(stat -c "%U" "$FINAL" 2>/dev/null)" = "test-user" ]
+    then
+        pass "Task 3c: final directory owner is test-user"
+    else
+        fail "Task 3c: final directory owner is not test-user"
+    fi
+
+    # 3d
+    if [ -d "$FINAL" ] &&
+       [ "$(stat -c "%G" "$FINAL" 2>/dev/null)" = "wheel" ]
+    then
+        pass "Task 3d: final directory group is wheel"
+    else
+        fail "Task 3d: final directory group is not wheel"
+    fi
+
+    # 3e - recursive ownership
+    TASK3H_OK=1
+
+    if [ -d "$FINAL" ]; then
+        while IFS= read -r ITEM; do
+            [ "$(stat -c "%U" "$ITEM" 2>/dev/null)" = "test-user" ] || TASK3H_OK=0
+            [ "$(stat -c "%G" "$ITEM" 2>/dev/null)" = "wheel" ] || TASK3H_OK=0
+        done < <(find "$FINAL" -mindepth 1 2>/dev/null)
+    else
+        TASK3H_OK=0
+    fi
+
+    if [ "$TASK3H_OK" -eq 1 ]; then
+        pass "Task 3e: ownership recursively applied to final contents"
+    else
+        fail "Task 3e: one or more items inside final have incorrect ownership"
+    fi
+
+    # TASK 4 - CONFIGURATION EVIDENCE
+    echo "<div class='validation-section'>Task 4 - Investigate the Server Configuration</div>"
+
+    GREP_SUMMARY="$BASE/grep_summary.txt"
+
+    # 4a
+    EXPECTED_SSSD=$(grep -i "sssd" /etc/nsswitch.conf 2>/dev/null)
+
+    if [ -z "$EXPECTED_SSSD" ]; then
+        pass "Task 4a: no sssd match exists in nsswitch.conf"
+    elif [ -f "$GREP_SUMMARY" ] &&
+         grep -Fq "$EXPECTED_SSSD" "$GREP_SUMMARY"
+    then
+        pass "Task 4a: case-insensitive sssd search recorded"
+    else
+        fail "Task 4a: sssd search result is missing"
+    fi
+
+    # 4b
+    EXPECTED_NOLOGIN=$(grep "nologin" /etc/passwd 2>/dev/null)
+
+    TASK4C_OK=1
+
+    if [ -n "$EXPECTED_NOLOGIN" ] && [ -f "$GREP_SUMMARY" ]; then
+        while IFS= read -r LINE; do
+            if ! grep -Fqx "$LINE" "$GREP_SUMMARY"; then
+                TASK4C_OK=0
+                break
+            fi
+        done <<< "$EXPECTED_NOLOGIN"
+    else
+        TASK4C_OK=0
+    fi
+
+    if [ "$TASK4C_OK" -eq 1 ]; then
+        pass "Task 4b: nologin entries recorded"
+    else
+        fail "Task 4b: nologin entries are missing"
+    fi
+
+    # 4c
+    TASK4D_OK=1
+
+    while IFS= read -r LINE; do
+        if ! grep -Fqx "$LINE" "$GREP_SUMMARY" 2>/dev/null; then
+            TASK4D_OK=0
+            break
+        fi
+    done < <(head -n 2 /etc/hosts)
+
+    if [ "$TASK4D_OK" -eq 1 ]; then
+        pass "Task 4c: first 2 lines of /etc/hosts recorded"
+    else
+        fail "Task 4c: first 2 lines of /etc/hosts are missing"
+    fi
+
+    # 4d
+    HOST_COUNT=$(wc -l < /etc/hosts)
+
+    if [ -f "$GREP_SUMMARY" ] &&
+       grep -Eq "^${HOST_COUNT}( /etc/hosts)?$" "$GREP_SUMMARY"
+    then
+        pass "Task 4d: /etc/hosts line count recorded correctly"
+    else
+        fail "Task 4d: /etc/hosts line count is missing or incorrect"
+    fi
+
+    # 4e
+    TASK4F_OK=1
+
+    while IFS= read -r LINE; do
+        if ! grep -Fqx "$LINE" "$GREP_SUMMARY" 2>/dev/null; then
+            TASK4F_OK=0
+            break
+        fi
+    done < <(tail -n 3 /etc/resolv.conf)
+
+    if [ "$TASK4F_OK" -eq 1 ]; then
+        pass "Task 4e: last 3 lines of /etc/resolv.conf recorded"
+    else
+        fail "Task 4e: last 3 lines of /etc/resolv.conf are missing"
+    fi
+
+    # TASK 5 - FILESYSTEM INVESTIGATION
+
+echo "<div class='validation-section'>Task 5 - The Final Filesystem Investigation</div>"
+
+INVESTIGATION="$BASE/investigation"
+FIND_TASKS="$BASE/find_tasks.txt"
+SERVICE_BK="$BASE/service_bk"
+
+# 5a - RECENT .CONF FILES
+TASK5A_OK=1
+
+if [ -f "$FIND_TASKS" ]; then
+    while IFS= read -r FILE; do
+        if ! grep -Fqx "$FILE" "$FIND_TASKS"; then
+            TASK5A_OK=0
+            break
+        fi
+    done < <(
+        cd "$BASE" &&
+        find investigation/etc -type f -name "*.conf" -mtime -5 2>/dev/null
+    )
+else
+    TASK5A_OK=0
+fi
+
+if [ "$TASK5A_OK" -eq 1 ]; then
+    pass "Task 5a: recent .conf files recorded"
+else
+    fail "Task 5a: required recent .conf file results are missing"
+fi
+
+
+# 5b - LOGROTATE FILES OLDER THAN 2 DAYS
+TASK5B_OK=1
+
+if [ -f "$FIND_TASKS" ]; then
+    while IFS= read -r FILE; do
+        if ! grep -Fqx "$FILE" "$FIND_TASKS"; then
+            TASK5B_OK=0
+            break
+        fi
+    done < <(
+        cd "$BASE" &&
+        find investigation/etc/logrotate.d -type f -mtime +2 2>/dev/null
+    )
+else
+    TASK5B_OK=0
+fi
+
+if [ "$TASK5B_OK" -eq 1 ]; then
+    pass "Task 5b: logrotate files older than 2 days recorded"
+else
+    fail "Task 5b: required logrotate results are missing"
+fi
+
+
+# 5c - SERVICE FILES COPIED
+TASK5C_OK=1
+
+if [ -f "$SERVICE_BK" ]; then
+    while IFS= read -r FILE; do
+        if ! grep -Fqx "$FILE" "$SERVICE_BK"; then
+            TASK5C_OK=0
+            break
+        fi
+    done < <(
+        cd "$BASE" &&
+        find investigation/etc/systemd -type f -name "*.service" 2>/dev/null
+    )
+else
+    TASK5C_OK=0
+fi
+if [ "$TASK5C_OK" -eq 1 ]; then
+    pass "Task 5c: service files are present in service_bk"
+else
+    fail "Task 5c: no .service files were found in service_bk"
+fi
+
+
+# 5d - FILES LARGER THAN 100MB
+TASK5D_OK=1
+
+if [ -f "$FIND_TASKS" ]; then
+    while IFS= read -r FILE; do
+        if ! grep -Fqx "$FILE" "$FIND_TASKS"; then
+            TASK5D_OK=0
+            break
+        fi
+    done < <(
+        cd "$BASE" &&
+        find investigation/var -type f -size +100M 2>/dev/null
+    )
+else
+    TASK5D_OK=0
+fi
+
+if [ "$TASK5D_OK" -eq 1 ]; then
+    pass "Task 5d: large files under investigation/var recorded"
+else
+    fail "Task 5d: required large-file results are missing"
+fi
+
+
+# 5e - SHADOW FILE
+TASK5E_OK=0
+
+if [ -f "$FIND_TASKS" ]; then
+    while IFS= read -r FILE; do
+        if grep -Fqx "$FILE" "$FIND_TASKS"; then
+            TASK5E_OK=1
+            break
+        fi
+    done < <(
+        cd "$BASE" &&
+        find investigation/etc -type f -name "shadow" 2>/dev/null
+    )
+fi
+
+if [ "$TASK5E_OK" -eq 1 ]; then
+    pass "Task 5e: shadow file search result recorded"
+else
+    fail "Task 5e: shadow file search result is missing"
+fi
+
+    # ============================================================
+# TASK 6 - ARCHIVE THE PROJECT WORKSPACE WITH TAR
+# ============================================================
+
+echo "<div class='validation-section'>Task 6 - Archive the Project Workspace with TAR</div>"
+
+PROJECT="$BASE/project_backup.tar"
+LOGS="$BASE/logs_backup.tar.gz"
+BACKUP="$BASE/backup"
+
+# 6a - project_backup.tar
+if [ -f "$PROJECT" ] &&
+   tar -tf "$PROJECT" 2>/dev/null | grep -q "^new-project/"
+then
+    pass "Task 6a: project_backup.tar contains new-project"
+else
+    fail "Task 6a: project_backup.tar is missing or new-project is not archived"
+fi
+
+# 6b - logs_backup.tar.gz
+if [ -f "$LOGS" ] &&
+   tar -tzf "$LOGS" >/dev/null 2>&1 &&
+   tar -tzf "$LOGS" 2>/dev/null | grep -q "^project-logs/"
+then
+    pass "Task 6b: logs_backup.tar.gz contains project-logs"
+else
+    fail "Task 6b: logs_backup.tar.gz is missing or invalid"
+fi
+
+# 6c - backup directory
+if [ -d "$BACKUP" ]; then
+    pass "Task 6c: backup directory exists"
+else
+    fail "Task 6c: backup directory is missing"
+fi
+
+# 6d - extract project archive
+if [ -d "$BACKUP/new-project" ]; then
+    pass "Task 6d: project_backup.tar extracted into backup"
+else
+    fail "Task 6d: project_backup.tar was not extracted into backup"
+fi
+
+# 6e - archive listing
+LIST="$BACKUP/logs_backup.txt"
+
+if [ -s "$LIST" ] &&
+   grep -q "^.*project-logs/" "$LIST"
+then
+    pass "Task 6e: logs_backup.txt contains the archive listing"
+else
+    fail "Task 6e: logs_backup.txt is missing or does not contain the archive listing"
+fi   
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#=====================================================================
