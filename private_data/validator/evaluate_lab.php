@@ -246,7 +246,7 @@ foreach ($output as $line) {
      * Task 1: Something – Pass
      * Task 2: Something – Fail
      */
-    if (preg_match('/Task\s+[0-9]+\s*:/i', $cleanLine)) {
+    if (preg_match('/Task\s+[0-9]+[a-z]?\s*:/i', $cleanLine)) {
 
         $total++;
 
