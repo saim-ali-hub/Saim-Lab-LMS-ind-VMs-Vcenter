@@ -1,0 +1,135 @@
+{
+  "lab_id": "lab214",
+  "title": "Lab 214 - The Morning Incident: Linux Administrator on Duty",
+  "description": "A production Linux server has been assigned for a technical screening and system readiness review. As the Linux Administrator on duty, you must connect to the remote server, collect system information, organize project files, configure ownership and permissions, investigate system configuration files, and locate important files across the filesystem.",
+
+  "lab_objective": {
+    "description": "By the end of this lab, you should be able to:",
+    "objectives": [
+      "Connect to and work on a remote Linux server using SSH.",
+      "Identify the current user and collect operating system information.",
+      "Collect and save system information using command output redirection.",
+      "Create files and nested directory structures.",
+      "Copy files and directories using cp and cp -r.",
+      "Create and manage symbolic and hard links.",
+      "Configure Linux file and directory permissions.",
+      "Change file and directory ownership and group ownership.",
+      "Apply ownership changes recursively.",
+      "Extract specific information from files using grep.",
+      "Use head and tail to inspect selected portions of files.",
+      "Count lines in a file using wc.",
+      "Search for files using find based on name, modification time, access time, and size.",
+      "Copy files discovered with find into a backup directory.",
+      "Use output redirection to create and append information to files.",
+      "Verify the results of administrative tasks using appropriate Linux commands."
+    ],
+
+  "scenario": [
+      "It is 8:00 AM and you are the Linux Administrator on duty. The Infrastructure Operations team has asked you to prepare a Linux server for a technical screening. Your first task is to connect to the remote server, collect key system information, and document it in ~/remote_info.txt. Next, prepare a project workspace with the required files, directories, symbolic link, and hard link. Then secure the workspace by configuring the required permissions, ownership, groups, and module backup. The troubleshooting team then needs specific information extracted from system configuration files and saved in ~/grep_summary.txt. Finally, perform a filesystem investigation using find to locate configuration files, recently accessed files, large files, the shadow file, and systemd service files. Save the required search results in ~/find_tasks.txt and copy the service files to the backup directory. Work like a Linux Administrator: use the correct commands, preserve existing output when required, and verify your work at each stage."
+    ] 
+    },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Phase 1 - The Remote Server Audit",
+      "steps": [
+        "The Infrastructure Operations team has given you access to the remote server.",
+        "SSH into your VM in the vecenter.",
+        "Copy lab214_test from /tmp into your home directory using 'cp /tmp/lab214_tmp ~' command",
+        "Change directory to lab214_test and verify your present working directory using pwd. Remain in this directory for the rest of the task.",
+        "Print the OS release information of the server from /etc/os-release file and append it to remote_info.txt.",
+        "Collect the DNS configuration details from /etc/resolv.conf file and append the output to the remote_info.txt.",
+        "Display the attached block devices using lsblk command and append the output to the remote_info.txt.",
+        "Total number of lines in /etc/group file using wc -l command and append the count to the remote_info.txt."
+      ],
+      "hint": "Pay close attention to the difference between > and >>. The audit requires information to be collected without accidentally replacing previous results.",
+      "real_world": [
+        "Real-world: Linux administrators regularly connect to remote servers and collect system information for troubleshooting, audits, inventory, and incident investigation."
+      ]
+    },
+
+    {
+      "task_number": 2,
+      "title": "Phase 2 - Build the Project Workspace",
+      "steps": [
+        "The application team needs a logging workspace created in your home directory.",
+        "Create report.txt in the lab214_test directory with the exact content: technical screening is in progress",
+        "Copy report.txt into logs/archive/data.",
+        "Inside logs, create a symbolic link named loglink that points to the logs/archive directory.",
+        "Create a hard link n lab214_test named sys-report that points to report.txt which inside lab214_test"
+      ],
+      "hint": "Use mkdir -p for the nested directory structure. Remember that symbolic links and hard links are created differently.",
+      "real_world": [
+        "Real-world: Linux administrators use structured directories and links to provide applications and users with convenient access to files and directories without unnecessarily duplicating data."
+      ]
+    },
+
+    {
+      "task_number": 3,
+      "title": "Phase 3 - Secure the Project and Assign Ownership",
+      "steps": [
+        "The Security team has identified several files and directories that require proper ownership and access control.",
+        "Configure the permissions of my-projects/project1.txt so the owner can read and write, the group can write only, and other users have no access.",
+        "Change the owner of my-projects/project1.txt to test-user and the group to wheel. If test-user does not exit, create the user using useradd command",
+        "Recursively change the owner of the my-projects/final directory and everything inside it to test-user.",
+        "Recursively change the group of the my-projects/final directory and everything inside it to wheel."
+      ],
+      "hint": "Use chmod to control access and chown/chgrp to manage ownership. Remember that the -R option applies ownership changes recursively.",
+      "real_world": [
+        "Real-world: Correct ownership and permissions are essential for protecting application data, controlling team access, and preventing unauthorized users from modifying sensitive resources."
+      ]
+    },
+
+    {
+      "task_number": 4,
+      "title": "Phase 4 - Investigate the Server Configuration",
+      "steps": [
+        "The troubleshooting team needs a concise evidence file instead of complete configuration files.",
+        "Search /etc/nsswitch.conf for the string sssd without considering letter case and store the matching output in grep_summary.txt.",
+        "Grep the word nologin from /etc/passwd and append the output to grep_summary.txt.",
+        "Display the first 2 lines of /etc/hosts and append the output to grep_summary.txt.",
+        "Count the number of lines in /etc/hosts and append that count to grep_summary.txt.",
+        "Display the last 3 lines of /etc/resolv.conf and append theoutput to grep_summary.txt."
+      ],
+      "hint": "Use grep -i for a case-insensitive search. Use > only when creating the initial output file and >> when adding additional information.",
+      "real_world": [
+        "Real-world: Administrators often need only specific lines from large configuration files. grep, head, tail, and wc allow them to quickly extract useful information without manually reviewing entire files."
+      ]
+    },
+    
+    {
+  "task_number": 5,
+  "title": "Phase 5 - The Final Filesystem Investigation",
+  "steps": [
+    "The Storage and Operations team has provided a controlled filesystem investigation area inside lab214_test.",
+    "Find all the files having .conf extension  under investigation/etc that were modified within the last 5 days and save the results in find_tasks.txt.",
+    "Find files under investigation/etc/logrotate.d that were modified less than 2 days ago and append the output to find_tasks.txt.",
+    "Find all the files having extension .service under investigation/etc/systemd and copy the output into service_bk.",
+    "Do not add the service file information to find_tasks.txt.",
+    "Search investigation/var for files larger than 100MB and append the output to find_tasks.txt.",
+    "Find a file named shadow under investigation/etc and append the output to find_tasks.txt."
+  ],
+  "hint": "Use find with conditions such as -name, -mtime, and -size. Use -type f and -type l when searching for regular files and symbolic links. Use -exec when you need find to perform an action on discovered files.",
+  "real_world": [
+    "Real-world: The find command is widely used by Linux administrators to locate configuration files, investigate recently modified files, identify large files, and perform maintenance or backup operations."
+      ]
+    },
+
+    {
+  "task_number": 6,
+  "title": "Phase 6 - Archive the Project Workspace with tar",
+  "steps": [
+    "The Operations team now needs you to create backups of the new-project workspace using the tar command.",
+    "Create a tar archive named project_backup.tar inside lab214_test that contains the entire new-project directory.",
+    "Create a gzip-compressed archive named logs_backup.tar.gz inside lab214_test that contains the entire project-logs directory.",
+    "Extract project_backup.tar using verbose mode into the backup directory which in inside lab214_test.",
+    "List the contents of logs_backup.tar.gz archive. Do not extract the gzip-compressed archive. Redirect the listing output to backup/logs_backup.txt"
+  ],
+  "hint": "Use tar with the appropriate options for creating, listing, and gzip compression. Pay attention to the difference between archiving files and compressing an archive.",
+  "real_world": [
+    "Real-world: Linux administrators use tar archives to package application files, configuration files, logs, and other data for backup, transfer, and disaster recovery."
+  ]
+}
+],   
+"completion_message": "Excellent work! You have successfully completed Lab 214 - The Morning Incident: Linux Administrator on Duty. You practiced collecting system information, creating and managing files and directories, working with symbolic and hard links, configuring permissions and ownership, extracting information with grep, and using find to investigate the Linux filesystem, and creating, archive, gzip-compressed archive and listing and exctraction of archives."
+}

@@ -1,0 +1,246 @@
+{
+  "lab_id": "lab216",
+  "title": "Lab 216 - Advanced Linux Process Management",
+  "description": "A production Linux application server has reported unusual process activity, including resource-consuming processes, background jobs, stopped processes, and processes that require careful investigation before termination. As the Linux Administrator, you must investigate, monitor, control, prioritize, and safely terminate processes without affecting unrelated system services.",
+
+  "lab_objective": {
+    "description": "By the end of this lab, you should be able to:",
+    "objectives": [
+      "View running processes.",
+      "Identify processes by PID.",
+      "Monitor processes using ps and top.",
+      "Find processes using pgrep.",
+      "Start processes in the background.",
+      "View and manage background jobs using jobs.",
+      "Bring background jobs to the foreground using fg.",
+      "Suspend and resume processes using Ctrl+Z and bg.",
+      "Stop and terminate processes safely.",
+      "Understand Linux process states.",
+      "Identify parent and child processes using PID and PPID.",
+      "Start a process with a specific nice value.",
+      "View the nice value of a process.",
+      "Change process priority using renice.",
+      "Understand and use Linux process signals.",
+      "Verify process changes and termination.",
+      "Sort processes by CPU utilization."
+    ]
+  },
+
+  "scenario": [
+    "You are working as a Linux system administrator for a production application server. The operations team has reported that several application processes are consuming resources, some background jobs are stuck, and one process needs to be identified and terminated without affecting unrelated services.",
+    "Your task is to investigate, manage, and clean up the processes safely. You will identify processes by name and PID, monitor resource usage, manage background jobs, investigate parent and child process relationships, control process states, adjust process priorities, use Linux signals, and safely terminate processes.",
+    "Throughout this lab, only work with processes that you create yourself when performing process termination or priority changes. Do not terminate, stop, or modify system-critical processes.",
+    "Work like a Linux Administrator: identify the process first, investigate it, take the appropriate action, verify the result, and clean up all processes created during the lab."
+  ],
+
+  "important_notes": [
+    "Do not terminate or modify system-critical processes such as systemd, sshd, rsyslog, chronyd, or other services required by the operating system.",
+    "Before terminating a process, verify that it was created by you.",
+    "Do not use kill, pkill, renice, or other process-control commands against system-critical processes.",
+    "Clean up all processes created during this lab before completing the lab."
+  ],
+
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Phase 1 - Create the Advanced Process Management Workspace",
+      "steps": [
+        "Inside your home directory, create a directory named lab216_challenge_vim.",
+        "Change directory to lab216_challenge_vim.",
+        "Verify your current working directory using pwd.",
+        "Remain inside this directory unless instructed otherwise.",
+	"important_notes:",
+        "Do not terminate or modify system-critical processes such as systemd, sshd, rsyslog, chronyd, or other services required by the operating system.",
+        "Before terminating a process, verify that it was created by you.",
+        "Do not use kill, pkill, renice, or other process-control commands against system-critical processes.",
+        "Clean up all processes created during this lab before completing the lab."
+      ],
+      "hint": "Use mkdir to create the directory and cd to enter it. Use pwd to verify your current location.",
+      "real_world": [
+        "Real-world: Linux administrators use dedicated working directories to organize troubleshooting files, command output, and investigation evidence."
+      ]
+    },
+
+    {
+      "task_number": 2,
+      "title": "Phase 2 - Find a Process by Name",
+      "steps": [
+        "Use pgrep to find sshd process and display its PID and process.",
+        "Save the output to a file named sshd.txt.",
+        "Do not terminate, stop, or modify the sshd process."
+      ],
+      "real_world": [
+        "Real-world: Administrators frequently need to locate a service or application process by name before investigating its PID and status."
+      ]
+    },
+    
+    {
+      "task_number": 3,
+      "title": "Phase 3 - Start Multiple Background Processes",
+      "steps": [
+        "Start the following processes in the background:",
+        "sleep 5000 &",
+        "sleep 8000 &",
+        "sleep 10000 &",
+        "sleep 15000 &",
+        "sleep 20000 &",
+        "Use the jobs command to list all background jobs running in your current shell.",
+        "Observe the Job IDs and current process states.",
+        "Run the jobs command again and redirect its output to bg.txt.",
+        "Verify the contents of bg.txt.",
+        "Hint: The ampersand (&) starts each command as a background job. The shell assigns a Job ID to each background job."
+      ],
+      "real_world": [
+        "Real-world: Administrators use background jobs when they need to allow long-running operations to continue while keeping the terminal available for additional work."
+      ]
+    },
+
+    {
+      "task_number": 4,
+      "title": "Phase 4 - Bring a Background Job to the Foreground",
+      "steps": [
+        "Identify the Job ID assigned to the sleep 5000 process.",
+        "Bring the sleep 5000 job to the foreground using fg.",
+        "Suspend the foreground process by pressing Ctrl+Z.",
+        "Use the jobs command to verify that the sleep 5000 job is now stopped.",
+        "Record the Job ID and observe its stopped state.",
+        "Hint: Use jobs to identify the Job ID. Use fg %job_id to bring the specific job to the foreground."
+      ],
+      "real_world": [
+        "Real-world: Shell job control allows administrators to move processes between foreground and background execution and temporarily suspend processes when necessary."
+      ]
+    },
+
+    {
+      "task_number": 5,
+      "title": "Phase 5 - Resume and Terminate a Job Using Job ID",
+      "steps": [
+        "Resume the stopped sleep 5000 process in the background using bg.",
+        "Use jobs to verify that the process is running again.",
+        "Terminate the sleep 5000 job using its shell Job ID.",
+        "Verify that the sleep 5000 process is no longer running.",
+        "Confirm that the remaining sleep jobs are still running.",
+        "Hint: Use bg %job_id to resume a stopped job. To terminate a job using its Job ID, use kill %job_id."
+      ],
+      "real_world": [
+        "Real-world: Administrators can manage shell jobs directly using Job IDs instead of first locating the process PID."
+      ]
+    },
+
+    {
+      "task_number": 6,
+      "title": "Phase 6 - Identify Parent and Child Processes",
+      "steps": [
+        "Identify one of the remaining sleep processes created during this lab.",
+        "Use ps to display the PID and PPID of the sleep process.",
+        "Determine the PID of the parent process.",
+        "Identify the parent process using the PPID.",
+        "Explain the relationship between the sleep process and its parent process.",
+        "Hint: Use ps -o pid,ppid,comm or a similar ps format. The PPID identifies the parent process."
+      ],
+      "real_world": [
+        "Real-world: Understanding parent-child relationships helps administrators troubleshoot process failures, process trees, orphan processes, and service dependencies."
+      ]
+    },
+
+    {
+      "task_number": 7,
+      "title": "Phase 7 - Terminate Remaining Sleep Processes",
+      "steps": [
+        "Check for the remaining sleep processes created during this lab.",
+        "Use an appropriate command to identify the sleep processes.",
+        "Verify that the processes belong to you before terminating them.",
+        "Terminate the remaining lab-created sleep processes by name.",
+        "Verify that no sleep processes created by you are still running.",
+        "Hint: Use pgrep -a sleep to identify sleep processes. Use pkill sleep only after confirming that the matching processes are safe to terminate."
+      ],
+      "real_world": [
+        "Real-world: Name-based process termination can affect multiple processes, so administrators must verify ownership and process identity before using pkill."
+      ]
+    },
+
+    {
+      "task_number": 8,
+      "title": "Phase 8 - Run a Process with a Different Priority",
+      "steps": [
+        "Start sleep 20000 process with a nice value of 10.",
+        "Run the process in the background.",
+        "Identify the PID of the sleep process.",
+        "Use ps to verify its nice value.",
+        "Redirect the process information showing the nice value to nice_value.txt.",
+        "Verify the contents of nice_value.txt.",
+        "Hint: Use nice -n 10 with the sleep command. Use ps with an appropriate output format to display the NI value."
+      ],
+      "real_world": [
+        "Real-world: Administrators can use nice values to influence CPU scheduling priority when running resource-intensive or background workloads."
+      ]
+    },
+
+    {
+      "task_number": 9,
+      "title": "Phase 9 - Change Process Priority",
+      "steps": [
+        "Find the PID of the sleep process created in Task 9.",
+        "Verify that the process belongs to you.",
+        "Use renice to change its nice value from 10 to 15.",
+        "Verify that the nice value has changed to 15.",
+        "Redirect the verification output to renice_value.txt.",
+        "Verify the contents of renice_value.txt.",
+        "Hint: Use renice -n 15 -p PID or the appropriate renice syntax available on your system. Use ps to verify the new NI value."
+      ],
+      "real_world": [
+        "Real-world: Administrators can adjust process priorities when balancing CPU resources between applications, background tasks, and other workloads."
+      ]
+    },
+
+    {
+      "task_number": 10,
+      "title": "Phase 10 - Terminate Remaining Processes and Verify Cleanup",
+      "steps": [
+        "Find all sleep processes created during this lab.",
+        "Verify that the processes belong to you.",
+        "Terminate all remaining lab-created sleep processes.",
+        "Use pgrep to verify that no sleep processes created by you are still running.",
+        "Use jobs to verify that no lab-created background jobs remain active or stopped in your shell.",
+        "Hint: Use pgrep -a sleep and jobs to verify the final process and job state. Clean up only processes and jobs created during this lab."
+      ],
+      "real_world": [
+        "Real-world: Proper cleanup is an important part of system administration. Temporary processes and jobs should not be left running after maintenance or testing activities are completed."
+      ]
+    },
+
+    {
+      "task_number": 11,
+      "title": "Phase 11 - Display and Sort Processes by CPU Usage",
+      "steps": [
+        "Display all currently running processes.",
+        "Format the output to show the following information:",
+        "PID   PPID   User   %CPU   %MEM   STATE   CMD",
+        "Sort the output so that processes consuming the most CPU appear first.",
+        "Save the output in sort_process_cpu.txt.",
+        "Hint: Use ps with a custom output format and --sort=-%cpu. For example: ps -eo pid,ppid,user,%cpu,%mem,state,cmd --sort=-%cpu"
+      ],
+      "real_world": [
+        "Real-world: Sorting processes by CPU usage allows administrators to quickly identify applications that may be responsible for high CPU utilization during performance investigations."
+      ]
+    }
+  ],
+
+  "important_commands": [
+    "ps",
+    "top",
+    "pgrep",
+    "pstree",
+    "jobs",
+    "bg",
+    "fg",
+    "kill",
+    "pkill",
+    "nice",
+    "renice",
+    "grep",
+    "wc"
+  ],
+
+  "completion_message": "Excellent work! You have successfully completed Lab 216 - Advanced Linux Process Management. You practiced identifying processes by name and PID, monitoring CPU and memory usage, managing background jobs, bringing jobs to the foreground, suspending and resuming processes, investigating parent and child relationships, managing process priorities with nice and renice, terminating processes safely, and sorting processes by CPU usage. You also practiced the essential Linux administration workflow: identify, investigate, manage, verify, and clean up."
+}

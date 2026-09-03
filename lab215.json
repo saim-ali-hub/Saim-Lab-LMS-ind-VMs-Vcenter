@@ -1,0 +1,218 @@
+{
+  "lab_id": "lab215",
+  "title": "Lab 215 - Simple Linux Process Management",
+  "description": "A production Linux application server has reported unusual process activity, including background jobs, stopped processes, and processes consuming system resources. As the Linux Administrator, you must investigate running processes, identify processes by PID, manage background jobs, monitor process activity, send signals, and safely terminate processes created during the lab.",
+
+  "lab_objective": {
+    "description": "By the end of this lab, you should be able to:",
+    "objectives": [
+      "View running processes using ps.",
+      "Identify processes by PID.",
+      "Display all processes running on a Linux system.",
+      "Monitor process resource utilization using ps and top.",
+      "Find processes by name using pgrep.",
+      "Start processes in the background.",
+      "View and manage background jobs using jobs.",
+      "Understand foreground and background processes.",
+      "Understand basic Linux process states.",
+      "Terminate processes using kill and pkill.",
+      "Use different signals to control processes.",
+      "Identify and verify processes before terminating them.",
+      "Count processes running on a Linux system.",
+      "Use output redirection to save command output to files.",
+      "Safely clean up processes created during the lab."
+    ],
+
+  "scenario": [
+    "You are a Linux system administrator responsible for maintaining a production application server. The operations team has reported unusual process activity on the server, including resource-intensive processes, background jobs, stopped processes, and processes that may not be behaving as expected.",
+    "Your task is to investigate and manage Linux processes safely. You will use standard Linux process-management tools to identify processes, examine their states, monitor resource usage, control background jobs, send signals, and terminate processes when necessary.",
+    "Throughout this lab, only work with processes that you create yourself. Do not terminate, stop, or modify system-critical processes such as systemd, sshd, chronyd, or other services required by the operating system.",
+    "Work like a Linux Administrator: identify the process first, investigate it, take the appropriate action, verify the result, and clean up all processes created during the lab."
+  ]
+  },
+
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Phase 1 - Create the Process Management Workspace",
+      "steps": [
+        "Inside your home directory, create a directory named lab215_vim.",
+        "Change directory to lab215_vim.",
+        "Verify your current working directory using pwd.",
+        "Remain inside this directory unless instructed otherwise.",
+	"Hint: Use mkdir to create the directory and cd to enter it. Use pwd to verify your current location."
+      ],
+      "real_world": [
+        "Real-world: Linux administrators organize troubleshooting and administrative work inside dedicated directories so that generated files and evidence can be easily located and reviewed."
+      ]
+    },
+
+    {
+      "task_number": 2,
+      "title": "Phase 2 - View Running Processes",
+      "steps": [
+        "Review the processes currently running in your terminal session.",
+        "Use the ps command to list the current processes running in your session.",
+        "Use the ps -ef command to list all processes running on the system.",
+        "Use the ps aux command to list all processes along with CPU and memory utilization.",
+        "Observe the differences between the output produced by ps, ps -ef, and ps aux.",
+	"Hint: Pay attention to the different columns and the amount of process information displayed by each command."
+      ],
+      "real_world": [
+        "Real-world: Linux administrators use ps to investigate running processes, identify resource-consuming applications, and troubleshoot process-related issues."
+      ]
+    },
+
+    {
+      "task_number": 3,
+      "title": "Phase 3 - Start Background Processes",
+      "steps": [
+        "Start the following Vim process in the background: vim file1_bg.vim &",
+        "Start another Vim process in the background: vim file2_bg.vim &",
+        "Verify that your terminal remains available for additional commands.",
+        "Understand how the ampersand (&) allows a process to run in the background instead of occupying the terminal.",
+        "Do not close or terminate the Vim processes yet.",
+	"Hint: The & symbol starts a command as a background job."
+      ],
+      "real_world": [
+        "Real-world: Administrators often run long-running commands and maintenance tasks in the background so that the terminal remains available for other administrative work."
+      ]
+    },
+
+    {
+      "task_number": 4,
+      "title": "Phase 4 - Investigate Background Jobs",
+      "steps": [
+        "Use the jobs command to display the background jobs and identify the Job ID of each Vim process.",
+        "Use ps -ef | grep vim to identify the PID of the Vim processes.",
+        "Use ps aux | grep vim to review the current state and resource information of the Vim processes.",
+        "Run the jobs command again and redirect its output to bg.txt.",
+        "Verify the contents of bg.txt."
+      ],
+      "hint": "The jobs command displays jobs associated with the current shell. Job IDs and process PIDs are different identifiers.",
+      "real_world": [
+        "Real-world: Linux administrators use shell job control to manage commands running in the background and determine whether jobs are running or stopped."
+      ]
+    },
+
+    {
+      "task_number": 5,
+      "title": "Phase 5 - Terminate a Process by Name",
+      "steps": [
+        "Use ps -ef | grep vim to search for Vim processes belonging to your user.",
+        "Verify that the Vim processes you identified were created by you.",
+	"Hint: Use pgrep -u \"$USER\" -a vim.", 
+	"Identify the PIDs of the Vim processes created during this lab and append the pgrep output to bg.txt.",
+	"Terminate only the Vim processes belonging to your user. Do not use unrestricted pkill vim on the shared server.",
+	"Hint: pkill -u \"$USER\" vim",
+        "Verify that the Vim processes created during this lab are no longer running.",
+	"If a stopped Vim process does not terminate with the normal signal, use an appropriate stronger signal after verifying the PID.",
+	"Hint: pkill -9 -u \"$USER\" vim"
+      ],
+      "real_world": [
+        "Real-world: Administrators can use name-based process management when multiple instances of the same application need to be stopped, but process ownership should always be verified first."
+      ]
+    },
+
+    {
+      "task_number": 6,
+      "title": "Phase 6 - Manage Multiple Background Processes",
+      "steps": [
+        "Start the following processes in the background:",
+        "sleep 5000 &",
+        "sleep 8000 &",
+        "sleep 10000 &",
+        "sleep 15000 &",
+        "sleep 20000 &",
+        "Use the jobs command to list all background jobs running in your current shell.",
+        "Observe the job IDs and process states.",
+        "Run the jobs command again and redirect the output to bg.txt.",
+        "Verify the contents of bg.txt.",
+	"Hint: Each sleep command creates a separate background job. The job number is assigned by the shell."
+      ],
+      "real_world": [
+        "Real-world: Administrators frequently manage multiple background processes simultaneously during maintenance, testing, monitoring, and troubleshooting activities."
+      ]
+    },
+
+    {
+      "task_number": 7,
+      "title": "Phase 7 - Terminate a Process Using PID",
+      "steps": [
+        "Find the PID of the sleep 5000 process.",
+        "Verify that the process belongs to you before terminating it.",
+        "Terminate the process using the kill command without specifying a signal option.",
+        "Verify that the sleep 5000 process is no longer running.",
+	"Hint: Use ps -ef | grep sleep or pgrep -a sleep to identify the process. The default signal sent by kill is -15."
+      ],
+      "real_world": [
+        "Real-world: Administrators normally identify a process by PID and attempt a normal termination before using stronger signals."
+      ]
+    },
+
+    {
+      "task_number": 8,
+      "title": "Phase 8 - Gracefully Terminate a Process",
+      "steps": [
+        "Find the PID of the sleep 8000 process.",
+        "Verify that the process belongs to you.",
+        "Attempt to terminate it using appropriate command to kill process using PID",
+	"Use the 'kill -15 PID' for graceful termination of the process.",
+        "Verify that the sleep 8000 process has been terminated."
+      ],
+      "hint": "SIGTERM (signal 15) requests that a process terminate gracefully.",
+      "real_world": [
+        "Real-world: SIGTERM is commonly used when administrators want an application to shut down normally and perform any required cleanup."
+      ]
+    },
+
+    {
+      "task_number": 9,
+      "title": "Phase 9 - Force Terminate a Process",
+      "steps": [
+        "Use ps -ef | grep sleep to find the PID of the sleep 10000 process.",
+        "Verify that the process belongs to you.",
+        "Terminate the process using kill -9.",
+        "Verify that the sleep 10000 process is no longer running.",
+        "Understand -9 should normally be used only when a process cannot be terminated gracefully."
+      ],
+      "hint": "Signal 9 is SIGKILL. Unlike SIGTERM, it cannot be caught or handled by the target process.",
+      "real_world": [
+        "Real-world: SIGKILL is a last-resort administrative action because the process does not get an opportunity to perform normal cleanup."
+      ]
+    },
+
+    {
+      "task_number": 10,
+      "title": "Phase 10 - Terminate Remaining Processes by Name",
+      "steps": [
+        "Use pgrep -a sleep to identify the remaining sleep processes.",
+        "Determine which sleep processes were created by you during this lab.",
+        "Terminate the remaining sleep processes created by you, by name of process using pkill.",
+        "Use pgrep -a sleep to verify that no sleep processes created by you are still running.",
+	"Hint: Always verify process ownership before using pkill. Do not terminate sleep processes belonging to another user."
+      ],
+      "real_world": [
+        "Real-world: Name-based termination can affect multiple processes, so administrators must verify the target processes before using pkill."
+      ]
+    },
+
+    {
+      "task_number": 11,
+      "title": "Phase 11 - Count Processes Running on the Server",
+      "steps": [
+        "Display all processes currently running on the server using ps -ef.",
+        "Determine the total number of processes displayed.",
+        "Count the processes using an appropriate Linux command pipeline.",
+        "Store the process count in a file named process.txt inside your lab215_vim directory.",
+        "Verify the contents of process.txt."
+      ],
+      "hint": "You can use ps -ef together with wc -l. Be aware that the ps command itself may be included in the count depending on the command used.",
+      "real_world": [
+        "Real-world: Process counts provide administrators with a quick view of system activity and can help identify abnormal changes in process volume."
+      ]
+    }
+  ],
+
+  "completion_message": "Excellent work! You have successfully completed Lab 215 - Linux Process Management. You practiced viewing and identifying Linux processes, monitoring process activity, starting background jobs, managing jobs, terminating processes by PID and name, using process signals, and counting running processes. You also practiced the important Linux administration workflow of identifying a process, taking the appropriate action, verifying the result, and cleaning up processes created during the lab."
+}
