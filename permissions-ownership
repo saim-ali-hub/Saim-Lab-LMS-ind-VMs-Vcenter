@@ -73,3 +73,39 @@ total 1360
 -rw-rw----. 1 root   apache  53282 Sep  2 20:19 lab214_result.txt
 -rw-rw----. 1 apache apache   1104 Sep  2 20:19 php_debug.log
 -rw-rw----. 1 root   apache   1385 Sep  2 20:19 sorting.sh
+
+[root@platform html]# ls -l
+total 72
+-rw-r-----. 1 root apache   481 Sep  2 20:19 api.php
+drwxr-x---. 2 root apache    99 Sep  3 06:23 config
+-rw-r-----. 1 root apache   438 Sep  2 20:19 get_item.php
+-rw-r-----. 1 root apache  4014 Sep  2 20:19 get_results.php
+drwxr-xr-x. 2 root root      42 Sep  2 20:19 images
+-rw-r--r--. 1 root root    2437 Sep  2 20:19 index.html
+drwxr-xr-x. 2 root root      71 Sep  3 06:10 js
+-rw-r-----. 1 root apache 11790 Sep  2 20:19 leaderboard.php
+-rw-r-----. 1 root root    4847 Sep  2 20:19 leaderboardv1.php
+-rw-r--r--. 1 root root    4382 Sep  2 20:19 login.html
+-rw-r-----. 1 root apache  1010 Sep  2 20:19 login.php
+-rwxr-xr-x. 1 root root   19557 Sep  2 20:19 style.css
+-rw-r-----. 1 root root     135 Sep  2 20:19 user123
+
+[root@platform html]# ls -l js
+total 44
+-rw-r--r--. 1 root root  6749 Sep  3 06:03 main.js
+-rw-r--r--. 1 root root 17874 Sep  3 06:10 script_lab.js
+-rw-r--r--. 1 root root 12412 Sep  2 20:19 script_leaderboard.js
+
+[root@platform html]# ls -l config/
+total 20
+-rw-r-----. 1 root apache 1039 Sep  2 20:19 config.php
+-rw-r-----. 1 root apache 3203 Sep  3 06:13 functions.php
+-rw-r-----. 1 root apache  524 Sep  3 06:13 ldap.php
+-rw-r-----. 1 root apache  112 Sep  3 06:23 secrets.php
+-rw-r-----. 1 root apache  706 Sep  2 20:19 vcenter.php
+
+[root@platform html]# ls -l images/
+total 44
+-rw-r--r--. 1 root root 32806 Sep  2 20:19 image.png
+-rw-r--r--. 1 root root  7198 Sep  2 20:19 linoop1.png
+
