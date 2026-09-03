@@ -1,7 +1,7 @@
 
 KEY EXCHANGE SETUP ARCHITECTURE:
 #============================================================================
-192.168.111.113
+192.168.111.117
 PLATFORM
 │
 ├── validator private key
@@ -11,10 +11,10 @@ PLATFORM
     ↓
     copied to
     ↓
-192.168.111.165
+192.168.111.xxx
 STUDENT VM
 │
-└── /home/saim/.ssh/authorized_keys
+└── /home/user_name/.ssh/authorized_keys
        │
        └── validator public key
 
@@ -22,23 +22,25 @@ STUDENT VM
 #=============================================================================
 USER SETUP & SSH CONFIGURATION
 #=============================================================================
-1. Create user "linoop" platform.linoop.local (192.168.111.113)
+1. Create user "linoop" platform.linoop.local (192.168.111.117)
 
 2. added in /etc/ssh/sshd_config    
 
 #Match User anoncvs
 
-Match User validator
+Match User linoop
 
    ForceCommand /tmp/key-exchange.sh
 
 #===========================================================================
-[root@platform ~]# cat /tmp/key-exchange.sh
+[root@platform ~]# vi /usr/local/bin/key-exchange.sh
+[root@platform ~]# chmod 755 /usr/local/bin/key-exchange.sh
+[root@platform ~]# cat /usr/local/bin/key-exchange.sh
 #!/bin/bash
 
 set -e
 
-VALIDATOR_KEY='ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDZU5sH0iDBGd5759uLQEYRpRfX0CBY2vxYod6WmfZFnSXEsOSzUj1X4caGAnuknpfqcPiHzXyXbUGCxPFXHmH5tvevg5FJmco3Dmk6BOjeB9yHlxWEYl3Pniq7zy9QZI6jwXyXP4RKHDnr19CZ+T7tFTtrXEOqnqtCjSKXjesGO732JRwVVqWAMMEI4E8Xy/8UTWVkwlJFsb1e+/4HwbcSNGn/d0cEJaomYXKIpAjJTIarRUq1MERCpGZ7fRJ7jqerBSFb14VOstuWDKioL84RMbY9mTpAlezseiSO6kQvcAdwlb2WeYU+G0rxMoiMvWqkZ+xTgeGdiaQBDDzLQR4H validator@platform.linoop.local'
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC74hlITx1nnA9t72DtEy+IQPEE4zy3IfEhvS/iCyIYC5IW31kvYml3m8AFCTCipx7WiJHhnaHnbwKNUGGenVjY5ICno/VWjT4XNT8T+P/bUYNHv51zacf6VGf11OOIk09ob3D8ssGourR1XdzivvSBlB40Aj7KOJ5yZ/G+8FUuzGa2bj2twUITU/DANlJDGUD+dc5KxVLIKZAMgDWJZeKtVKRhztfjGwDOvORqWc8MIooJi4V4eGfdDEkai6PlCLhGKUlieztRjfT77YZpQvsPAlW+GY55uOJqTWCewYlhTvVpYDWmwdzKgVZxRUnA5G7WevHgXNCL/Vb1vslbwcVrCQ5bkrJmR5krBKurQUfwfXnwPLpxew9OTCeWuOZ9FAZt0upNNcBMiao1XOnvzqGs/BXfrfytCA+022Y4XN30T5/qCeqNJPeV+3sNNCOSB9ccjxgrpVBaEi4ciVu9Ukfi4SKYFBu3DcFMJle/oi0IhvRqLdifVeWIq0BHylTru5c= validator@platform.linoop.local
 
 echo
 echo "=========================================="
