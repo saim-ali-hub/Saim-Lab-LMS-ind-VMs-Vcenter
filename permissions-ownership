@@ -1,0 +1,75 @@
+[root@platform www]# ls -l
+total 4
+drwxr-xr-x. 2 root root      6 Aug 25 09:55 cgi-bin
+drwxr-xr-x. 5 root root   4096 Sep  2 20:32 html
+drwxr-s--x. 4 root apache   34 Sep  2 20:19 private_data
+
+[root@platform www]# ls -l private_data/
+total 4
+drwxr-s--x. 4 root apache 4096 Sep  3 05:36 lab
+drwxrws---. 2 root apache   55 Sep  2 20:19 validator
+
+[root@platform www]# ls -l private_data/validator/
+total 16
+-rw-r-----. 1 root apache 7184 Sep  2 20:19 evaluate_lab.php
+-rw-r-----. 1 root apache 6226 Sep  2 20:19 evaluate_quiz.php
+
+[root@platform www]# ls -l private_data/lab/
+total 440
+drwxr-x---. 2 root apache     52 Sep  2 20:19 extra
+-rw-r-----. 1 root apache  35022 Sep  2 20:19 function_file
+-rw-r-----. 1 root apache   5376 Sep  2 20:19 lab101.json
+-rw-r-----. 1 root apache   7930 Sep  2 20:19 lab102.json
+-rw-r-----. 1 root apache   4376 Sep  2 20:19 lab103.json
+-rw-r-----. 1 root apache   3265 Sep  2 20:19 lab104.json
+-rw-r-----. 1 root apache   7026 Sep  2 20:19 lab105.json
+-rw-r-----. 1 root apache   4723 Sep  2 20:19 lab1.json
+-rw-r-----. 1 root apache  10906 Sep  2 20:19 lab201.json
+-rw-r-----. 1 root apache   5972 Sep  2 20:19 lab202.json
+-rw-r-----. 1 root apache   5871 Sep  2 20:19 lab203.json
+-rw-r-----. 1 root apache   4646 Sep  2 20:19 lab204.json
+-rw-r-----. 1 root apache  12474 Sep  2 20:19 lab205.json
+-rw-r-----. 1 root apache   8024 Sep  2 20:19 lab206.json
+-rw-r-----. 1 root apache   7522 Sep  2 20:19 lab207.json
+-rw-r-----. 1 root apache  15628 Sep  2 20:19 lab208.json
+-rw-r-----. 1 root apache  11958 Sep  2 20:19 lab209.json
+-rw-r-----. 1 root apache   8852 Sep  2 20:19 lab210.json
+-rw-r-----. 1 root apache   9926 Sep  2 20:19 lab211.json
+-rw-r-----. 1 root apache   5925 Sep  2 20:19 lab212.json
+-rw-r-----. 1 root apache   5603 Sep  2 20:19 lab213.json
+-rw-r-----. 1 root apache  10040 Sep  2 20:19 lab214.json
+-rw-r-----. 1 root apache  14452 Sep  2 20:19 lab280.json
+-rw-r-----. 1 root apache   5482 Sep  2 20:19 lab2.json
+-rw-r-----. 1 root apache   5983 Sep  2 20:19 lab313.json
+-rw-r-----. 1 root apache   4708 Sep  2 20:19 labaaaa212.json
+-rw-r-----. 1 root apache   6874 Sep  2 20:19 labaaaaa211a.json
+-rw-r-----. 1 root apache   2418 Sep  2 20:19 list.json
+drwxrws---. 2 root apache   4096 Sep  2 20:19 results
+-rwxr-xr-x. 1 root apache   1984 Sep  2 20:19 validate_lab.sh
+-rwxr-xr-x. 1 root apache 152175 Sep  2 20:19 validator-2026.sh
+
+[root@platform www]# ls -l private_data/lab/results/
+total 1360
+-rw-rw----. 1 apache apache 639152 Sep  2 20:19 debug.log
+-rw-rw----. 1 root   apache     66 Sep  2 20:19 file1
+-rw-rw----. 1 root   apache   3312 Sep  2 20:19 lab101_result.txt
+-rw-rw----. 1 root   apache    592 Sep  2 20:19 lab102_result.txt
+-rw-rw----. 1 root   apache    432 Sep  2 20:19 lab103_result.txt
+-rw-rw----. 1 root   apache    432 Sep  2 20:19 lab104_result.txt
+-rw-rw----. 1 root   apache    512 Sep  2 20:19 lab105_result.txt
+-rw-rw----. 1 root   apache  72352 Sep  2 20:19 lab201_result.txt
+-rw-rw----. 1 root   apache  68672 Sep  2 20:19 lab202_result.txt
+-rw-rw----. 1 root   apache  43952 Sep  2 20:19 lab203_result.txt
+-rw-rw----. 1 root   apache  54970 Sep  2 20:19 lab204_result.txt
+-rw-rw----. 1 root   apache  52992 Sep  2 20:19 lab205_result.txt
+-rw-rw----. 1 root   apache  52352 Sep  2 20:19 lab206_result.txt
+-rw-rw----. 1 root   apache  29392 Sep  2 20:19 lab207_result.txt
+-rw-rw----. 1 root   apache  68592 Sep  2 20:19 lab208_result.txt
+-rw-rw----. 1 root   apache  43392 Sep  2 20:19 lab209_result.txt
+-rw-rw----. 1 root   apache  28672 Sep  2 20:19 lab210_result.txt
+-rw-rw----. 1 root   apache  61792 Sep  2 20:19 lab211_result.txt
+-rw-rw----. 1 root   apache  30672 Sep  2 20:19 lab212_result.txt
+-rw-rw----. 1 root   apache  30832 Sep  2 20:19 lab213_result.txt
+-rw-rw----. 1 root   apache  53282 Sep  2 20:19 lab214_result.txt
+-rw-rw----. 1 apache apache   1104 Sep  2 20:19 php_debug.log
+-rw-rw----. 1 root   apache   1385 Sep  2 20:19 sorting.sh
