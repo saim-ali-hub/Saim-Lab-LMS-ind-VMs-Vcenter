@@ -1,102 +1,82 @@
 #!/bin/bash
+
 STUDENT_NAME="$1"
-LAB_NUMBER="$2"
+STUDENT_IP="$2"
+LAB_NUMBER="$3"
 
-if [ -z "$STUDENT_NAME" ] || [ -z "$LAB_NUMBER" ]; then
-    echo "Usage: $0 <student_name> <lab_number>"
-    exit 1
-fi
-
-
-if ! id "$STUDENT_NAME" >/dev/null 2>&1; then
-    echo "Error: Student user '$STUDENT_NAME' does not exist."
-    exit 1
-fi
-
-# Prevent unexpected characters in username
-if ! [[ "$STUDENT_NAME" =~ ^[a-zA-Z0-9._-]+$ ]]; then
-    echo "Error: Invalid student username."
-    exit 1
-fi
-
-# VARIABLES
-export STUDENT_NAME
-export LAB_NUMBER
-
-HOME_DIR="/home/$STUDENT_NAME"
-
-if [ ! -d "$HOME_DIR" ]; then
-    echo "Error: Home directory not found: $HOME_DIR"
-    exit 1
-fi
-
-# VALIDATOR LIBRARY
 VALIDATOR="/var/www/private_data/lab/validator-2026.sh"
-# LOAD VALIDATION FUNCTIONS
-source "$VALIDATOR"
+SSH_KEY="/home/validator/.ssh/id_rsa"
+REMOTE_VALIDATOR="/tmp/linoop-validator-${LAB_NUMBER}-$$.sh"
 
-if [ $? -ne 0 ]; then
-    echo "Error: Unable to load validator library."
+if [ -z "$STUDENT_NAME" ] || [ -z "$STUDENT_IP" ] || [ -z "$LAB_NUMBER" ]; then
+    echo "Invalid validation request."
     exit 1
 fi
-
-# RUN SELECTED LAB
 
 echo "Sit tight. Validation of your $LAB_NUMBER is in process. Good luck....."
 
-case "$LAB_NUMBER" in
+# Copy validator to student's VM
+scp \
+    -i "$SSH_KEY" \
+    -o BatchMode=yes \
+    -o StrictHostKeyChecking=no \
+    -o UserKnownHostsFile=/dev/null \
+    -o LogLevel=ERROR \
+    "$VALIDATOR" \
+    "$STUDENT_NAME@$STUDENT_IP:$REMOTE_VALIDATOR"
 
-    lab201)
-        validate_lab201_commands_sysinfo 
-        ;;
+if [ $? -ne 0 ]; then
+    exit 1
+fi
 
-    lab202)
-        validate_lab202_linuxfs_navigation_fsmgt
-        ;;
+# Always attempt remote cleanup when this script exits
+cleanup() {
+    ssh \
+        -i "$SSH_KEY" \
+        -o BatchMode=yes \
+        -o StrictHostKeyChecking=no \
+        -o UserKnownHostsFile=/dev/null \
+        -o LogLevel=ERROR \
+        "$STUDENT_NAME@$STUDENT_IP" \
+        "rm -f '$REMOTE_VALIDATOR'" \
+        >/dev/null 2>&1
+}
 
-    lab203)
-        validate_lab203_command_navigation
-        ;;
+trap cleanup EXIT
 
-    lab204)
-        validate_lab204_review_navigation
-        ;;
-    lab205)
-        validate_lab205_file_permissions
-        ;;
-    lab206)
-        validate_lab206_file_permissionsII
-        ;;
-    lab207)
-        validate_lab207_ownership_group_management
-        ;;
-    lab208)
-        validate_lab208_linux_file_links
-        ;;
-    lab209)
-        validate_lab209_linux_admin_onboarding
-        ;;
-    lab210)
-        validate_lab210_tar_backup_management
-        ;;
-    lab211)
-        validate_lab211_production_portal_mgt
-        ;;
-    lab212)
-        validate_lab212_find_grep
-        ;;
-    lab213)
-        validate_lab213_vim_editor
-        ;;	 
-    lab214)
-        validate_lab214_morning_incident
-        ;;
-    *)
+# Run validator on student's VM
+ssh \
+    -i "$SSH_KEY" \
+    -o BatchMode=yes \
+    -o StrictHostKeyChecking=no \
+    -o UserKnownHostsFile=/dev/null \
+    -o LogLevel=ERROR \
+    "$STUDENT_NAME@$STUDENT_IP" \
+    "export STUDENT_NAME='$STUDENT_NAME';
+     export LAB_NUMBER='$LAB_NUMBER';
 
-        echo "Invalid lab: $LAB_NUMBER"
-        exit 1
-        ;;
+     trap 'rm -f \"$REMOTE_VALIDATOR\"' EXIT;
 
-esac
+     source '$REMOTE_VALIDATOR';
 
-exit 0
+     case \"\$LAB_NUMBER\" in
+        lab201) validate_lab201_commands_sysinfo ;;
+        lab202) validate_lab202_linuxfs_navigation_fsmgt ;;
+        lab203) validate_lab203_command_navigation ;;
+        lab204) validate_lab204_review_navigation ;;
+        lab205) validate_lab205_file_permissions ;;
+        lab206) validate_lab206_file_permissionsII ;;
+        lab207) validate_lab207_ownership_group_management ;;
+        lab208) validate_lab208_linux_file_links ;;
+        lab209) validate_lab209_linux_admin_onboarding ;;
+        lab210) validate_lab210_tar_backup_management ;;
+        lab211) validate_lab211_production_portal_mgt ;;
+        lab212) validate_lab212_find_grep ;;
+        lab213) validate_lab213_vim_editor ;;
+        lab214) validate_lab214_morning_incident ;;
+        lab215) validate_lab215_process_management ;;
+        lab216) validate_lab216_advanced_process_management ;;
+        *) echo 'Invalid lab'; exit 1 ;;
+     esac"
+
+exit $?
