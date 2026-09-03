@@ -23,14 +23,15 @@ STUDENT VM
 USER SETUP & SSH CONFIGURATION
 #=============================================================================
 1. Create user "linoop" platform.linoop.local (192.168.111.117)
+2. Assign passwd
 
-2. added in /etc/ssh/sshd_config    
+3. added in /etc/ssh/sshd_config    
 
 #Match User anoncvs
 
 Match User linoop
 
-   ForceCommand /tmp/key-exchange.sh
+   ForceCommand /usr/local/bin/key-exchange.sh
 
 #===========================================================================
 [root@platform ~]# vi /usr/local/bin/key-exchange.sh
@@ -91,3 +92,13 @@ echo
 
 exit 0
 # ===========================================================================
+
+SUDO Privilege:
+==============
+visudo -f /etc/sudoers.d/linoop-validator
+apache ALL=(validator) NOPASSWD: /var/www/private_data/lab/validate_lab.sh
+
+chmod 440 /etc/sudoers.d/linoop-validator
+chown root:root /etc/sudoers.d/linoop-validator
+
+
