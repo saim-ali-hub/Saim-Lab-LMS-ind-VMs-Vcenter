@@ -1,4 +1,3 @@
-
 KEY EXCHANGE SETUP ARCHITECTURE:
 #============================================================================
 192.168.111.117
@@ -100,5 +99,3 @@ apache ALL=(validator) NOPASSWD: /var/www/private_data/lab/validate_lab.sh
 
 chmod 440 /etc/sudoers.d/linoop-validator
 chown root:root /etc/sudoers.d/linoop-validator
-
-

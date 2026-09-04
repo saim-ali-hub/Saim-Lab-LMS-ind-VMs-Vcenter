@@ -60,6 +60,28 @@
         "file": "lab212.json"
     },
     {
+        "category": "Linux",
+        "name": "lab 213 - Vim Editor File Management",
+        "file": "lab213.json"
+
+    },
+    {
+     "category": "Linux",
+     "name": "lab 214 - The Morning Incident: Linux Administrator on Duty",
+     "file": "lab214.json"
+    },
+    {
+     "category": "Linux",
+     "name": "lab 215 - Simple Linux Process Management",
+     "file": "lab215.json"
+    },
+    {
+     "category": "Linux",
+     "name": "lab 216 - Advanced Linux Process Management",
+     "file": "lab216.json"
+    },
+    {
+
         "category": "Amazon Web Services",
         "name": "Lab101 - Launch an AWS EC2 Linux Instance (Amazon Linux 2023)",
         "file": "lab101.json"
@@ -83,5 +105,11 @@
         "category": "Amazon Web Services",
         "name": "Lab105 - Amazon S3 Storage Management",
         "file": "lab105.json"
+    },
+    {
+        "category": "Technical Screening",
+        "name": "Technical Screening Round - 3",
+        "file": "lab903.json"
     }
+
 ]

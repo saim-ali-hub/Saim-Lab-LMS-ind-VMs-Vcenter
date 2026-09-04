@@ -1,0 +1,814 @@
+2026-08-16 23:26:30
+PHP UID: uid=48(apache) gid=48(apache) groups=48(apache) context=system_u:system_r:httpd_t:s0
+PHP SELINUX: system_u:system_r:httpd_t:s0
+PHP TMP: drwxrwxrwt. 2 root root 6 Aug 13 15:30 /tmp
+PHP KIT: ls: cannot access '/tmp/onboarding_kit': No such file or directory
+PHP KIT FILE: cat: /tmp/onboarding_kit/TICKET_4471.txt: No such file or directory
+
+2026-08-16 23:27:26
+PHP UID: uid=48(apache) gid=48(apache) groups=48(apache) context=system_u:system_r:httpd_t:s0
+PHP SELINUX: system_u:system_r:httpd_t:s0
+PHP TMP: drwxrwxrwt. 2 root root 6 Aug 13 15:30 /tmp
+PHP KIT: ls: cannot access '/tmp/onboarding_kit': No such file or directory
+PHP KIT FILE: cat: /tmp/onboarding_kit/TICKET_4471.txt: No such file or directory
+
+2026-08-16 23:27:45
+PHP UID: uid=48(apache) gid=48(apache) groups=48(apache) context=system_u:system_r:httpd_t:s0
+PHP SELINUX: system_u:system_r:httpd_t:s0
+PHP TMP: drwxrwxrwt. 2 root root 6 Aug 13 15:30 /tmp
+PHP KIT: ls: cannot access '/tmp/onboarding_kit': No such file or directory
+PHP KIT FILE: cat: /tmp/onboarding_kit/TICKET_4471.txt: No such file or directory
+
+2026-09-03 21:23:50 USER=ali.qaisar LAB=lab216 IP=192.168.111.239 STATUS=1 OUTPUT_LINES=1
+Error: Student user 'ali.qaisar' does not exist.
+============================================
+COUNT RESULT: TOTAL=0 PASSED=0 PERCENTAGE=0
+2026-09-03 21:24:47 USER=ali.qaisar LAB=lab216 IP=192.168.111.239 STATUS=1 OUTPUT_LINES=1
+Error: Student user 'ali.qaisar' does not exist.
+============================================
+COUNT RESULT: TOTAL=0 PASSED=0 PERCENTAGE=0
+2026-09-03 21:49:59 USER=ali.qaisar LAB=lab216 IP=192.168.111.239 STATUS=1 OUTPUT_LINES=1
+Error: Home directory not found: /home/ali.qaisar
+============================================
+COUNT RESULT: TOTAL=0 PASSED=0 PERCENTAGE=0
+2026-09-03 22:42:08 USER=ali.qaisar LAB=lab216 IP=192.168.111.239 STATUS=1 OUTPUT_LINES=1
+Error: Student user 'ali.qaisar' does not exist.
+============================================
+COUNT RESULT: TOTAL=0 PASSED=0 PERCENTAGE=0
+2026-09-03 23:01:17 USER=ali.qaisar LAB=lab216 IP=192.168.111.239 STATUS=2 OUTPUT_LINES=3
+Warning: Permanently added '192.168.111.239' (ED25519) to the list of known hosts.
+/var/www/private_data/lab/validate_lab.sh: line 114: unexpected EOF while looking for matching `"'
+/var/www/private_data/lab/validate_lab.sh: line 121: syntax error: unexpected end of file
+============================================
+COUNT RESULT: TOTAL=0 PASSED=0 PERCENTAGE=0
+2026-09-03 23:03:59 USER=ali.qaisar LAB=lab216 IP=192.168.111.239 STATUS=0 OUTPUT_LINES=148
+Sit tight. Validation of your lab216 is in process. Good luck.....
+Warning: Permanently added '192.168.111.239' (ED25519) to the list of known hosts.
+Warning: Permanently added '192.168.111.239' (ED25519) to the list of known hosts.
+Checking Lab 216 - Advanced Linux Process Management...
+<div class='validation-section'>Task 1 - Create the Advanced Process Management Workspace</div>
+<div class='validation-pass'>✓ Task 1: lab216_challenge_vim directory exists – Pass</div>
+<div class='validation-section'>Task 2 - Find a Process by Name</div>
+<div class='validation-pass'>✓ Task 2: sshd PID and process name can be identified using pgrep – Pass</div>
+<div class='validation-section'>Task 3 - Start Multiple Background Processes</div>
+<div class='validation-pass'>✓ Task 3: background sleep jobs recorded in bg.txt – Pass</div>
+<div class='validation-section'>Task 4 - Bring a Background Job to the Foreground</div>
+<div class='validation-pass'>✓ Task 4: sleep 5000 process is no longer running – Pass</div>
+<div class='validation-section'>Task 5 - Resume and Terminate a Job Using Job ID</div>
+<div class='validation-pass'>✓ Task 5: sleep 5000 process was terminated – Pass</div>
+<div class='validation-section'>Task 6 - Identify Parent and Child Processes</div>
+<div class='validation-pass'>✓ Task 6: parent/child process investigation completed manually</div>
+<div class='validation-section'>Task 7 - Terminate Remaining Sleep Processes</div>
+<div class='validation-pass'>✓ Task 7: no lab-created sleep processes remain – Pass</div>
+<div class='validation-section'>Task 8 - Run a Process with a Different Priority</div>
+<div class='validation-pass'>✓ Task 8: nice value 10 recorded in nice_value.txt – Pass</div>
+<div class='validation-section'>Task 9 - Change Process Priority</div>
+<div class='validation-pass'>✓ Task 9: nice value changed to 15 and recorded – Pass</div>
+<div class='validation-section'>Task 10 - Terminate Remaining Processes and Verify Cleanup</div>
+<div class='validation-pass'>✓ Task 10: all lab-created processes have been cleaned up – Pass</div>
+<div class='validation-section'>Task 11 - Display and Sort Processes by CPU Usage</div>
+<div class='validation-pass'>✓ Task 11a: sort_process_cpu.txt exists – Pass</div>
+<div class='validation-pass'>✓ Task 11b: process output contains the required columns – Pass</div>
+<div class='validation-pass'>✓ Task 11c: processes are sorted by CPU usage in descending order – Pass</div>
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>ali.qaisar</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>Lab 216 - Advanced Linux Process Management</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>13</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>13</span>
+</div>
+
+</div>
+
+<div class="result-percentage">100%</div>
+
+<div class="result-success">
+✓ LAB PASSED
+</div>
+
+</div>
+============================================
+COUNT RESULT: TOTAL=13 PASSED=13 PERCENTAGE=100
+2026-09-03 23:06:17 USER=ali.qaisar LAB=lab216 IP=192.168.111.239 STATUS=0 OUTPUT_LINES=147
+Sit tight. Validation of your lab216 is in process. Good luck.....
+Warning: Permanently added '192.168.111.239' (ED25519) to the list of known hosts.
+Warning: Permanently added '192.168.111.239' (ED25519) to the list of known hosts.
+Checking Lab 216 - Advanced Linux Process Management...
+<div class='validation-section'>Task 1 - Create the Advanced Process Management Workspace</div>
+<div class='validation-fail'>✗ Task 1: lab216_challenge_vim directory is missing – Fail</div>
+<div class='validation-section'>Task 2 - Find a Process by Name</div>
+<div class='validation-pass'>✓ Task 2: sshd PID and process name can be identified using pgrep – Pass</div>
+<div class='validation-section'>Task 3 - Start Multiple Background Processes</div>
+<div class='validation-fail'>✗ Task 3: bg.txt is missing or empty – Fail</div>
+<div class='validation-section'>Task 4 - Bring a Background Job to the Foreground</div>
+<div class='validation-pass'>✓ Task 4: sleep 5000 process is no longer running – Pass</div>
+<div class='validation-section'>Task 5 - Resume and Terminate a Job Using Job ID</div>
+<div class='validation-pass'>✓ Task 5: sleep 5000 process was terminated – Pass</div>
+<div class='validation-section'>Task 6 - Identify Parent and Child Processes</div>
+<div class='validation-pass'>✓ Task 6: parent/child process investigation completed manually</div>
+<div class='validation-section'>Task 7 - Terminate Remaining Sleep Processes</div>
+<div class='validation-pass'>✓ Task 7: no lab-created sleep processes remain – Pass</div>
+<div class='validation-section'>Task 8 - Run a Process with a Different Priority</div>
+<div class='validation-fail'>✗ Task 8: nice_value.txt is missing or empty – Fail</div>
+<div class='validation-section'>Task 9 - Change Process Priority</div>
+<div class='validation-fail'>✗ Task 9: renice_value.txt is missing or empty – Fail</div>
+<div class='validation-section'>Task 10 - Terminate Remaining Processes and Verify Cleanup</div>
+<div class='validation-pass'>✓ Task 10: all lab-created processes have been cleaned up – Pass</div>
+<div class='validation-section'>Task 11 - Display and Sort Processes by CPU Usage</div>
+<div class='validation-fail'>✗ Task 11a: sort_process_cpu.txt is missing – Fail</div>
+<div class='validation-fail'>✗ Task 11b: required process columns are missing from sort_process_cpu.txt – Fail</div>
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>ali.qaisar</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>Lab 216 - Advanced Linux Process Management</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>13</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>6</span>
+</div>
+
+</div>
+
+<div class="result-percentage">46%</div>
+
+<div class="result-failed">
+✗ LAB NEEDS ATTENTION
+</div>
+
+</div>
+============================================
+COUNT RESULT: TOTAL=12 PASSED=6 PERCENTAGE=50
+2026-09-03 23:14:32 USER=ali.qaisar LAB=lab216 IP=192.168.111.239 STATUS=0 OUTPUT_LINES=148
+Sit tight. Validation of your lab216 is in process. Good luck.....
+Warning: Permanently added '192.168.111.239' (ED25519) to the list of known hosts.
+Warning: Permanently added '192.168.111.239' (ED25519) to the list of known hosts.
+Checking Lab 216 - Advanced Linux Process Management...
+<div class='validation-section'>Task 1 - Create the Advanced Process Management Workspace</div>
+<div class='validation-pass'>✓ Task 1: lab216_challenge_vim directory exists – Pass</div>
+<div class='validation-section'>Task 2 - Find a Process by Name</div>
+<div class='validation-pass'>✓ Task 2: sshd PID and process name can be identified using pgrep – Pass</div>
+<div class='validation-section'>Task 3 - Start Multiple Background Processes</div>
+<div class='validation-pass'>✓ Task 3: background sleep jobs recorded in bg.txt – Pass</div>
+<div class='validation-section'>Task 4 - Bring a Background Job to the Foreground</div>
+<div class='validation-pass'>✓ Task 4: sleep 5000 process is no longer running – Pass</div>
+<div class='validation-section'>Task 5 - Resume and Terminate a Job Using Job ID</div>
+<div class='validation-pass'>✓ Task 5: sleep 5000 process was terminated – Pass</div>
+<div class='validation-section'>Task 6 - Identify Parent and Child Processes</div>
+<div class='validation-pass'>✓ Task 6: parent/child process investigation completed manually</div>
+<div class='validation-section'>Task 7 - Terminate Remaining Sleep Processes</div>
+<div class='validation-pass'>✓ Task 7: no lab-created sleep processes remain – Pass</div>
+<div class='validation-section'>Task 8 - Run a Process with a Different Priority</div>
+<div class='validation-pass'>✓ Task 8: nice value 10 recorded in nice_value.txt – Pass</div>
+<div class='validation-section'>Task 9 - Change Process Priority</div>
+<div class='validation-pass'>✓ Task 9: nice value changed to 15 and recorded – Pass</div>
+<div class='validation-section'>Task 10 - Terminate Remaining Processes and Verify Cleanup</div>
+<div class='validation-pass'>✓ Task 10: all lab-created processes have been cleaned up – Pass</div>
+<div class='validation-section'>Task 11 - Display and Sort Processes by CPU Usage</div>
+<div class='validation-pass'>✓ Task 11a: sort_process_cpu.txt exists – Pass</div>
+<div class='validation-pass'>✓ Task 11b: process output contains the required columns – Pass</div>
+<div class='validation-pass'>✓ Task 11c: processes are sorted by CPU usage in descending order – Pass</div>
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>ali.qaisar</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>Lab 216 - Advanced Linux Process Management</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>13</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>13</span>
+</div>
+
+</div>
+
+<div class="result-percentage">100%</div>
+
+<div class="result-success">
+✓ LAB PASSED
+</div>
+
+</div>
+============================================
+COUNT RESULT: TOTAL=13 PASSED=13 PERCENTAGE=100
+2026-09-03 23:23:42 USER=ali.qaisar LAB=lab216 IP=192.168.111.239 STATUS=2 OUTPUT_LINES=11
+Sit tight. Validation of your lab216 is in process. Good luck.....
+
+1 device has a firmware upgrade available.
+Run `fwupdmgr get-upgrades` for more information.
+
+Activate the web console with: systemctl enable --now cockpit.socket
+
+/var/www/private_data/lab/validate_lab.sh: line 24: $'export STUDENT_NAME=\'ali.qaisar\';\n      export LAB_NUMBER=\'lab216\';': command not found
+/var/www/private_data/lab/validate_lab.sh: line 28: $REMOTE_VALIDATOR: No such file or directory
+/var/www/private_data/lab/validate_lab.sh: line 48: unexpected EOF while looking for matching `"'
+/var/www/private_data/lab/validate_lab.sh: line 51: syntax error: unexpected end of file
+============================================
+COUNT RESULT: TOTAL=0 PASSED=0 PERCENTAGE=0
+2026-09-03 23:28:38 USER=ali.qaisar LAB=lab216 IP=192.168.111.239 STATUS=2 OUTPUT_LINES=4
+Sit tight. Validation of your lab216 is in process. Good luck.....
+/var/www/private_data/lab/validate_lab.sh: line 27: $REMOTE_VALIDATOR: No such file or directory
+/var/www/private_data/lab/validate_lab.sh: line 47: unexpected EOF while looking for matching `"'
+/var/www/private_data/lab/validate_lab.sh: line 50: syntax error: unexpected end of file
+============================================
+COUNT RESULT: TOTAL=0 PASSED=0 PERCENTAGE=0
+2026-09-03 23:29:59 USER=ali.qaisar LAB=lab216 IP=192.168.111.239 STATUS=0 OUTPUT_LINES=146
+Sit tight. Validation of your lab216 is in process. Good luck.....
+Checking Lab 216 - Advanced Linux Process Management...
+<div class='validation-section'>Task 1 - Create the Advanced Process Management Workspace</div>
+<div class='validation-pass'>✓ Task 1: lab216_challenge_vim directory exists – Pass</div>
+<div class='validation-section'>Task 2 - Find a Process by Name</div>
+<div class='validation-pass'>✓ Task 2: sshd PID and process name can be identified using pgrep – Pass</div>
+<div class='validation-section'>Task 3 - Start Multiple Background Processes</div>
+<div class='validation-pass'>✓ Task 3: background sleep jobs recorded in bg.txt – Pass</div>
+<div class='validation-section'>Task 4 - Bring a Background Job to the Foreground</div>
+<div class='validation-pass'>✓ Task 4: sleep 5000 process is no longer running – Pass</div>
+<div class='validation-section'>Task 5 - Resume and Terminate a Job Using Job ID</div>
+<div class='validation-pass'>✓ Task 5: sleep 5000 process was terminated – Pass</div>
+<div class='validation-section'>Task 6 - Identify Parent and Child Processes</div>
+<div class='validation-pass'>✓ Task 6: parent/child process investigation completed manually</div>
+<div class='validation-section'>Task 7 - Terminate Remaining Sleep Processes</div>
+<div class='validation-pass'>✓ Task 7: no lab-created sleep processes remain – Pass</div>
+<div class='validation-section'>Task 8 - Run a Process with a Different Priority</div>
+<div class='validation-pass'>✓ Task 8: nice value 10 recorded in nice_value.txt – Pass</div>
+<div class='validation-section'>Task 9 - Change Process Priority</div>
+<div class='validation-pass'>✓ Task 9: nice value changed to 15 and recorded – Pass</div>
+<div class='validation-section'>Task 10 - Terminate Remaining Processes and Verify Cleanup</div>
+<div class='validation-pass'>✓ Task 10: all lab-created processes have been cleaned up – Pass</div>
+<div class='validation-section'>Task 11 - Display and Sort Processes by CPU Usage</div>
+<div class='validation-pass'>✓ Task 11a: sort_process_cpu.txt exists – Pass</div>
+<div class='validation-pass'>✓ Task 11b: process output contains the required columns – Pass</div>
+<div class='validation-pass'>✓ Task 11c: processes are sorted by CPU usage in descending order – Pass</div>
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>ali.qaisar</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>Lab 216 - Advanced Linux Process Management</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>13</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>13</span>
+</div>
+
+</div>
+
+<div class="result-percentage">100%</div>
+
+<div class="result-success">
+✓ LAB PASSED
+</div>
+
+</div>
+============================================
+COUNT RESULT: TOTAL=13 PASSED=13 PERCENTAGE=100
+2026-09-03 23:39:31 USER=ali.qaisar LAB=lab216 IP=192.168.111.239 STATUS=0 OUTPUT_LINES=146
+Sit tight. Validation of your lab216 is in process. Good luck.....
+Checking Lab 216 - Advanced Linux Process Management...
+<div class='validation-section'>Task 1 - Create the Advanced Process Management Workspace</div>
+<div class='validation-pass'>✓ Task 1: lab216_challenge_vim directory exists – Pass</div>
+<div class='validation-section'>Task 2 - Find a Process by Name</div>
+<div class='validation-pass'>✓ Task 2: sshd PID and process name can be identified using pgrep – Pass</div>
+<div class='validation-section'>Task 3 - Start Multiple Background Processes</div>
+<div class='validation-pass'>✓ Task 3: background sleep jobs recorded in bg.txt – Pass</div>
+<div class='validation-section'>Task 4 - Bring a Background Job to the Foreground</div>
+<div class='validation-pass'>✓ Task 4: sleep 5000 process is no longer running – Pass</div>
+<div class='validation-section'>Task 5 - Resume and Terminate a Job Using Job ID</div>
+<div class='validation-pass'>✓ Task 5: sleep 5000 process was terminated – Pass</div>
+<div class='validation-section'>Task 6 - Identify Parent and Child Processes</div>
+<div class='validation-pass'>✓ Task 6: parent/child process investigation completed manually</div>
+<div class='validation-section'>Task 7 - Terminate Remaining Sleep Processes</div>
+<div class='validation-pass'>✓ Task 7: no lab-created sleep processes remain – Pass</div>
+<div class='validation-section'>Task 8 - Run a Process with a Different Priority</div>
+<div class='validation-pass'>✓ Task 8: nice value 10 recorded in nice_value.txt – Pass</div>
+<div class='validation-section'>Task 9 - Change Process Priority</div>
+<div class='validation-pass'>✓ Task 9: nice value changed to 15 and recorded – Pass</div>
+<div class='validation-section'>Task 10 - Terminate Remaining Processes and Verify Cleanup</div>
+<div class='validation-pass'>✓ Task 10: all lab-created processes have been cleaned up – Pass</div>
+<div class='validation-section'>Task 11 - Display and Sort Processes by CPU Usage</div>
+<div class='validation-pass'>✓ Task 11a: sort_process_cpu.txt exists – Pass</div>
+<div class='validation-pass'>✓ Task 11b: process output contains the required columns – Pass</div>
+<div class='validation-pass'>✓ Task 11c: processes are sorted by CPU usage in descending order – Pass</div>
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>ali.qaisar</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>Lab 216 - Advanced Linux Process Management</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>13</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>13</span>
+</div>
+
+</div>
+
+<div class="result-percentage">100%</div>
+
+<div class="result-success">
+✓ LAB PASSED
+</div>
+
+</div>
+============================================
+COUNT RESULT: TOTAL=13 PASSED=13 PERCENTAGE=100

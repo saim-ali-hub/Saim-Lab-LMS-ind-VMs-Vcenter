@@ -6,6 +6,7 @@ window.AppState = window.AppState || {
 
     currentLabData: null,
     currentLabFile: null,
+    currentLabCategory: null,
     currentLabState: null,
     labStateMap: {},
     currentUser: null
@@ -107,12 +108,14 @@ function closeLabPopup() {
    OPEN LAB
 ========================================================= */
 
-function openItem(section, file) {
+function openItem(section, file, category) {
 
     console.log(
         "openItem:",
         section,
-        file
+        file,
+        "CATEGORY:",
+        category
     );
 
 
@@ -178,7 +181,14 @@ function openItem(section, file) {
 
         AppState.currentLabFile =
             file;
+     
+	AppState.currentLabCategory =
+            category || "";
 
+        console.log(
+           "CURRENT LAB CATEGORY:",
+           AppState.currentLabCategory
+       );
 
         /* Initialize lab state */
 

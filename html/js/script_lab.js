@@ -137,7 +137,7 @@ function loadLabSection() {
 
                 li.onclick = function () {
 
-                    openItem("lab", item.file);
+                    openItem("lab", item.file, item.category);
 
                 };
 
@@ -547,6 +547,8 @@ function renderLabQuestions() {
        VALIDATE BUTTON
     ===================================================== */
 
+    if (AppState.currentLabCategory !== "Technical Screening") {
+
     html += `
 
         <button
@@ -563,8 +565,14 @@ function renderLabQuestions() {
         >
             VALIDATE
         </button>
+       `;
 
-        </div>
+     }
+
+     html += `
+
+
+       </div>
 
     `;
 

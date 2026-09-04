@@ -1,0 +1,1 @@
+apache ALL=(validator) NOPASSWD: /var/www/private_data/lab/validate_lab.sh
