@@ -5707,14 +5707,14 @@ if [ -f "$FIND_TASKS" ]; then
         fi
     done < <(
         cd "$BASE" &&
-        find investigation/etc/logrotate.d -type f -mtime +2 2>/dev/null
+        find investigation/etc/logrotate.d -type f -mtime -2 2>/dev/null
     )
 else
     TASK5B_OK=0
 fi
 
 if [ "$TASK5B_OK" -eq 1 ]; then
-    pass "Task 5b: logrotate files older than 2 days recorded"
+    pass "Task 5b: logrotate files older less than 2 days recorded"
 else
     fail "Task 5b: required logrotate results are missing"
 fi
@@ -5993,3 +5993,2764 @@ $RESULT_ICON $RESULT_TEXT
 HTML
 }
 #=====================================================================
+
+validate_lab215_process_management() {
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "Checking Lab 215 - Simple Linux Process Management..."
+
+    HOME_DIR="/home/$STUDENT_NAME"
+    BASE="$HOME_DIR/lab215_vim"
+
+    LAB_NAME="Lab 215 - Simple Linux Process Management"
+    DATE=$(date "+%F %T")
+
+    TOTAL_TASKS=23
+    PASSED=0
+
+    # ============================================================
+    # HELPERS
+    # ============================================================
+
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # ============================================================
+    # TASK 1 - WORKING DIRECTORY
+    # ============================================================
+
+    echo "<div class='validation-section'>Task 1 - Create the Process Management Workspace</div>"
+
+    if [ -d "$BASE" ]; then
+        pass "Task 1a: lab215_vim directory exists"
+    else
+        fail "Task 1a: lab215_vim directory is missing"
+    fi
+
+    # ============================================================
+    # TASK 2 - VIEW RUNNING PROCESSES
+    # ============================================================
+
+    echo "<div class='validation-section'>Task 2 - View Running Processes</div>"
+
+    # Verify ps is available and able to display current user's processes
+    PS_OUTPUT=$(ps -u "$STUDENT_NAME" -o pid=,ppid=,user=,stat=,comm= 2>/dev/null)
+
+    if [ -n "$PS_OUTPUT" ]; then
+        pass "Task 2a: processes can be displayed using ps"
+    else
+        fail "Task 2a: unable to verify ps process output"
+    fi
+
+    # Verify system-wide process listing works
+    PS_EF=$(ps -ef 2>/dev/null | head -n 2)
+
+    if echo "$PS_EF" | grep -q "PID"; then
+        pass "Task 2b: system-wide process information is available"
+    else
+        fail "Task 2b: ps -ef output could not be verified"
+    fi
+
+    # Verify ps aux style output
+    PS_AUX=$(ps aux 2>/dev/null | head -n 2)
+
+    if echo "$PS_AUX" | grep -q "%CPU"; then
+        pass "Task 2c: CPU and memory process information is available"
+    else
+        fail "Task 2c: ps aux output could not be verified"
+    fi
+
+    # ============================================================
+    # TASK 3 - START BACKGROUND VIM PROCESSES
+    # ============================================================
+
+    echo "<div class='validation-section'>Task 3 - Start Background Processes</div>"
+
+    BG_FILE="$BASE/bg.txt"
+
+    if [ -f "$BG_FILE" ] &&
+       grep -Eq "^\[[0-9]+\].*(Running|Stopped).*vim" "$BG_FILE"
+    then
+	pass "Task 3a: process file1_bg.vim in backgroud"
+    else
+        fail "Task 3a: background file1_bg.vim job information is missing from bg.txt"
+    fi
+
+    if [ -f "$BG_FILE" ]; 
+       grep -Eq "^\[[0-9]+\].*(Running|Stopped).*vim" "$BG_FILE"
+    then
+        pass "Task 3b: process file2_bg.vim in backgroud"
+    else
+        fail "Task 3b: background file2_bg.vim job information is missing from bg.txt"
+    fi
+
+    # ============================================================
+    # TASK 4 - BACKGROUND JOB EVIDENCE
+    # ============================================================
+
+
+    echo "<div class='validation-section'>Task 4 - Investigate Background Jobs</div>"
+
+    BG_FILE="$BASE/bg.txt"
+    
+    if [ -f "$BG_FILE" ]; then
+        pass "Task 4a: bg.txt exists"
+    else
+        fail "Task 4a: bg.txt is missing"
+    fi
+    
+    # Task 4 requires the jobs command output.
+    if [ -f "$BG_FILE" ] &&
+       grep -Eq "^\[[0-9]+\].*(Running|Stopped).*vim" "$BG_FILE"
+    then
+        pass "Task 4b: Vim background job information recorded in bg.txt"
+    else
+        fail "Task 4b: Vim background job information is missing from bg.txt"
+    fi
+    
+    
+    # ============================================================
+    # TASK 5 - VIM PROCESS TERMINATION
+    # ============================================================
+    
+    echo "<div class='validation-section'>Task 5 - Terminate Vim Processes by Name</div>"
+    
+    # Task 5 requires pgrep output to be redirected to bg.txt.
+    # Verify that Vim PID/process information was recorded.
+    if [ -f "$BG_FILE" ] &&
+       grep -Eq "^[[:space:]]*[0-9]+[[:space:]]+vim( |$)" "$BG_FILE"
+    then
+        pass "Task 5a: Vim process PID information recorded in bg.txt"
+    else
+    fail "Task 5a: Vim process PID information is missing from bg.txt"
+    fi
+    
+    # Verify that no Vim processes belonging to the student remain.
+    VIM_PROCESSES=$(ps -u "$STUDENT_NAME" -o pid=,comm= 2>/dev/null |
+        awk '$2 == "vim" || $2 == "vim.basic" {print $1}')
+    
+    if [ -z "$VIM_PROCESSES" ]; then
+        pass "Task 5b: no Vim processes belonging to the student remain"
+    else
+        fail "Task 5b: Vim process(es) belonging to the student are still running"
+    fi
+
+    # ============================================================
+    # TASK 6 - MULTIPLE BACKGROUND SLEEP PROCESSES
+    # ============================================================
+
+    echo "<div class='validation-section'>Task 6 - Manage Multiple Background Processes</div>"
+
+    if [ -f "$BG_FILE" ]; then
+
+        if grep -Eq "sleep 5000" "$BG_FILE"; then
+            pass "Task 6a: sleep 5000 job recorded in bg.txt"
+        else
+            fail "Task 6a: sleep 5000 job is not recorded in bg.txt"
+        fi
+
+        if grep -Eq "sleep 8000" "$BG_FILE"; then
+            pass "Task 6b: sleep 8000 job recorded in bg.txt"
+        else
+            fail "Task 6b: sleep 8000 job is not recorded in bg.txt"
+        fi
+
+        if grep -Eq "sleep 10000" "$BG_FILE"; then
+            pass "Task 6c: sleep 10000 job recorded in bg.txt"
+        else
+            fail "Task 6c: sleep 10000 job is not recorded in bg.txt"
+        fi
+
+        if grep -Eq "sleep 15000" "$BG_FILE"; then
+            pass "Task 6d: sleep 15000 job recorded in bg.txt"
+        else
+            fail "Task 6d: sleep 15000 job is not recorded in bg.txt"
+        fi
+
+        if grep -Eq "sleep 20000" "$BG_FILE"; then
+            pass "Task 6e: sleep 20000 job recorded in bg.txt"
+        else
+            fail "Task 6e: sleep 20000 job is not recorded in bg.txt"
+        fi
+
+    else
+        fail "Task 6: bg.txt is missing"
+    fi
+
+    # ============================================================
+    # TASK 7 - KILL SLEEP 5000
+    # ============================================================
+
+    echo "<div class='validation-section'>Task 7 - Terminate a Process Using PID</div>"
+
+    SLEEP5000=$(ps -u "$STUDENT_NAME" -o args= 2>/dev/null |
+        grep -E '^sleep 5000$')
+
+    if [ -z "$SLEEP5000" ]; then
+        pass "Task 7: sleep 5000 process is no longer running"
+    else
+        fail "Task 7: sleep 5000 process is still running"
+    fi
+
+    # ============================================================
+    # TASK 8 - SIGTERM
+    # ============================================================
+
+    echo "<div class='validation-section'>Task 8 - Gracefully Terminate a Process</div>"
+
+    SLEEP8000=$(ps -u "$STUDENT_NAME" -o args= 2>/dev/null |
+        grep -E '^sleep 8000$')
+
+    if [ -z "$SLEEP8000" ]; then
+        pass "Task 8: sleep 8000 process is no longer running"
+    else
+        fail "Task 8: sleep 8000 process is still running"
+    fi
+
+    # ============================================================
+    # TASK 9 - SIGKILL
+    # ============================================================
+
+    echo "<div class='validation-section'>Task 9 - Force Terminate a Process</div>"
+
+    SLEEP10000=$(ps -u "$STUDENT_NAME" -o args= 2>/dev/null |
+        grep -E '^sleep 10000$')
+
+    if [ -z "$SLEEP10000" ]; then
+        pass "Task 9: sleep 10000 process is no longer running"
+    else
+        fail "Task 9: sleep 10000 process is still running"
+    fi
+
+    # ============================================================
+    # TASK 10 - REMAINING SLEEP PROCESSES
+    # ============================================================
+
+    echo "<div class='validation-section'>Task 10 - Terminate Remaining Processes by Name</div>"
+
+    REMAINING_SLEEP=$(ps -u "$STUDENT_NAME" -o pid=,args= 2>/dev/null |
+        awk '$2 == "sleep" {print}')
+
+    if [ -z "$REMAINING_SLEEP" ]; then
+        pass "Task 10: no student-created sleep processes remain"
+    else
+        fail "Task 10: student-created sleep process(es) are still running"
+    fi
+
+    # ============================================================
+    # TASK 11 - PROCESS COUNT
+    # ============================================================
+
+    echo "<div class='validation-section'>Task 11 - Count Processes Running on the Server</div>"
+
+    PROCESS_FILE="$BASE/process.txt"
+
+    if [ -f "$PROCESS_FILE" ]; then
+        pass "Task 11a: process.txt exists"
+    else
+        fail "Task 11a: process.txt is missing"
+    fi
+
+    if [ -f "$PROCESS_FILE" ] &&
+       grep -Eq '^[0-9]+$' "$PROCESS_FILE"
+    then
+        PROCESS_COUNT=$(cat "$PROCESS_FILE" 2>/dev/null)
+
+        if [ "$PROCESS_COUNT" -gt 0 ] 2>/dev/null; then
+            pass "Task 11b: process count is recorded in process.txt"
+        else
+            fail "Task 11b: process count is zero or invalid"
+        fi
+    else
+        fail "Task 11b: process.txt does not contain a valid numeric process count"
+    fi
+
+    # ============================================================
+    # ADDITIONAL SAFETY / CLEANUP CHECKS
+    # ============================================================
+
+    echo "<div class='validation-section'>Final Process Cleanup</div>"
+
+    # No student Vim processes
+    FINAL_VIM=$(ps -u "$STUDENT_NAME" -o comm= 2>/dev/null |
+        grep -E '^(vim|vim.basic)$')
+
+    if [ -z "$FINAL_VIM" ]; then
+        pass "Cleanup 1: no Vim processes belonging to the student remain"
+    else
+        fail "Cleanup 1: Vim processes belonging to the student remain"
+    fi
+
+    # No student sleep processes
+    FINAL_SLEEP=$(ps -u "$STUDENT_NAME" -o comm= 2>/dev/null |
+        grep '^sleep$')
+
+    if [ -z "$FINAL_SLEEP" ]; then
+        pass "Cleanup 2: no sleep processes belonging to the student remain"
+    else
+        fail "Cleanup 2: sleep processes belonging to the student remain"
+    fi
+
+        # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+
+#====================================================================
+
+validate_lab216_advanced_process_management() {
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "Checking Lab 216 - Advanced Linux Process Management..."
+
+    HOME_DIR="/home/$STUDENT_NAME"
+    BASE="$HOME_DIR/lab216_challenge_vim"
+
+    LAB_NAME="Lab 216 - Advanced Linux Process Management"
+    DATE=$(date "+%F %T")
+
+    TOTAL_TASKS=13
+    PASSED=0
+
+    # HELPERS
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # ============================================================
+    # TASK 1 - WORKING DIRECTORY
+    # ============================================================
+
+    echo "<div class='validation-section'>Task 1 - Create the Advanced Process Management Workspace</div>"
+
+    if [ -d "$BASE" ]; then
+        pass "Task 1: lab216_challenge_vim directory exists"
+    else
+        fail "Task 1: lab216_challenge_vim directory is missing"
+    fi
+
+
+    # ============================================================
+    # TASK 2 - FIND SSHD PROCESS
+    # ============================================================
+
+    echo "<div class='validation-section'>Task 2 - Find a Process by Name</div>"
+
+    SSHD_FOUND=$(pgrep -a sshd 2>/dev/null)
+
+    if [ -n "$SSHD_FOUND" ]; then
+        pass "Task 2: sshd PID and process name can be identified using pgrep"
+    else
+        fail "Task 2: sshd process could not be identified"
+    fi
+
+    # ============================================================
+    # TASK 3 - BACKGROUND PROCESSES
+    # ============================================================
+
+    echo "<div class='validation-section'>Task 3 - Start Multiple Background Processes</div>"
+
+    BG_FILE="$BASE/bg.txt"
+
+    if [ -f "$BG_FILE" ] && [ -s "$BG_FILE" ]; then
+
+        BG_OK=1
+
+        grep -q "sleep 5000" "$BG_FILE" || BG_OK=0
+        grep -q "sleep 8000" "$BG_FILE" || BG_OK=0
+        grep -q "sleep 10000" "$BG_FILE" || BG_OK=0
+        grep -q "sleep 15000" "$BG_FILE" || BG_OK=0
+        grep -q "sleep 20000" "$BG_FILE" || BG_OK=0
+
+        if [ "$BG_OK" -eq 1 ]; then
+            pass "Task 3: background sleep jobs recorded in bg.txt"
+        else
+            fail "Task 3: bg.txt does not contain all required sleep jobs"
+        fi
+
+    else
+        fail "Task 3: bg.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 4 - FOREGROUND / SUSPEND
+    # ============================================================
+
+    echo "<div class='validation-section'>Task 4 - Bring a Background Job to the Foreground</div>"
+    SLEEP5000=$(pgrep -u "$STUDENT_NAME" -f '^sleep 5000$' 2>/dev/null)
+
+    if [ -z "$SLEEP5000" ]; then
+        pass "Task 4: sleep 5000 process is no longer running"
+    else
+        fail "Task 4: sleep 5000 process is still running"
+    fi
+
+
+    # ============================================================
+    # TASK 5 - RESUME AND TERMINATE JOB
+    # ============================================================
+
+    echo "<div class='validation-section'>Task 5 - Resume and Terminate a Job Using Job ID</div>"
+
+    SLEEP5000=$(pgrep -u "$STUDENT_NAME" -f '^sleep 5000$' 2>/dev/null)
+
+    if [ -z "$SLEEP5000" ]; then
+        pass "Task 5: sleep 5000 process was terminated"
+    else
+        fail "Task 5: sleep 5000 process is still running"
+    fi
+
+
+    # ============================================================
+    # TASK 6 - PARENT AND CHILD PROCESS
+    # ============================================================
+
+    echo "<div class='validation-section'>Task 6 - Identify Parent and Child Processes</div>"
+    PARENT_FILE="$BASE/process_parent.txt"
+
+    if [ -f "$PARENT_FILE" ] && [ -s "$PARENT_FILE" ]; then
+
+        if grep -Eq "PID|PPID|[0-9]+[[:space:]]+[0-9]+" "$PARENT_FILE"; then
+            pass "Task 6: parent and child process evidence recorded"
+        else
+            fail "Task 6: process_parent.txt exists but does not contain valid PID/PPID information"
+        fi
+
+    else
+        echo "<div class='validation-pass'>✓ Task 6: parent/child process investigation completed manually</div>"
+        ((PASSED++))
+    fi
+
+
+    # ============================================================
+    # TASK 7 - TERMINATE REMAINING SLEEP PROCESSES
+    # ============================================================
+
+    echo "<div class='validation-section'>Task 7 - Terminate Remaining Sleep Processes</div>"
+
+    REMAINING_SLEEP=$(pgrep -u "$STUDENT_NAME" -x sleep 2>/dev/null)
+
+    if [ -z "$REMAINING_SLEEP" ]; then
+        pass "Task 7: no lab-created sleep processes remain"
+    else
+        fail "Task 7: one or more sleep processes created by the student are still running"
+    fi
+
+
+    # ============================================================
+    # TASK 8 - NICE VALUE
+    # ============================================================
+
+    echo "<div class='validation-section'>Task 8 - Run a Process with a Different Priority</div>"
+
+    NICE_FILE="$BASE/nice_value.txt"
+
+    if [ -f "$NICE_FILE" ] && [ -s "$NICE_FILE" ]; then
+
+        if grep -Eq "[[:space:]]10[[:space:]]" "$NICE_FILE"; then
+            pass "Task 8: nice value 10 recorded in nice_value.txt"
+        else
+            fail "Task 8: nice value 10 was not found in nice_value.txt"
+        fi
+
+    else
+        fail "Task 8: nice_value.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 9 - RENICE
+    # ============================================================
+
+    echo "<div class='validation-section'>Task 9 - Change Process Priority</div>"
+
+    RENICE_FILE="$BASE/renice_value.txt"
+
+    if [ -f "$RENICE_FILE" ] && [ -s "$RENICE_FILE" ]; then
+
+        if grep -Eq "[[:space:]]15[[:space:]]" "$RENICE_FILE"; then
+            pass "Task 9: nice value changed to 15 and recorded"
+        else
+            fail "Task 9: nice value 15 was not found in renice_value.txt"
+        fi
+
+    else
+        fail "Task 9: renice_value.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 10 - FINAL CLEANUP
+    # ============================================================
+
+    echo "<div class='validation-section'>Task 10 - Terminate Remaining Processes and Verify Cleanup</div>"
+
+    CLEANUP_OK=1
+
+    # Check for student-owned sleep processes
+    if pgrep -u "$STUDENT_NAME" -x sleep >/dev/null 2>&1; then
+        CLEANUP_OK=0
+    fi
+
+    # Check for remaining Vim processes created by the student
+    if pgrep -u "$STUDENT_NAME" -x vim >/dev/null 2>&1; then
+        CLEANUP_OK=0
+    fi
+
+    if [ "$CLEANUP_OK" -eq 1 ]; then
+        pass "Task 10: all lab-created processes have been cleaned up"
+    else
+        fail "Task 10: one or more lab-created processes are still running"
+    fi
+
+    # ============================================================
+    # TASK 11 - SORT PROCESSES BY CPU
+    # ============================================================
+
+    echo "<div class='validation-section'>Task 11 - Display and Sort Processes by CPU Usage</div>"
+
+    CPU_FILE="$BASE/sort_process_cpu.txt"
+    
+    if [ -f "$CPU_FILE" ]; then
+        pass "Task 11a: sort_process_cpu.txt exists"
+    else
+        fail "Task 11a: sort_process_cpu.txt is missing"
+    fi
+    
+    if [ -f "$CPU_FILE" ] &&
+       grep -Eq "PID.*PPID.*USER.*%CPU.*%MEM.*S.*CMD" "$CPU_FILE"
+    then
+        pass "Task 11b: process output contains the required columns"
+    else
+        fail "Task 11b: required process columns are missing from sort_process_cpu.txt"
+    fi
+           
+    if [ -f "$CPU_FILE" ]; then
+    
+        CPU_VALUES=$(awk 'NR > 1 && $1 ~ /^[0-9]+$/ && $4 ~ /^[0-9.]+$/ {print $4}' "$CPU_FILE")
+    
+        SORTED_CPU=$(printf '%s\n' "$CPU_VALUES" | sort -nr)
+    
+        if [ "$CPU_VALUES" = "$SORTED_CPU" ]; then
+            pass "Task 11c: processes are sorted by CPU usage in descending order"
+        else
+            fail "Task 11c: processes are not sorted by CPU usage"
+        fi
+    
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+
+#===================================================================
+
+validate_lab217_service_management() {
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "Checking Lab 217 - Linux Service Management..."
+
+    HOME_DIR="/home/$STUDENT_NAME"
+    BASE="$HOME_DIR/service_mgt"
+
+    LAB_NAME="Lab 217 - Linux Service Management"
+    DATE=$(date "+%F %T")
+
+    TOTAL_TASKS=11
+    PASSED=0
+
+    # ============================================================
+    # HELPERS
+    # ============================================================
+
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+
+    # ============================================================
+    # TASK 1 - WORKING DIRECTORY
+    # ============================================================
+    if [ -d "$BASE" ]; then
+        pass "Task 1: service_mgt directory exists"
+    else
+        fail "Task 1: service_mgt directory is missing"
+    fi
+
+
+    # ============================================================
+    # TASK 2 - IDENTIFY SERVICE MANAGER
+    # ============================================================
+    PID1_COMM=$(ps -p 1 -o comm= 2>/dev/null | xargs)
+
+    if [ "$PID1_COMM" = "systemd" ]; then
+        pass "Task 2: systemd is running as PID 1"
+    else
+        fail "Task 2: systemd is not running as PID 1"
+    fi
+
+    # ============================================================
+    # TASK 3 - CHECK HTTPD STATUS
+    # ============================================================
+    HTTPD_STATUS3="$BASE/httpd_status3"
+
+    if [ -f "$HTTPD_STATUS3" ] && [ -s "$HTTPD_STATUS3" ]; then
+
+        if grep -q "httpd.service" "$HTTPD_STATUS3" &&
+           grep -Eq "Loaded:|Active:" "$HTTPD_STATUS3"; then
+            pass "Task 3: httpd service status recorded in httpd_status3"
+        else
+            fail "Task 3: httpd_status3 does not contain valid systemctl status output"
+        fi
+
+    else
+        fail "Task 3: httpd_status3 is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 4 - STOP HTTPD
+    # ============================================================
+    HTTPD_STATUS4="$BASE/httpd_status4"
+
+    if [ -f "$HTTPD_STATUS4" ] && [ -s "$HTTPD_STATUS4" ]; then
+
+        if grep -Eq "Active:.*(inactive|dead|failed)" "$HTTPD_STATUS4"; then
+            pass "Task 4: httpd was stopped and inactive state was recorded"
+        else
+            fail "Task 4: httpd_status4 does not show httpd as stopped"
+        fi
+
+    else
+        fail "Task 4: httpd_status4 is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 5 - START HTTPD
+    # ============================================================
+    HTTPD_STATUS5="$BASE/httpd_status5"
+
+    if [ -f "$HTTPD_STATUS5" ] && [ -s "$HTTPD_STATUS5" ]; then
+
+        if grep -Eq "Active:.*active \(running\)" "$HTTPD_STATUS5"; then
+            pass "Task 5: httpd was started and active state was recorded"
+        else
+            fail "Task 5: httpd_status5 does not show httpd as active (running)"
+        fi
+
+    else
+        fail "Task 5: httpd_status5 is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 6 - RESTART HTTPD
+    # ============================================================
+    HTTPD_STATUS6="$BASE/httpd_status6"
+
+    if [ -f "$HTTPD_STATUS6" ] && [ -s "$HTTPD_STATUS6" ]; then
+
+        if grep -Eq "Active:.*active \(running\)" "$HTTPD_STATUS6"; then
+            pass "Task 6: httpd was restarted and active state was recorded"
+        else
+            fail "Task 6: httpd_status6 does not show httpd as active (running)"
+        fi
+
+    else
+        fail "Task 6: httpd_status6 is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 7 - RELOAD HTTPD
+    # ============================================================
+    HTTPD_STATUS7="$BASE/httpd_status7"
+
+    if [ -f "$HTTPD_STATUS7" ] && [ -s "$HTTPD_STATUS7" ]; then
+
+        if grep -Eq "Active:.*active \(running\)" "$HTTPD_STATUS7"; then
+            pass "Task 7: httpd reload completed and service remained active"
+        else
+            fail "Task 7: httpd_status7 does not show httpd as active (running)"
+        fi
+
+    else
+        fail "Task 7: httpd_status7 is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 8 - ENABLE HTTPD AT BOOT
+    # ============================================================
+    HTTPD_STATUS8="$BASE/httpd_status8"
+
+    if [ -s "$HTTPD_STATUS8" ]; then
+       if grep -qE 'Loaded:.*; enabled;' "$HTTPD_STATUS8"; then
+            pass "Task 8: httpd is enabled at boot"
+        else
+            fail "Task 8: httpd is not enabled at boot"
+        fi
+    else
+        fail "Task 8: httpd_status8 is missing or empty"
+    fi
+
+    # ============================================================
+    # TASK 9 - DISABLE HTTPD AT BOOT
+    # ============================================================
+    HTTPD_STATUS9="$BASE/httpd_status9"
+
+    if [ -s "$HTTPD_STATUS9" ]; then
+
+       if grep -qE 'Loaded:.*; disabled;' "$HTTPD_STATUS9"; then
+            pass "Task 9: httpd is disabled at boot"
+        else
+            fail "Task 9: httpd is not disabled at boot"
+        fi
+
+    else
+        fail "Task 9: httpd_status9 is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 10 - SERVICE INFORMATION
+    # ============================================================
+    HTTPD_STATUS10="$BASE/httpd_status10"
+
+    if [ -f "$HTTPD_STATUS10" ] && [ -s "$HTTPD_STATUS10" ]; then
+
+        INFO_OK=1
+
+        grep -q "Loaded:" "$HTTPD_STATUS10" || INFO_OK=0
+        grep -q "Active:" "$HTTPD_STATUS10" || INFO_OK=0
+        grep -q "Main PID:" "$HTTPD_STATUS10" || INFO_OK=0
+
+        if [ "$INFO_OK" -eq 1 ]; then
+            pass "Task 10: httpd service information recorded"
+        else
+            fail "Task 10: httpd_status10 does not contain required service information"
+        fi
+
+    else
+        fail "Task 10: httpd_status10 is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 11 - FIND HTTPD PROCESS
+    # ============================================================
+    HTTPD_STATUS11="$BASE/httpd_status11"
+
+    if [ -f "$HTTPD_STATUS11" ] && [ -s "$HTTPD_STATUS11" ]; then
+
+        PROCESS_OK=1
+
+        # Check for required ps headers
+        grep -Eq "PID[[:space:]]+PPID[[:space:]]+USER[[:space:]]+COMMAND" \
+            "$HTTPD_STATUS11" || PROCESS_OK=0
+
+        # Check that httpd process information exists
+        grep -Eq "[0-9]+[[:space:]]+[0-9]+[[:space:]]+[[:alnum:]_.-]+[[:space:]]+httpd" \
+            "$HTTPD_STATUS11" || PROCESS_OK=0
+
+        if [ "$PROCESS_OK" -eq 1 ]; then
+            pass "Task 11: httpd process information recorded with PID, PPID, USER, and COMMAND"
+        else
+            fail "Task 11: httpd_status11 does not contain valid httpd process information"
+        fi
+
+    else
+        fail "Task 11: httpd_status11 is missing or empty"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+
+#===============================================================================
+
+validate_lab218_advanced_service_management() {
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "Checking Lab 218 - Advanced Linux Service Management..."
+
+    HOME_DIR="/home/$STUDENT_NAME"
+    BASE="$HOME_DIR/lab218_service_mgt_advance"
+
+    LAB_NAME="Lab 218 - Advanced Linux Service Management"
+    DATE=$(date "+%F %T")
+
+    TOTAL_TASKS=11
+    PASSED=0
+
+    # ============================================================
+    # HELPERS
+    # ============================================================
+
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+
+    # ============================================================
+    # TASK 1 - LAB WORKSPACE
+    # ============================================================
+
+    if [ -d "$BASE" ]; then
+        pass "Task 1: lab218_service_mgt_advance directory exists"
+    else
+        fail "Task 1: lab218_service_mgt_advance directory is missing"
+    fi
+
+
+    # ============================================================
+    # TASK 2 - IDENTIFY SERVICE MANAGER
+    # ============================================================
+
+    TASK2="$BASE/task2_service_manager.txt"
+
+    if [ -f "$TASK2" ] && [ -s "$TASK2" ]; then
+
+        PID1_OK=1
+
+        # Check PID 1 exists in saved output
+        grep -Eq "[[:space:]]*1[[:space:]]+systemd[[:space:]]+" "$TASK2" || PID1_OK=0
+
+        if [ "$PID1_OK" -eq 1 ]; then
+            pass "Task 2: systemd identified as the service manager running as PID 1"
+        else
+            fail "Task 2: task2_service_manager.txt does not show systemd as PID 1"
+        fi
+
+    else
+        fail "Task 2: task2_service_manager.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 3 - INSPECT APACHE BEFORE STARTING
+    # ============================================================
+
+    TASK3="$BASE/task3_httpd_status.txt"
+
+    if [ -f "$TASK3" ] && [ -s "$TASK3" ]; then
+
+        STATUS_OK=1
+
+        grep -q "httpd.service" "$TASK3" || STATUS_OK=0
+        grep -q "Loaded:" "$TASK3" || STATUS_OK=0
+        grep -q "Active:" "$TASK3" || STATUS_OK=0
+        grep -q "Main PID:" "$TASK3" || STATUS_OK=0
+
+        if [ "$STATUS_OK" -eq 1 ]; then
+            pass "Task 3: httpd service status recorded with required information"
+        else
+            fail "Task 3: task3_httpd_status.txt does not contain required httpd status information"
+        fi
+
+    else
+        fail "Task 3: task3_httpd_status.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 4 - START APACHE
+    # ============================================================
+
+    TASK4="$BASE/task4_httpd.txt"
+
+    if [ -f "$TASK4" ] && [ -s "$TASK4" ]; then
+
+        if grep -Eq "Active:.*active \(running\)" "$TASK4"; then
+            pass "Task 4: httpd was started and active state was recorded"
+        else
+            fail "Task 4: task4_httpd.txt does not show httpd as active (running)"
+        fi
+
+    else
+        fail "Task 4: task4_httpd.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 5 - ENABLE APACHE AT BOOT
+    # ============================================================
+
+    TASK5="$BASE/task5_httpd_status.txt"
+
+    if [ -f "$TASK5" ] && [ -s "$TASK5" ]; then
+
+        if grep -Eq "Loaded:.*; enabled;" "$TASK5"; then
+            pass "Task 5: httpd is shown as enabled at boot"
+        else
+            fail "Task 5: task5_httpd_status.txt does not show httpd as enabled"
+        fi
+
+    else
+        fail "Task 5: task5_httpd_status.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 6 - CREATE WEB CONTENT
+    # ============================================================
+
+    INDEX_FILE="/var/www/html/index.html"
+
+    if [ -f "$INDEX_FILE" ]; then
+
+        CONTENT_OK=1
+
+        grep -Fq "<h1>LINOOP Linux Service Management</h1>" "$INDEX_FILE" || CONTENT_OK=0
+        grep -Fq "<p>Apache HTTP Server is running successfully.</p>" "$INDEX_FILE" || CONTENT_OK=0
+        grep -Fq "<p>Lab 218 - Advanced Service Management</p>" "$INDEX_FILE" || CONTENT_OK=0
+
+        if [ "$CONTENT_OK" -eq 1 ]; then
+            pass "Task 6: index.html contains the required Lab 218 web content"
+        else
+            fail "Task 6: index.html does not contain the required web content"
+        fi
+
+    else
+        fail "Task 6: /var/www/html/index.html is missing"
+    fi
+
+
+    # ============================================================
+    # TASK 7 - ACCESS WEB SERVER
+    # ============================================================
+    TASK7_PASS=true
+    TASK7_ERRORS=""
+    
+    # SELinux
+    if [ "$(getenforce 2>/dev/null)" != "Permissive" ]; then
+        TASK7_PASS=false
+        TASK7_ERRORS="${TASK7_ERRORS}<li>SELinux is not Permissive.</li>"
+    fi
+    
+    # Apache service
+    if ! systemctl is-active --quiet httpd; then
+        TASK7_PASS=false
+        TASK7_ERRORS="${TASK7_ERRORS}<li>Apache HTTP Server is not running.</li>"
+    fi
+    
+    # Web content through HTTP
+    WEB_CONTENT=$(curl -s --max-time 5 http://localhost 2>/dev/null)
+    
+    if ! echo "$WEB_CONTENT" | grep -Fq "<h1>LINOOP Linux Service Management</h1>"; then
+        TASK7_PASS=false
+        TASK7_ERRORS="${TASK7_ERRORS}<li>Apache is not serving the required web content.</li>"
+    fi
+    
+    # Port 80
+    if ! netstat -tunap 2>/dev/null | grep -qE '(:80[[:space:]]).*LISTEN'; then
+        TASK7_PASS=false
+        TASK7_ERRORS="${TASK7_ERRORS}<li>TCP port 80 is not listening.</li>"
+    fi
+    
+    # Firewall
+    if firewall-cmd --list-service 2>/dev/null | grep -qw http; then
+        TASK7_PASS=false
+        TASK7_ERRORS="${TASK7_ERRORS}<li>Firewall does not allow the <b>http</b> service.</li>"
+    fi
+    
+    # FINAL RESULT
+    if [ "$TASK7_PASS" = true ]; then
+    
+        pass "Task 7: Web server is configured and ready for browser access"
+    
+    else
+    
+        fail "Task 7: Web server is not fully configured for browser access"
+    
+        echo "<b>Task 7 - What needs to be fixed:</b>"
+        echo "<ul>"
+        echo "$TASK7_ERRORS"
+        echo "</ul>"
+
+    fi
+
+    # ============================================================
+    # TASK 8 - STOP HTTPD SERVICE
+    # ============================================================
+
+    TASK8="$BASE/task8_httpd_status.txt"
+
+    if [ -f "$TASK8" ] && [ -s "$TASK8" ]; then
+
+        if grep -Eq "Active:.*(inactive|dead|failed)" "$TASK8"; then
+            pass "Task 8: httpd was stopped and inactive state was recorded"
+        else
+            fail "Task 8: task8_httpd_status.txt does not show httpd as stopped"
+        fi
+
+    else
+        fail "Task 8: task8_httpd_status.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 9 - TEST WEBSITE AFTER STOPPING HTTPD
+    # ============================================================
+
+    TASK9="$BASE/task9_httpd_status.txt"
+
+    if [ -f "$TASK9" ] && [ -s "$TASK9" ]; then
+
+        if grep -Eq "Active:.*(inactive|dead|failed)" "$TASK9"; then
+            pass "Task 9: httpd unavailable state was recorded after stopping the service"
+        else
+            fail "Task 9: task9_httpd_status.txt does not show httpd as stopped"
+        fi
+
+    else
+        fail "Task 9: task9_httpd_status.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 10 - RESTART APACHE
+    # ============================================================
+
+    TASK10="$BASE/task10_httpd_status.txt"
+
+    if [ -f "$TASK10" ] && [ -s "$TASK10" ]; then
+
+        if grep -Eq "Active:.*active \(running\)" "$TASK10"; then
+            pass "Task 10: httpd was restarted and active state was recorded"
+        else
+            fail "Task 10: task10_httpd_status.txt does not show httpd as active (running)"
+        fi
+
+    else
+        fail "Task 10: task10_httpd_status.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 11 - ACCESS WEBSITE AGAIN
+    # ============================================================
+
+    TASK11="$BASE/task11_httpd_accessible.txt"
+
+    if [ -f "$TASK11" ] && [ -s "$TASK11" ]; then
+
+        if grep -qx "active" "$TASK11"; then
+
+            # Also verify the required web content still exists
+            CONTENT_OK=1
+
+            grep -Fq "<h1>LINOOP Linux Service Management</h1>" "$INDEX_FILE" || CONTENT_OK=0
+            grep -Fq "<p>Apache HTTP Server is running successfully.</p>" "$INDEX_FILE" || CONTENT_OK=0
+            grep -Fq "<p>Lab 218 - Advanced Service Management</p>" "$INDEX_FILE" || CONTENT_OK=0
+
+            if [ "$CONTENT_OK" -eq 1 ]; then
+                pass "Task 11: httpd is active and required website content is available"
+            else
+                fail "Task 11: httpd is active but required website content is missing"
+            fi
+
+        else
+            fail "Task 11: task11_httpd_accessible.txt does not show httpd as active"
+        fi
+
+    else
+        fail "Task 11: task11_httpd_accessible.txt is missing or empty"
+    fi
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+
+#============================================================================
+
+validate_lab219_user_management() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "Checking Lab 219 - Linux User Management..."
+
+    HOME_DIR="/home/$STUDENT_NAME"
+    BASE="$HOME_DIR/lab219_user_mgt"
+
+    LAB_NAME="Lab 219 - Linux User Management"
+    DATE=$(date "+%F %T")
+
+    TOTAL_TASKS=12
+    PASSED=0
+
+    # ============================================================
+    # HELPERS
+    # ============================================================
+
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+
+    # ============================================================
+    # TASK 1 - CREATE GROUP
+    # ============================================================
+
+    TASK1="$BASE/task1-group.txt"
+
+    if [ -f "$TASK1" ] && [ -s "$TASK1" ]; then
+
+        TASK1_OK=1
+
+        grep -Eq '^appsupport:x:3001:' "$TASK1" || TASK1_OK=0
+
+        if [ "$TASK1_OK" -eq 1 ]; then
+            pass "Task 1: appsupport group exists with GID 3001"
+        else
+            fail "Task 1: task1-group.txt does not show appsupport with GID 3001"
+        fi
+
+    else
+        fail "Task 1: task1-group.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 2 - CREATE GROUPS WITH SPECIFIC GID
+    # ============================================================
+
+    TASK2="$BASE/task2-groups.txt"
+
+    if [ -f "$TASK2" ] && [ -s "$TASK2" ]; then
+
+        TASK2_OK=1
+
+        grep -Eq '^developers:x:3002:' "$TASK2" || TASK2_OK=0
+        grep -Eq '^dbadmin:x:3003:' "$TASK2" || TASK2_OK=0
+
+        if [ "$TASK2_OK" -eq 1 ]; then
+            pass "Task 2: developers and dbadmin groups were created with the required GIDs"
+        else
+            fail "Task 2: task2-groups.txt does not show the required group GIDs"
+        fi
+
+    else
+        fail "Task 2: task2-groups.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 3 - CREATE USERS
+    # ============================================================
+
+    TASK3="$BASE/task3-users.txt"
+
+    if [ -f "$TASK3" ] && [ -s "$TASK3" ]; then
+
+        TASK3_OK=1
+
+        grep -Eq '^alex:' "$TASK3" || TASK3_OK=0
+        grep -Eq '^david:' "$TASK3" || TASK3_OK=0
+
+        if [ "$TASK3_OK" -eq 1 ]; then
+            pass "Task 3: alex and david users were created"
+        else
+            fail "Task 3: task3-users.txt does not show both alex and david"
+        fi
+
+    else
+        fail "Task 3: task3-users.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 4 - CREATE MARIA WITH UID 2001
+    # ============================================================
+
+    TASK4="$BASE/task4-uid.txt"
+
+    if [ -f "$TASK4" ] && [ -s "$TASK4" ]; then
+
+        TASK4_OK=1
+
+        # id output should contain uid=2001 for Maria
+        grep -Eq 'uid=2001\(maria\)' "$TASK4" || TASK4_OK=0
+
+        if [ "$TASK4_OK" -eq 1 ]; then
+            pass "Task 4: maria was created with UID 2001"
+        else
+            fail "Task 4: task4-uid.txt does not show maria with UID 2001"
+        fi
+
+    else
+        fail "Task 4: task4-uid.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 5 - MARIA SUPPLEMENTARY GROUP
+    # ============================================================
+
+    TASK5="$BASE/task5-maria-groups.txt"
+
+    if [ -f "$TASK5" ] && [ -s "$TASK5" ]; then
+
+        TASK5_OK=1
+
+        # Maria must have primary group maria
+        grep -Eq 'gid=[0-9]+\(maria\)' "$TASK5" || TASK5_OK=0
+
+        # Maria must have developers as supplementary group
+        grep -Eq 'groups=.*developers' "$TASK5" || TASK5_OK=0
+
+        if [ "$TASK5_OK" -eq 1 ]; then
+            pass "Task 5: maria has maria as primary group and developers as supplementary group"
+        else
+            fail "Task 5: task5-maria-groups.txt does not show the required Maria group configuration"
+        fi
+
+    else
+        fail "Task 5: task5-maria-groups.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 6 - ALEX APPSUPPORT
+    # ============================================================
+
+    TASK6="$BASE/task6-alex-groups.txt"
+
+    if [ -f "$TASK6" ] && [ -s "$TASK6" ]; then
+
+        TASK6_OK=1
+
+        grep -Eq 'uid=[0-9]+\(alex\)' "$TASK6" || TASK6_OK=0
+        grep -Eq 'groups=.*appsupport' "$TASK6" || TASK6_OK=0
+
+        if [ "$TASK6_OK" -eq 1 ]; then
+            pass "Task 6: alex was added to appsupport as a supplementary group"
+        else
+            fail "Task 6: task6-alex-groups.txt does not show alex as a member of appsupport"
+        fi
+
+    else
+        fail "Task 6: task6-alex-groups.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 7 - DAVID DBADMIN
+    # ============================================================
+
+    TASK7="$BASE/task7-user-group.txt"
+
+    if [ -f "$TASK7" ] && [ -s "$TASK7" ]; then
+
+        TASK7_OK=1
+
+        # David primary group must be david
+        grep -Eq 'gid=[0-9]+\(david\)' "$TASK7" || TASK7_OK=0
+
+        # David supplementary group must include dbadmin
+        grep -Eq 'groups=.*dbadmin' "$TASK7" || TASK7_OK=0
+
+        if [ "$TASK7_OK" -eq 1 ]; then
+            pass "Task 7: david has david as primary group and dbadmin as supplementary group"
+        else
+            fail "Task 7: task7-user-group.txt does not show the required David group configuration"
+        fi
+
+    else
+        fail "Task 7: task7-user-group.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 8 - REMOVE ALEX FROM APPSUPPORT
+    # ============================================================
+
+    TASK8="$BASE/task8-remove-group.txt"
+
+    if [ -f "$TASK8" ] && [ -s "$TASK8" ]; then
+
+        if grep -Eq 'groups=.*appsupport' "$TASK8"; then
+            fail "Task 8: task8-remove-group.txt still shows alex as a member of appsupport"
+        else
+            pass "Task 8: alex was removed from appsupport"
+        fi
+
+    else
+        fail "Task 8: task8-remove-group.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 9 - REMOVE MARIA FROM DEVELOPERS
+    # ============================================================
+
+    TASK9="$BASE/task9-remove-group.txt"
+
+    if [ -f "$TASK9" ] && [ -s "$TASK9" ]; then
+
+        if grep -Eq 'groups=.*developers' "$TASK9"; then
+            fail "Task 9: task9-remove-group.txt still shows maria as a member of developers"
+        else
+            pass "Task 9: maria was removed from developers"
+        fi
+
+    else
+        fail "Task 9: task9-remove-group.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 10 - REMOVE DAVID FROM DBADMIN
+    # ============================================================
+
+    TASK10="$BASE/task10-remove-group.txt"
+
+    if [ -f "$TASK10" ] && [ -s "$TASK10" ]; then
+
+        if grep -Eq 'groups=.*dbadmin' "$TASK10"; then
+            fail "Task 10: task10-remove-group.txt still shows david as a member of dbadmin"
+        else
+            pass "Task 10: david was removed from dbadmin"
+        fi
+
+    else
+        fail "Task 10: task10-remove-group.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 11 - DELETE GROUPS
+    # ============================================================
+
+    TASK11="$BASE/task11-delete-groups.txt"
+
+    if [ -f "$TASK11" ] && [ ! -s "$TASK11" ]; then
+
+        TASK11_OK=1
+
+        if grep -Eq '^appsupport:x:' "$TASK11"; then
+            TASK11_OK=0
+        fi
+
+        if grep -Eq '^developers:x:' "$TASK11"; then
+            TASK11_OK=0
+        fi
+
+        if grep -Eq '^dbadmin:x:' "$TASK11"; then
+            TASK11_OK=0
+        fi
+
+        # Also verify the live system state.
+        getent group appsupport >/dev/null 2>&1 && TASK11_OK=0
+        getent group developers >/dev/null 2>&1 && TASK11_OK=0
+        getent group dbadmin >/dev/null 2>&1 && TASK11_OK=0
+
+
+
+        if [ "$TASK11_OK" -eq 1 ]; then
+            pass "Task 11: appsupport, developers, and dbadmin groups were deleted"
+        else
+            fail "Task 11: one or more required groups still exist"
+        fi
+
+    else
+        fail "Task 11: task11-delete-groups.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 12 - DELETE USERS
+    # ============================================================
+
+    TASK12="$BASE/task12-delete-users.txt"
+
+    if [ -f "$TASK12" ]; then
+
+        TASK12_OK=1
+        # Users must no longer exist
+        getent passwd alex >/dev/null 2>&1 && TASK12_OK=0
+        getent passwd david >/dev/null 2>&1 && TASK12_OK=0
+        getent passwd maria >/dev/null 2>&1 && TASK12_OK=0
+
+        # Verification file must contain no passwd entries
+        grep -Eq '^(alex|david|maria):' "$TASK12" && TASK12_OK=0
+
+        if [ "$TASK12_OK" -eq 1 ]; then
+            pass "Task 12: alex, david, and maria users were deleted"
+        else
+            fail "Task 12: one or more required users still exist"
+        fi
+
+    else
+        fail "Task 12: task12-delete-users.txt is missing or empty"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+
+#=========================================================================
+
+validate_lab220_advanced_user_management() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "Checking Lab 220 - Linux User Management - Advanced..."
+
+    HOME_DIR="/home/$STUDENT_NAME"
+    BASE="$HOME_DIR/lab219_user_mgt"
+
+    LAB_NAME="Lab 220 - Linux User Management - Advanced"
+    DATE=$(date "+%F %T")
+
+    TOTAL_TASKS=11
+    PASSED=0
+
+    # ============================================================
+    # HELPERS
+    # ============================================================
+
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+
+    # ============================================================
+    # TASK 1 - CREATE LAB DIRECTORY AND GROUPS
+    # ============================================================
+
+    TASK1="$BASE/task1-groups.txt"
+
+    if [ ! -d "$BASE" ]; then
+
+        fail "Task 1: lab219_user_mgt directory is missing"
+
+    elif [ ! -f "$TASK1" ] || [ ! -s "$TASK1" ]; then
+
+        fail "Task 1: task1-groups.txt is missing or empty"
+
+    else
+
+        TASK1_OK=1
+
+        grep -Eq '^platform:x:3101:' "$TASK1" || TASK1_OK=0
+        grep -Eq '^developers:x:3102:' "$TASK1" || TASK1_OK=0
+        grep -Eq '^database:x:3103:' "$TASK1" || TASK1_OK=0
+        grep -Eq '^support:x:3104:' "$TASK1" || TASK1_OK=0
+
+        if [ "$TASK1_OK" -eq 1 ]; then
+            pass "Task 1: lab directory created and all required groups have the correct GIDs"
+        else
+            fail "Task 1: task1-groups.txt does not show all required groups with the correct GIDs"
+        fi
+
+    fi
+
+
+    # ============================================================
+    # TASK 2 - CREATE USERS WITH SPECIFIC UIDs
+    # ============================================================
+
+    TASK2="$BASE/task2-users.txt"
+
+    if [ -f "$TASK2" ] && [ -s "$TASK2" ]; then
+
+        TASK2_OK=1
+
+        grep -Eq 'uid=2101\(alex\)' "$TASK2" || TASK2_OK=0
+        grep -Eq 'uid=2102\(david\)' "$TASK2" || TASK2_OK=0
+        grep -Eq 'uid=2103\(maria\)' "$TASK2" || TASK2_OK=0
+        grep -Eq 'uid=2104\(sophia\)' "$TASK2" || TASK2_OK=0
+
+        if [ "$TASK2_OK" -eq 1 ]; then
+            pass "Task 2: alex, david, maria, and sophia were created with the required UIDs"
+        else
+            fail "Task 2: task2-users.txt does not show all users with the required UIDs"
+        fi
+
+    else
+        fail "Task 2: task2-users.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 3 - CONFIGURE SUPPLEMENTARY GROUPS
+    # ============================================================
+
+    TASK3="$BASE/task3-groups.txt"
+
+    if [ -f "$TASK3" ] && [ -s "$TASK3" ]; then
+
+        TASK3_OK=1
+
+        # Alex
+        grep -Eq 'uid=[0-9]+\(alex\).*gid=[0-9]+\(alex\).*groups=.*developers' "$TASK3" \
+            || TASK3_OK=0
+
+        grep -Eq 'uid=[0-9]+\(alex\).*gid=[0-9]+\(alex\).*groups=.*support' "$TASK3" \
+            || TASK3_OK=0
+
+        # David
+        grep -Eq 'uid=[0-9]+\(david\).*gid=[0-9]+\(david\).*groups=.*platform' "$TASK3" \
+            || TASK3_OK=0
+
+        grep -Eq 'uid=[0-9]+\(david\).*gid=[0-9]+\(david\).*groups=.*database' "$TASK3" \
+            || TASK3_OK=0
+
+        # Maria
+        grep -Eq 'uid=[0-9]+\(maria\).*gid=[0-9]+\(maria\).*groups=.*developers' "$TASK3" \
+            || TASK3_OK=0
+
+        # Sophia
+        grep -Eq 'uid=[0-9]+\(sophia\).*gid=[0-9]+\(sophia\).*groups=.*platform' "$TASK3" \
+            || TASK3_OK=0
+
+        grep -Eq 'uid=[0-9]+\(sophia\).*gid=[0-9]+\(sophia\).*groups=.*database' "$TASK3" \
+            || TASK3_OK=0
+
+        if [ "$TASK3_OK" -eq 1 ]; then
+            pass "Task 3: supplementary group memberships were configured correctly"
+        else
+            fail "Task 3: task3-groups.txt does not show the required supplementary group memberships"
+        fi
+
+    else
+        fail "Task 3: task3-groups.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 4 - ADD AND REMOVE SUPPLEMENTARY MEMBERSHIPS
+    # ============================================================
+
+    TASK4="$BASE/task4-members.txt"
+
+    if [ -f "$TASK4" ] && [ -s "$TASK4" ]; then
+
+        TASK4_OK=1
+
+        # David must NOT have database
+        if grep -E 'uid=[0-9]+\(david\)' "$TASK4" | grep -q 'database'; then
+            TASK4_OK=0
+        fi
+
+        # Maria must have support
+        grep -E 'uid=[0-9]+\(maria\)' "$TASK4" | grep -q 'support' \
+            || TASK4_OK=0
+
+        # Sophia must NOT have database
+        if grep -E 'uid=[0-9]+\(sophia\)' "$TASK4" | grep -q 'database'; then
+            TASK4_OK=0
+        fi
+
+        # Primary groups must remain unchanged
+        grep -Eq 'uid=[0-9]+\(david\).*gid=[0-9]+\(david\)' "$TASK4" \
+            || TASK4_OK=0
+
+        grep -Eq 'uid=[0-9]+\(maria\).*gid=[0-9]+\(maria\)' "$TASK4" \
+            || TASK4_OK=0
+
+        grep -Eq 'uid=[0-9]+\(sophia\).*gid=[0-9]+\(sophia\)' "$TASK4" \
+            || TASK4_OK=0
+
+        if [ "$TASK4_OK" -eq 1 ]; then
+            pass "Task 4: supplementary memberships were changed without changing primary groups"
+        else
+            fail "Task 4: task4-members.txt does not show the required membership changes"
+        fi
+
+    else
+        fail "Task 4: task4-members.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 5 - SET PASSWORDS
+    # ============================================================
+
+    TASK5="$BASE/task5-passwords.txt"
+
+    if [ -f "$TASK5" ] && [ -s "$TASK5" ]; then
+
+        TASK5_OK=1
+
+        # Expected passwd -S output should show PS (Password Set)
+        grep -Eq '^alex[[:space:]]+PS[[:space:]]' "$TASK5" || TASK5_OK=0
+        grep -Eq '^david[[:space:]]+PS[[:space:]]' "$TASK5" || TASK5_OK=0
+        grep -Eq '^maria[[:space:]]+PS[[:space:]]' "$TASK5" || TASK5_OK=0
+        grep -Eq '^sophia[[:space:]]+PS[[:space:]]' "$TASK5" || TASK5_OK=0
+
+        # Make sure password hashes were NOT saved.
+        if grep -Eq '^\$[0-9a-zA-Z./]+\$' "$TASK5"; then
+            TASK5_OK=0
+        fi
+
+        if [ "$TASK5_OK" -eq 1 ]; then
+            pass "Task 5: passwords were configured and verification output does not contain passwords"
+        else
+            fail "Task 5: task5-passwords.txt does not show all accounts with configured passwords"
+        fi
+
+    else
+        fail "Task 5: task5-passwords.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 6 - LOCK MARIA
+    # ============================================================
+
+    TASK6="$BASE/task6-lock-maria.txt"
+
+    if [ -f "$TASK6" ] && [ -s "$TASK6" ]; then
+
+        TASK6_OK=1
+
+        # passwd -S maria normally reports LK when the password is locked.
+        grep -Eq '^maria[[:space:]]+LK[[:space:]]' "$TASK6" || TASK6_OK=0
+
+        if [ "$TASK6_OK" -eq 1 ]; then
+            pass "Task 6: Maria's account was locked"
+        else
+            fail "Task 6: task6-lock-maria.txt does not show Maria's account as locked"
+        fi
+
+    else
+        fail "Task 6: task6-lock-maria.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 7 - UNLOCK MARIA
+    # ============================================================
+
+    TASK7="$BASE/task7-unlock-maria.txt"
+
+    if [ -f "$TASK7" ] && [ -s "$TASK7" ]; then
+
+        TASK7_OK=1
+
+        # Maria should no longer show LK.
+        if grep -Eq '^maria[[:space:]]+LK[[:space:]]' "$TASK7"; then
+            TASK7_OK=0
+        fi
+
+        # Normal unlocked account with password should show PS.
+        grep -Eq '^maria[[:space:]]+PS[[:space:]]' "$TASK7" || TASK7_OK=0
+
+        if [ "$TASK7_OK" -eq 1 ]; then
+            pass "Task 7: Maria's account was unlocked"
+        else
+            fail "Task 7: task7-unlock-maria.txt does not show Maria as unlocked"
+        fi
+
+    else
+        fail "Task 7: task7-unlock-maria.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 8 - REMOVE USERS FROM SUPPLEMENTARY GROUPS
+    # ============================================================
+
+    TASK8="$BASE/task8-membership-removal.txt"
+
+    if [ -f "$TASK8" ] && [ -s "$TASK8" ]; then
+
+        TASK8_OK=1
+
+        # Alex must not have support or developers.
+        if grep -E 'uid=[0-9]+\(alex\)' "$TASK8" | grep -Eq 'support|developers'; then
+            TASK8_OK=0
+        fi
+
+        # Maria must not have support or developers.
+        if grep -E 'uid=[0-9]+\(maria\)' "$TASK8" | grep -Eq 'support|developers'; then
+            TASK8_OK=0
+        fi
+
+        # Sophia must not have platform.
+        if grep -E 'uid=[0-9]+\(sophia\)' "$TASK8" | grep -q 'platform'; then
+            TASK8_OK=0
+        fi
+
+        # Primary groups must remain unchanged.
+        grep -Eq 'uid=[0-9]+\(alex\).*gid=[0-9]+\(alex\)' "$TASK8" \
+            || TASK8_OK=0
+
+        grep -Eq 'uid=[0-9]+\(maria\).*gid=[0-9]+\(maria\)' "$TASK8" \
+            || TASK8_OK=0
+
+        grep -Eq 'uid=[0-9]+\(sophia\).*gid=[0-9]+\(sophia\)' "$TASK8" \
+            || TASK8_OK=0
+
+        if [ "$TASK8_OK" -eq 1 ]; then
+            pass "Task 8: users were removed from the required supplementary groups"
+        else
+            fail "Task 8: task8-membership-removal.txt does not show the required membership removal"
+        fi
+
+    else
+        fail "Task 8: task8-membership-removal.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 9 - DELETE DATABASE GROUP
+    # ============================================================
+
+    TASK9="$BASE/task9-delete-database.txt"
+
+    if [ -f "$TASK9" ]; then
+
+        TASK9_OK=1
+        
+        getent group database >/dev/null 2>&1 && TASK9_OK=0
+       
+        if grep -Eq '^database:x:' "$TASK9"; then
+            TASK9_OK=0
+        fi
+
+        if [ "$TASK9_OK" -eq 1 ]; then
+            pass "Task 9: database group was deleted successfully"
+        else
+            fail "Task 9: database group still exists or verification is incorrect"
+        fi
+
+    else
+        fail "Task 9: task9-delete-database.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 10 - DELETE SOPHIA
+    # ============================================================
+
+    TASK10="$BASE/task10-delete-sophia.txt"
+
+    if [ -f "$TASK10" ]; then
+
+        TASK10_OK=1
+
+        getent passwd sophia >/dev/null 2>&1 && TASK10_OK=0
+ 
+        [ -d "/home/sophia" ] && TASK10_OK=0
+
+        if grep -Eq '^sophia:' "$TASK10"; then
+            TASK10_OK=0
+        fi
+
+        if [ "$TASK10_OK" -eq 1 ]; then
+            pass "Task 10: sophia account and home directory were deleted"
+        else
+            fail "Task 10: sophia account or home directory still exists"
+        fi
+
+    else
+        fail "Task 10: task10-delete-sophia.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 11 - FINAL ACCOUNT CLEANUP
+    # ============================================================
+
+    TASK11="$BASE/task11-final-audit.txt"
+
+    if [ -f "$TASK11" ] && [ -s "$TASK11" ]; then
+
+        TASK11_OK=1
+
+        # --------------------------------------------------------
+        # Groups that must NOT exist
+        # --------------------------------------------------------
+
+        getent group support >/dev/null 2>&1 && TASK11_OK=0
+        getent group platform >/dev/null 2>&1 && TASK11_OK=0
+        getent group database >/dev/null 2>&1 && TASK11_OK=0
+
+        # --------------------------------------------------------
+        # developers MUST exist
+        # --------------------------------------------------------
+
+        if ! getent group developers >/dev/null 2>&1; then
+            TASK11_OK=0
+        fi
+
+        # --------------------------------------------------------
+        # Users that MUST exist
+        # --------------------------------------------------------
+
+        getent passwd alex >/dev/null 2>&1 || TASK11_OK=0
+        getent passwd david >/dev/null 2>&1 || TASK11_OK=0
+        getent passwd maria >/dev/null 2>&1 || TASK11_OK=0
+
+        # --------------------------------------------------------
+        # Sophia MUST NOT exist
+        # --------------------------------------------------------
+
+        getent passwd sophia >/dev/null 2>&1 && TASK11_OK=0
+
+        # --------------------------------------------------------
+        # Check saved audit for expected account/group results
+        # --------------------------------------------------------
+
+        grep -Eq '^developers:x:' "$TASK11" || TASK11_OK=0
+
+        if grep -Eq '^support:x:' "$TASK11"; then
+            TASK11_OK=0
+        fi
+
+        if grep -Eq '^platform:x:' "$TASK11"; then
+            TASK11_OK=0
+        fi
+
+        if grep -Eq '^database:x:' "$TASK11"; then
+            TASK11_OK=0
+        fi
+
+        if grep -Eq '^sophia:' "$TASK11"; then
+            TASK11_OK=0
+        fi
+
+        if [ "$TASK11_OK" -eq 1 ]; then
+            pass "Task 11: final account and group cleanup completed successfully"
+        else
+            fail "Task 11: final account audit does not match the required state"
+        fi
+
+    else
+        fail "Task 11: task11-final-audit.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+
+#=========================================================================

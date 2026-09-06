@@ -1,0 +1,223 @@
+{
+  "lab_id": "lab219",
+  "title": "Lab 219 - Linux User Management",
+  "description": "The objective of this lab is to develop practical skills in managing Linux users, groups, UIDs, GIDs, primary groups, supplementary groups, and user account removal.",
+  "lab_objective": {
+    "description": "The objective of this lab is to develop practical skills in managing local Linux users and groups.",
+    "objectives": [
+      "Understand the structure of /etc/passwd.",
+      "Understand the structure of /etc/group.",
+      "Create and manage local users.",
+      "Create and manage local groups.",
+      "Understand UID and GID.",
+      "Configure primary and supplementary group membership.",
+      "Remove users safely.",
+      "Verify account configuration using standard Linux commands."
+    ],
+  "scenario": [
+    "You are a Linux system administrator responsible for preparing user accounts for a new application support team.",
+    "The team requires individual user accounts, department groups, and appropriate primary and supplementary group memberships.",
+    "Throughout the lab, you will create users and groups, configure group memberships, remove users from groups, delete groups, and finally remove the user accounts.",
+    "You will save important command output into files so that your work can be reviewed and validated."
+  ]
+ },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Create Group",
+      "steps": [
+        "Create a directory in your home directory named lab219_user_mgt.",
+        "Switch to root user because to add user you need elevated privileges.",
+        "Create appsupport the group with gid 3001.",
+        "hint: Use command groupadd <GROUP_NAME>",
+        "Verify if appsupport group is created using grep command.",
+        "Redirect the output to /home/your-user-name/lab219_user_mgt/task1-group.txt"
+      ],
+      "real_world": [
+        "Linux administrators create groups to organize users and control access to files and resources.",
+        "Using a specific GID can be important when consistent group identities are required across systems."
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Create Groups with Specific GID",
+      "steps": [
+        "Create the developers group with gid 3002.",
+        "Create the dbadmin the group with gid 3003.",
+        "hint: Use command groupadd -g <GID> <GROUP_NAME>",
+        "Verify that both groups exist using getent group <group_name>.",
+        "Redirect the output to /home/your-user-name/lab219_user_mgt/task2-groups.txt"
+      ],
+      "real_world": [
+        "Specific GIDs may be required when administrators need consistent group ownership across systems."
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Create a Regular User",
+      "steps": [
+        "Create users named alex and david.",
+        "hint: useradd <USER_NAME>",
+        "Verify that both users exist using getent passwd <user_name>.",
+        "Redirect the output to /home/your-user-name/lab219_user_mgt/task3-users.txt"
+      ],
+      "real_world": [
+        "Individual user accounts allow administrators to provide separate identities, permissions, and environments for team members."
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Create a User with a Specific UID",
+      "steps": [
+        "Create a user named maria.",
+        "Assign Maria the UID 2001.",
+        "hint: Use the appropriate useradd option for specifying a UID. Command: useradd -u <UID> <USER_NAME>",
+        "Verify maria user create using id command.",
+        "Redirect the output to /home/your-user-name/lab219_user_mgt/task4-uid.txt"
+      ],
+      "real_world": [
+        "Administrators may need to assign specific UIDs when migrating accounts or maintaining consistent file ownership."
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Add Supplementary Groups",
+      "steps": [
+        "Add Maria to the developers supplementary group.",
+        "Do not change her existing primary group.",
+        "hint: Use usermod with the appropriate option to add a supplementary group without changing the existing primary group.",
+        "Verify that Maria now has maria as her primary group and developers as a supplementary group.",
+        "Verify the result using the id command.",
+        "Redirect the output to /home/your-user-name/lab219_user_mgt/task5-maria-groups.txt"
+      ],
+      "real_world": [
+        "Supplementary groups allow a user to gain access to resources belonging to additional departments or teams without changing the user's primary group."
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Add an Alex User to a Supplementary Group",
+      "steps": [
+        "Add alex to appsupport as a supplementary group.",
+        "Do not change Alex's primary group.",
+        "hint: usermod -aG <GROUP_NAME> <USER_NAME>",
+        "Verify the result using the id command.",
+        "Redirect the output to /home/your-user-name/lab219_user_mgt/task6-alex-groups.txt"
+      ],
+      "real_world": [
+        "Administrators frequently add existing users to additional groups when their responsibilities change."
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "Add David to a Supplementary Group",
+      "steps": [
+        "Add David to the dbadmin supplementary group.",
+        "Do not change David's existing primary group.",
+        "hint: usermod -aG <GROUP_NAME> <USER_NAME>",
+        "David should now have david as his primary group and dbadmin as a supplementary group.",
+        "Verify the result using the id command.",
+        "Redirect the output to /home/your-user-name/lab219_user_mgt/task7-user-group.txt"
+      ],
+      "real_world": [
+        "A user can belong to multiple groups while still having only one primary group."
+      ]
+    },
+    {
+      "task_number": 8,
+      "title": "Remove a User from a Supplementary Group",
+      "steps": [
+        "Alex is no longer required to be a member of the appsupport group.",
+        "Remove Alex from the appsupport supplementary group.",
+        "Do not change Alex's primary group.",
+        "hint: gpasswd -d <USER_NAME> <GROUP_NAME>",
+        "Verify that Alex is no longer a member of appsupport.",
+        "Redirect the verification output to /home/your-user-name/lab219_user_mgt/task8-remove-group.txt"
+      ],
+      "real_world": [
+        "Removing unnecessary group memberships is an important part of maintaining least-privilege access."
+      ]
+    },
+    {
+      "task_number": 9,
+      "title": "Remove a User from Another Supplementary Group",
+      "steps": [
+        "Maria is no longer required to be a member of the developers supplementary group.",
+        "Remove Maria from the developers supplementary group.",
+        "Do not change Maria's primary group.",
+        "hint: Use an appropriate command to remove a user from a supplementary group.",
+        "Verify that Maria is no longer a member of developers.",
+        "Redirect the output to /home/your-user-name/lab219_user_mgt/task9-remove-group.txt"
+      ],
+      "real_world": [
+        "Users should only remain members of groups that are required for their current responsibilities."
+      ]
+    },
+    {
+      "task_number": 10,
+      "title": "Remove David from the dbadmin Group",
+      "steps": [
+        "David is no longer required to be a member of the dbadmin supplementary group.",
+        "Remove David from the dbadmin group.",
+        "Do not change David's primary group.",
+        "hint: Use an appropriate command to remove David from the dbadmin supplementary group.",
+        "Verify that David is no longer a member of dbadmin.",
+        "Redirect the output to /home/your-user-name/lab219_user_mgt/task10-remove-group.txt"
+      ],
+      "real_world": [
+        "Administrators should remove group access when a user's responsibilities change."
+      ]
+    },
+    {
+      "task_number": 11,
+      "title": "Delete Groups",
+      "steps": [
+        "The application support team has been reorganized, and the following groups are no longer required:",
+        "appsupport",
+        "developers",
+        "dbadmin",
+        "Delete all three groups.",
+        "hint: groupdel <GROUP_NAME>",
+        "Verify that the groups no longer exist using getent group <group_name>.",
+        "Redirect the verification output to /home/your-user-name/lab219_user_mgt/task11-delete-groups.txt",
+        "Important: Because the groups have already been removed from the users' supplementary memberships, they can now be deleted. Otherwise they would not."
+      ],
+      "real_world": [
+        "Unused groups should be removed to keep account and access management clean.",
+        "A group that is still being used as a user's primary group cannot simply be deleted."
+      ]
+    },
+    {
+      "task_number": 12,
+      "title": "Delete Users",
+      "steps": [
+        "The following temporary application-support accounts are no longer required:",
+        "alex",
+        "david",
+        "maria",
+        "Delete all three users.",
+        "hint: userdel -r <USER_NAME>",
+        "Verify that the users no longer exist using getent passwd <user_name>.",
+        "Redirect the output to /home/your-user-name/lab219_user_mgt/task12-delete-users.txt"
+      ],
+      "real_world": [
+        "When an account is no longer required, administrators should remove it according to the organization's account-retirement procedure.",
+        "Removing the home directory may be appropriate for temporary accounts when the account and its personal data are no longer required."
+      ]
+    }
+  ],
+  "important_commands": [
+    "groupadd <GROUP_NAME>",
+    "groupadd -g <GID> <GROUP_NAME>",
+    "getent group <GROUP_NAME>",
+    "useradd <USER_NAME>",
+    "useradd -u <UID> <USER_NAME>",
+    "getent passwd <USER_NAME>",
+    "id <USER_NAME>",
+    "usermod -aG <GROUP_NAME> <USER_NAME>",
+    "gpasswd -d <USER_NAME> <GROUP_NAME>",
+    "groupdel <GROUP_NAME>",
+    "userdel -r <USER_NAME>"
+  ],
+  "completion_message": "Congratulations! You have completed Lab 219 - Linux User Management. You created and managed Linux users and groups, assigned specific UIDs and GIDs, configured primary and supplementary group memberships, removed users from supplementary groups, deleted groups, and safely removed user accounts. You also verified account configuration using standard Linux commands."
+}

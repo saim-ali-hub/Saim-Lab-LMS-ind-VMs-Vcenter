@@ -1,0 +1,206 @@
+{
+  "lab_id": "lab220",
+  "title": "Lab 220: Linux User Management — Advanced",
+  "description": "The objective of this lab is to develop practical skills in managing Linux users, groups, UIDs, GIDs, primary groups, supplementary groups, passwd lock and unlock, and user account removal.",
+  "lab_objective": {
+  "description": "The objective of this lab is to develop practical skills in managing local Linux users and groups.",
+  "objectives": [
+    "Understand the structure of /etc/passwd.",
+    "Understand the structure of /etc/group.",
+    "Create and manage local users.",
+    "Create and manage local groups.",
+    "Understand UID and GID.",
+    "Configure primary and supplementary group membership.",
+    "Modify user and group configuration.",
+    "Rename users and groups.",
+    "Lock and unlock user accounts.",
+    "Configure password aging policies.",
+    "Set and verify account expiration.",
+    "Remove users from supplementary groups.",
+    "Safely delete users and groups.",
+    "Verify account configuration using standard Linux commands."
+  ],
+  "scenario": [
+   "You are a Linux system administrator responsible for preparing and maintaining user accounts for a newly formed Infrastructure Operations Team.\n\nThe team contains application developers, database administrators, and Linux support personnel.\n\nDuring the account setup process, the requirements change several times. You must create the accounts, assign appropriate group memberships, modify existing accounts, enforce password policies, temporarily disable an account, rename accounts and groups, and finally retire some accounts."
+   ]
+  },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Create the Lab Directory and Groups",
+      "steps": [
+        "Create the following directory in your home directory lab219_user_mgt",
+        "Store the verification output for every task in in this lab",
+        "/home/your-user-name/lab219_user_mgt/",
+        "Create the following groups with the specified GIDs:",
+        "platform 3101",
+        "developers 3102",
+        "database 3103",
+        "support 3104",
+        "Verify all four groups using getent group.",
+        "Redirect the verification output to:",
+        "/home/your-user-name/lab219_user_mgt/task1-groups.txt"
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Create Users with Specific UIDs",
+      "steps": [
+        "Create the following users:",
+        "alex 2101",
+        "david 2102",
+        "maria 2103",
+        "sophia 2104",
+        "Each user should have a normal home directory.",
+        "Verify the users using id <username>",
+        "Redirect the verification output to /home/your-user-name/lab219_user_mgt/task2-users.txt"
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Configure Supplementary Groups",
+      "steps": [
+        "Configure supplementary group membership for the following users as follows:",
+        "Add developers to alex's supplementary groups.",
+        "Add support to alex's supplementary groups without removing any existing supplementary groups.",
+        "Add platform to david's supplementary groups.",
+        "Add database to david’s supplementary groups without removing any existing supplementary groups.",
+        "Add developers to maria's supplementary groups.",
+        "Add platform to sophia's supplementary groups.",
+        "Add database to sophia’s supplementary groups without removing any existing supplementary groups.",
+        "Do not change the users' primary groups.",
+        "Important: Do not accidentally replace existing supplementary group memberships while adding a new group.",
+        "Hint: Think carefully about the difference between usermod –G and usermod -aG",
+        "Verify all four users using id users.",
+        "Redirect the output to /home/your-user-name/lab219_user_mgt/task3-groups.txt"
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Add and Remove Supplementary Memberships",
+      "steps": [
+        "The team structure has changed.",
+        "Remove David from the database supplementary group.",
+        "Add Maria to the support supplementary group.",
+        "Remove Sophia from the database supplementary group.",
+        "Do not change any user's primary group.",
+        "Verify all three accounts using id.",
+        "Redirect the output to:",
+        "/home/your-user-name/lab219_user_mgt/task4-members.txt"
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Set Passwords for Existing Users",
+      "steps": [
+        "Use the passwd command to set a password for the following users:",
+        "alex",
+        "david",
+        "maria",
+        "sophia",
+        "Password choice is yours. You may choose any password you prefer.",
+        "Do not place passwords in any verification file.",
+        "Verify that each account has password information configured using appropriate account-management commands.",
+        "Hint: passwd",
+        "Redirect the verification output to:",
+        "/home/your-user-name/lab219_user_mgt/task5-passwords.txt",
+        "Important: Never record the actual passwords in the lab output."
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Lock a User Account",
+      "steps": [
+        "Maria will be temporarily unavailable for several weeks.",
+        "Lock Maria's account.",
+        "Hint: passwd",
+        "Verify that Maria's account is locked using an appropriate command.",
+        "Do not delete the account.",
+        "Redirect the output to:",
+        "/home/your-user-name/lab219_user_mgt/task6-lock-maria.txt"
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "Unlock an Existing User Account",
+      "steps": [
+        "Maria has returned to the team.",
+        "Unlock her account.",
+        "Hint: Use passwd with the appropriate account-unlock option.",
+        "Verify that Maria's account is no longer locked.",
+        "Redirect the output to:",
+        "/home/your-user-name/lab219_user_mgt/task7-unlock-maria.txt"
+      ]
+    },
+    {
+      "task_number": 8,
+      "title": "Remove Users from Supplementary Groups",
+      "steps": [
+        "The project has ended.",
+        "Make the following changes:",
+        "Remove Alex from support and developers.",
+        "Remove Maria from support and developers.",
+        "Remove Sophia from platform.",
+        "Do not change their primary groups.",
+        "Verify each account.",
+        "Redirect the output to:",
+        "/home/your-user-name/lab219_user_mgt/task8-membership-removal.txt"
+      ]
+    },
+    {
+      "task_number": 9,
+      "title": "Delete an Unused Group",
+      "steps": [
+        "The database group is no longer required.",
+        "Before deleting it:",
+        "1. Verify that no user requires it as a primary group.",
+        "2. Remove any remaining supplementary memberships if necessary.",
+        "3. Delete the group.",
+        "Verify that:",
+        "getent group database",
+        "does not return the group.",
+        "Redirect the output to:",
+        "/home/your-user-name/lab219_user_mgt/task9-delete-database.txt"
+      ]
+    },
+    {
+      "task_number": 10,
+      "title": "Delete Temporary User",
+      "steps": [
+        "Sophia's contract has ended.",
+        "Delete the sophia account and its home directory.",
+        "Verify:",
+        "- sophia no longer exists. Verify id sophia",
+        "- /home/sophia no longer exists. Verify ls -ld /home/sophia",
+        "Redirect the verification output to:",
+        "/home/your-user-name/lab219_user_mgt/task10-delete-sophia.txt"
+      ]
+    },
+    {
+      "task_number": 11,
+      "title": "Final Account Cleanup",
+      "steps": [
+        "The platform and support groups are no longer required.",
+        "Before deleting them, verify that no remaining user has them as a primary or supplementary group.",
+        "Delete the groups.",
+        "Then perform a final audit of the remaining accounts:",
+        "alex",
+        "david",
+        "maria",
+        "Verify that:",
+        "- support does not exist.",
+        "- platform does not exist.",
+        "- database does not exist.",
+        "- developers exists.",
+        "- alex exists.",
+        "- david exists.",
+        "- maria exists.",
+        "- sophia does not exist.",
+        "Redirect the complete verification output to:",
+        "/home/your-user-name/lab219_user_mgt/task11-final-audit.txt"
+      ]
+    }
+  ],
+"completion_message": "Congratulations! You have completed Lab 220 - Linux User Management - Advances. You created and managed Linux users and groups, assigned specific UIDs and GIDs, configured primary and supplementary group memberships, locked and unlocked users password, removed users from supplementary groups, deleted groups, and safely removed user accounts. You also verified account configuration using standard Linux commands."
+
+}

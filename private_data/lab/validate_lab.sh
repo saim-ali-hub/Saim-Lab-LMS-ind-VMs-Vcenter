@@ -76,6 +76,10 @@ ssh \
         lab214) validate_lab214_morning_incident ;;
         lab215) validate_lab215_process_management ;;
         lab216) validate_lab216_advanced_process_management ;;
+        lab217) validate_lab217_service_management ;; 
+        lab218) validate_lab218_advanced_service_management ;;
+        lab219) validate_lab219_user_management ;;
+        lab220) validate_lab220_advanced_user_management ;;
         *) echo 'Invalid lab'; exit 1 ;;
      esac"
 

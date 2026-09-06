@@ -1,0 +1,223 @@
+{
+  "lab_id": "lab218",
+  "title": "Lab 218 - Advanced Linux Service Management",
+  "description": "The objective of this lab is to develop practical skills in managing Linux services using systemd and systemctl.",
+  "lab_objective": {
+    "description": "The objective of this lab is to develop practical skills in managing Linux services using systemd and systemctl.",
+    "objectives": [
+      "Identify the Linux service manager.",
+      "Understand service states and lifecycle management.",
+      "Start, stop, restart, and reload services.",
+      "Enable and disable services at boot.",
+      "Configure and manage the httpd web service.",
+      "Deploy and test web content through Apache.",
+      "Understand the relationship between a service and its processes.",
+      "Troubleshoot a service that has been stopped or is unavailable.",
+      "Understand how Linux administrators manage services in production environments."
+    ],
+  
+  "scenario": [
+    "You are a Linux System Administrator responsible for maintaining a production Linux server. The server provides a web service through Apache HTTP Server (httpd). Your task is to configure and manage these httpd service as you would on a production server.",
+    "You will begin with the Apache web service (httpd service). You will inspect its current state, start and enable it, configure a simple web page, and verify that the website is accessible from a browser. You will then deliberately stop the service and investigate what happens when the web service becomes unavailable. Finally, you will recover the service and verify that the website becomes accessible again.",
+    "Throughout the lab, you will save important command output into files so that your work can be reviewed and validated."
+  ]
+ },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Task 1 - Create the Lab Workspace",
+      "steps": [
+        "Create the following directory in your home directory:",
+        "lab218_service_mgt_advance",
+        "Change into the directory and switch to root.",
+        "Make sure all files created during this lab are stored inside this directory unless the task specifically instructs you to modify a system configuration file."
+      ],
+      "hint": "Create the directory first, then change into it before switching to root.",
+      "real_world": [
+        "Administrators commonly create a dedicated working directory when performing maintenance or troubleshooting tasks.",
+        "Keeping command output in one location makes troubleshooting and validation easier."
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Task 2 - Identify the Service Manager",
+      "steps": [
+        "Determine which service manager is being used by the system.",
+        "Display PID 1:",
+        "ps -p 1 -o pid,comm,cmd",
+        "Save the output to task2_service_manager.txt",
+        "Identify the service manager running as PID 1."
+      ],
+      "challenge": "Explain why PID 1 is important on a Linux system.",
+      "hint": "PID 1 is the first userspace process started by the Linux kernel and is responsible for managing the system's services and processes.",
+      "real_world": [
+        "Linux administrators need to know which service manager controls services before performing service-management tasks.",
+        "On modern Linux systems using systemd, systemd normally runs as PID 1."
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Task 3 - Inspect Apache Before Starting",
+      "steps": [
+        "Check the current status of Apache (httpd Service)",
+        "Save the output to task3_httpd_status.txt",
+        "Identify:",
+        "Loaded state",
+        "Active state",
+        "Main PID",
+        "Service file location",
+        "Enabled/disabled state"
+      ],
+      "hint": "Use systemctl status httpd and carefully examine the Loaded and Active lines.",
+      "real_world": [
+        "Before starting or changing a production service, administrators normally inspect its current state first.",
+        "The service status provides information about whether the service is loaded, running, enabled, and which process is managing the service."
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Task 4 - Start Apache",
+      "steps": [
+        "Start the Apache service (httpd service)",
+        "Verify that it is running Save the output to task4_httpd.txt",
+        "The service should show:",
+        "Active: active (running)"
+      ],
+      "hint": "Use systemctl start httpd followed by systemctl status httpd.",
+      "real_world": [
+        "Starting a service launches it immediately without necessarily configuring it to start automatically during boot."
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Task 5 - Enable Apache at Boot",
+      "steps": [
+        "Configure httpd service (Apache) to start automatically when the server boots.",
+        "Check status and save the output to task5_httpd_status.txt",
+        "Understand the difference systemctl start httpd starts Apache now.",
+        "systemctl enable httpd configures Apache to start during boot."
+      ],
+      "hint": "Use systemctl enable httpd and then verify the service status.",
+      "real_world": [
+        "Production web servers normally need their web service to return automatically after a server reboot.",
+        "The enable operation controls whether systemd starts the service during the appropriate boot process."
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Task 6 - Create Web Content",
+      "steps": [
+        "Change directory to Apache's default web root /var/www/html",
+        "Create or replace /var/www/html/index.html with a simple page containing:",
+        "<h1>LINOOP Linux Service Management</h1>",
+        "<p>Apache HTTP Server is running successfully.</p>",
+        "<p>Lab 218 - Advanced Service Management</p>",
+        "Verify the file cat /var/www/html/index.html"
+      ],
+      "hint": "Use a text editor or a redirection command to create the index.html file.",
+      "real_world": [
+        "The web root contains content that Apache can serve to clients.",
+        "Administrators frequently deploy or update web content as part of maintaining web servers."
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "Task 7 - Access the Web Server",
+      "steps": [
+        "On your VM execute a commmand 'setenforce 0'.",
+        "Execute another command 'firewall-cmd --add-service=http --permanent'.",
+        "Then execute 'firewall-cmd --reload'",
+        "Don't worry about these command for now. We learn in detail later. Just focus on webservice",
+        "Now determine the IP address of the server.",
+        "Then open a browser and access http://SERVER_IP",
+        "Verify that your custom page means the content you added in index.hmtl file is displayed."
+      ],
+      "hint": "Use an appropriate command to determine the server IP address, then replace SERVER_IP with the actual address.",
+      "real_world": [
+        "Testing a service from a client browser verifies that the service is not only running locally but is also serving content to clients."
+      ]
+    },
+    {
+      "task_number": 8,
+      "title": "Task 8 - Stop httpd service",
+      "steps": [
+        "Now comes the fun part.",
+        "Stop httpd service.",
+        "Check its status and save the output to task8_httpd_status.txt",
+        "The service should no longer be running."
+      ],
+      "hint": "Use systemctl stop httpd and then check its status.",
+      "real_world": [
+        "Administrators may need to stop a service during maintenance, troubleshooting, or configuration changes."
+      ]
+    },
+    {
+      "task_number": 9,
+      "title": "Task 9 - Test the Website After Stopping httpd",
+      "steps": [
+        "Return to your browser and refresh the page.",
+        "Observe what happens.",
+        "The website should no longer be accessible because the Apache (httpd) service is stopped.",
+        "Save the current service state to task9_httpd_status.txt"
+      ],
+      "think_about_it": [
+        "The HTML file still exists /var/www/html/index.html",
+        "So why can't the browser access it?",
+        "This is the key lesson:",
+        "The content can exist on disk, but without the service running, there is no web server available to deliver that content."
+      ],
+      "hint": "The browser does not directly read /var/www/html/index.html. It communicates with the web server, which must be running to deliver the file.",
+      "real_world": [
+        "A web server outage does not necessarily mean that the website files have been deleted.",
+        "The application or content can remain intact while the service responsible for delivering it is unavailable."
+      ]
+    },
+    {
+      "task_number": 10,
+      "title": "Task 10 - Restart Apache (httpd service) Again",
+      "steps": [
+        "Restart httpd service.",
+        "Verify status save the output to task10_httpd_status.txt"
+      ],
+      "hint": "Use systemctl restart httpd and then verify the service status.",
+      "real_world": [
+        "Restarting a service is a common recovery action when a service has been stopped or is not functioning correctly."
+      ]
+    },
+    {
+      "task_number": 11,
+      "title": "Task 11 - Access the Website Again",
+      "steps": [
+        "Return to the browser and refresh the page.",
+        "Verify that the website is accessible again.",
+        "You should see:",
+        "LINOOP Linux Service Management",
+        "Apache HTTP Server is running successfully.",
+        "Lab 218 - Advanced Service Management",
+        "Save the final service state using command systemctl is-active httpd to task11_httpd_accessible.txt",
+        "aha_moment",
+        "Now understand HTTPD running, port 80 listening, Browser connects, Apache serves index.html and Website accessible",
+        "versus:",
+        "HTTPD stopped, No web server, Browser cannot connect, Website unavailable"
+      ],
+      "hint": "The final service state should show active when httpd has been successfully restarted.",
+      "real_world": [
+        "This represents a basic production troubleshooting workflow: check the service, identify the problem, recover the service, and verify availability from the client side."
+      ]
+    }
+  ],
+  "important_commands": [
+    "ps -p 1 -o pid,comm,cmd",
+    "systemctl status httpd",
+    "systemctl start httpd",
+    "systemctl stop httpd",
+    "systemctl restart httpd",
+    "systemctl reload httpd",
+    "systemctl enable httpd",
+    "systemctl disable httpd",
+    "systemctl is-active httpd",
+    "systemctl is-enabled httpd",
+    "cat /var/www/html/index.html"
+  ],
+  "completion_message": "Congratulations! You have completed Lab 218 - Advanced Linux Service Management. You identified the Linux service manager, inspected the Apache httpd service, started and enabled it, deployed web content, verified the website from a browser, stopped the service to observe the impact, and restarted it to restore service availability. You also demonstrated the important relationship between a running service, its processes, and the content that the service delivers."
+}

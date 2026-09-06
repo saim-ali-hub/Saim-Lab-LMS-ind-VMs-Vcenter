@@ -1,0 +1,224 @@
+{
+  "lab_id": "lab217",
+  "title": "Lab 217 - Linux Service Management",
+  "description": "A production Linux server is running several services that support different applications. A web service must be running continuously, while some services should start automatically when the server boots. As the Linux System Administrator, you must perform a service-management review and make sure the required services are configured correctly using systemd and systemctl.",
+
+  "lab_objective": {
+    "description": "By the end of this lab, you will learn how to manage services on a Linux system using systemctl:",
+    "objectives": [
+      "Identify the service manager used by the Linux system.",
+      "Check the status of a service.",
+      "Stop a service.",
+      "Start a service.",
+      "Restart a service.",
+      "Reload a service without completely stopping it.",
+      "Enable a service to start automatically at boot.",
+      "Disable a service from starting automatically at boot.",
+      "Check whether a service is enabled.",
+      "View detailed service information.",
+      "Identify the main process associated with a running service.",
+      "Understand the relationship between a systemd service and its process."
+    ],
+
+  "scenario": [
+    "You are working as a Linux System Administrator responsible for maintaining a production Linux server. The server is running several services that support different applications. A web service must be running continuously, while some services should start automatically when the server boots.",
+    "Your manager has asked you to perform a service-management review and make sure the required services are configured correctly.",
+    "You must use systemd and systemctl to inspect and manage the services.",
+    "Throughout this lab, you will work with the httpd service to practice common service-management tasks. You will systemctl command to stop, start, restart, reload, enable, disable service and identify the process associated with the service."
+  ],
+
+  "important_notes": [
+    "Do not stop, disable, restart, or modify critical system services such as systemd, sshd, networking services, or other services required for system access.",
+    "If the httpd service is not installed, install it using dnf install httpd -y.",
+    "Complete all tasks inside the service_mgt directory unless instructed otherwise.",
+    "Redirect the requested command output to the specified files.",
+    "When changing the enabled or disabled state of httpd, verify the result using systemctl.",
+    "Understand that starting a service and enabling a service are two different operations.",
+    "systemctl start starts a service immediately, while systemctl enable configures a service to start automatically during boot."
+   ]
+  },
+
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Create a ‘service_mgt’ directory",
+      "steps": [
+        "Create a directory service_mgt in your home directory.",
+        "Change directory to service_mgt directory.",
+        "Switch to root user.",
+        "Make sure you in next all files that you would create store inside this service_mgt directory."
+      ],
+      "hint": "Use mkdir to create the directory, cd to change into it, and su - or an appropriate command to switch to the root user. Use pwd to verify your current directory.",
+      "real_world": [
+        "Real-world: Linux administrators commonly create dedicated working directories to store service-management reports, command output, and troubleshooting information."
+      ]
+    },
+
+    {
+      "task_number": 2,
+      "title": "Identify the Service Manager",
+      "steps": [
+        "Determine which service manager is being used by the system.",
+        "Display the system's PID 1 process and identify the service manager.",
+        "Hint: ps -p 1 -o pid,comm,cmd"
+      ],
+      "hint": "Use ps to display PID 1. On a system using systemd, PID 1 should identify systemd as the service manager.",
+      "real_world": [
+        "Real-world: Before managing services, Linux administrators should understand which service manager controls the system. Modern RHEL-based systems use systemd."
+      ]
+    },
+
+    {
+      "task_number": 3,
+      "title": "Check Service Status",
+      "steps": [
+        "Check the status of the httpd service.",
+        "If httpd service is not installed already, please install using ‘dnf install httpd -y’.",
+        "Check status if httpd service.",
+        "Redirect output to the files named ‘httpd_status3’."
+      ],
+      "hint": "Use dnf install httpd -y if httpd is not installed. Use systemctl status httpd to check the service status. Use output redirection to save the result in httpd_status3.",
+      "real_world": [
+        "Real-world: Checking service status is usually the first step when troubleshooting an application or service that is reported as unavailable."
+      ]
+    },
+
+    {
+      "task_number": 4,
+      "title": "Stop a Service",
+      "steps": [
+        "On your machine stop the httpd service.",
+        "Check status of httpd its should no longer be running.",
+        "Redirect to ‘httpd_status4’."
+      ],
+      "hint": "Use systemctl stop httpd and then use systemctl status httpd to verify that the service is no longer running.",
+      "real_world": [
+        "Real-world: Administrators may stop a service during maintenance, troubleshooting, configuration changes, or application shutdown procedures."
+      ]
+    },
+
+    {
+      "task_number": 5,
+      "title": "Start a Service",
+      "steps": [
+        "Now start the httpd service again.",
+        "Verify that httpd service is running/active.",
+        "Redirect output of status of httpd service into httpd_status5."
+      ],
+      "hint": "Use systemctl start httpd and then verify the service using systemctl status httpd.",
+      "real_world": [
+        "Real-world: After maintenance or troubleshooting, administrators start required services and verify that they have returned to the active state."
+      ]
+    },
+
+    {
+      "task_number": 6,
+      "title": "Restart a Service",
+      "steps": [
+        "Restart the httpd service.",
+        "Verify that the service returns to the active (running) state.",
+        "Redirect output of status of httpd service into httpd_status6."
+      ],
+      "hint": "Use systemctl restart httpd and then check the status of httpd.",
+      "real_world": [
+        "Real-world: Restarting a service is commonly used after configuration changes or when a service needs to completely stop and initialize again."
+      ]
+    },
+
+    {
+      "task_number": 7,
+      "title": "Reload a Service",
+      "steps": [
+        "Use systemctl to reload the service without completely stopping it.",
+        "Verify the service status after the reload.",
+        "Redirect output of status of httpd service into httpd_status7.",
+        "Understand the difference between systemctl restart and systemctl reload."
+      ],
+      "hint": "Use systemctl reload httpd and then verify the status using systemctl status httpd. Restart generally stops and starts the service, while reload asks the service to reread its configuration without completely stopping the service.",
+      "real_world": [
+        "Real-world: Administrators often reload services such as web servers after configuration changes when they want the new configuration applied without completely stopping the service."
+      ]
+    },
+
+    {
+      "task_number": 8,
+      "title": "Enable a Service at Boot",
+      "steps": [
+        "Configure the httpd service so that it automatically starts when the system boots.",
+        "Verify that the service is enabled.",
+        "Redirect output of status of httpd service into httpd_status8."
+      ],
+      "hint": "Use systemctl enable httpd to configure automatic startup at boot. Use systemctl status httpd to verify the enabled state.",
+      "real_world": [
+        "Real-world: Production services that must be available after a server reboot are commonly configured to start automatically at boot."
+      ]
+    },
+
+    {
+      "task_number": 9,
+      "title": "Disable a Service at Boot",
+      "steps": [
+        "Disable the httpd service from starting automatically at server boot.",
+        "Verify that the service is disabled.",
+        "Redirect output of status of httpd service into httpd_status9."
+      ],
+      "hint": "Use systemctl disable httpd and then use systemctl status httpd to verify that the service is disabled.",
+      "real_world": [
+        "Real-world: Administrators disable services that should not automatically start after a reboot, especially services that are no longer required or are being retired."
+      ]
+    },
+
+    {
+      "task_number": 10,
+      "title": "View Service Information",
+      "steps": [
+        "Use systemctl to display detailed information about ‘httpd’ service.",
+        "Hint: Check status.",
+        "Identify:",
+        "Loaded state",
+        "Active state",
+        "Main PID",
+        "Service description",
+        "Service file location",
+        "Whether the service is enabled",
+        "Redirect output of status of httpd service into httpd_status10."
+      ],
+      "hint": "Use systemctl status httpd and examine the Loaded, Active, Main PID, description, service file location, and enabled information displayed in the output.",
+      "real_world": [
+        "Real-world: The systemctl status output provides administrators with important information for quickly determining whether a service is loaded, running, enabled, and which process is responsible for the service."
+      ]
+    },
+
+    {
+      "task_number": 11,
+      "title": "Find the Service's Process",
+      "steps": [
+        "Identify the main process associated with a running service.",
+        "Display at least:",
+        "PID     PPID    USER    COMMAND",
+        "Execute command:",
+        "ps -C httpd -o pid,ppid,user,comm",
+        "Redirect output of the command into httpd_status11."
+      ],
+      "hint": "Use the exact ps command provided in the task. PID identifies the process, PPID identifies its parent process, USER identifies the account running the process, and COMMAND identifies the process name.",
+      "real_world": [
+        "Real-world: systemctl manages the service unit, while the actual application is executed by one or more processes. Administrators often use systemctl and ps together when troubleshooting services."
+      ]
+    }
+  ],
+
+  "important_commands": [
+    "ps",
+    "dnf",
+    "systemctl",
+    "systemctl status",
+    "systemctl start",
+    "systemctl stop",
+    "systemctl restart",
+    "systemctl reload",
+    "systemctl enable",
+    "systemctl disable"
+  ],
+
+  "completion_message": "Excellent work! You have successfully completed Lab 217 - Linux Service Management. You practiced identifying the service manager, checking service status, starting and stopping services, restarting and reloading services, enabling and disabling services at boot, viewing detailed service information, and identifying the process associated with a running service. You also learned the important difference between a systemd service and the process that actually runs the service."
+}
