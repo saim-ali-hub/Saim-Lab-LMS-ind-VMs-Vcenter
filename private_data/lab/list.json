@@ -1,5 +1,31 @@
 [
     {
+
+        "category": "Amazon Web Services",
+        "name": "Lab101 - Launch an AWS EC2 Linux Instance (Amazon Linux 2023)",
+        "file": "lab101.json"
+    },
+    {
+        "category": "Amazon Web Services",
+        "name": "Lab102 - Launch Multiple AWS EC2 Linux Instances",
+        "file": "lab102.json"
+    },
+    {
+        "category": "Amazon Web Services",
+        "name": "Lab103 - AWS IAM Users, Groups, and Policies",
+        "file": "lab103.json"
+    },
+    {
+        "category": "Amazon Web Services",
+        "name": "Lab104 - AWS IAM Users, Groups, and Policies",
+        "file": "lab104.json"
+    },
+    {
+        "category": "Amazon Web Services",
+        "name": "Lab105 - Amazon S3 Storage Management",
+        "file": "lab105.json"
+    },
+    {
         "category": "Linux",
         "name": "Lab201 - Basic Linux Commands",
         "file": "lab201.json"
@@ -81,35 +107,48 @@
      "file": "lab216.json"
     },
     {
-
-        "category": "Amazon Web Services",
-        "name": "Lab101 - Launch an AWS EC2 Linux Instance (Amazon Linux 2023)",
-        "file": "lab101.json"
+     "category": "Linux",
+     "name": "lab 217 - Linux Service Management",
+     "file": "lab217.json"
     },
     {
-        "category": "Amazon Web Services",
-        "name": "Lab102 - Launch Multiple AWS EC2 Linux Instances",
-        "file": "lab102.json"
+     "category": "Linux",
+     "name": "lab 218 - Advance Linux Service Management",
+     "file": "lab218.json"
     },
     {
-        "category": "Amazon Web Services",
-        "name": "Lab103 - AWS IAM Users, Groups, and Policies",
-        "file": "lab103.json"
+     "category": "Linux",
+     "name": "lab 219 - Linux User Management",
+     "file": "lab219.json"
     },
     {
-        "category": "Amazon Web Services",
-        "name": "Lab104 - AWS IAM Users, Groups, and Policies",
-        "file": "lab104.json"
+     "category": "Linux",
+     "name": "lab 220 - Linux User Management - Advanced",
+     "file": "lab220.json"
     },
     {
-        "category": "Amazon Web Services",
-        "name": "Lab105 - Amazon S3 Storage Management",
-        "file": "lab105.json"
+     "category": "Linux",
+     "name": "lab 221 - Linux package Management",
+     "file": "lab221.json"
+    },
+    {
+     "category": "Linux",
+     "name": "lab 222 - Linux Package Management - Advanced",
+     "file": "lab222.json"
+    },
+    {
+        "category": "Technical Screening",
+        "name": "Technical Screening Round - 1",
+        "file": "lab901.json"
+    },
+    {
+        "category": "Technical Screening",
+        "name": "Technical Screening Round - 2",
+        "file": "lab902.json"
     },
     {
         "category": "Technical Screening",
         "name": "Technical Screening Round - 3",
         "file": "lab903.json"
     }
-
 ]
