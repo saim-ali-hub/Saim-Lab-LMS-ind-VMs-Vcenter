@@ -21,25 +21,24 @@
     "Verify account configuration using standard Linux commands."
   ],
   "scenario": [
-   "You are a Linux system administrator responsible for preparing and maintaining user accounts for a newly formed Infrastructure Operations Team.\n\nThe team contains application developers, database administrators, and Linux support personnel.\n\nDuring the account setup process, the requirements change several times. You must create the accounts, assign appropriate group memberships, modify existing accounts, enforce password policies, temporarily disable an account, rename accounts and groups, and finally retire some accounts."
+   "You are a Linux system administrator responsible for preparing and maintaining user accounts for a newly formed Infrastructure Operations Team.\n\nThe team contains application engineers, database administrators, and Linux support personnel.\n\nDuring the account setup process, the requirements change several times. You must create the accounts, assign appropriate group memberships, modify existing accounts, enforce password policies, temporarily disable an account, rename accounts and groups, and finally retire some accounts."
    ]
   },
   "tasks": [
     {
       "task_number": 1,
       "title": "Create the Lab Directory and Groups",
-      "steps": [
-        "Create the following directory in your home directory lab219_user_mgt",
-        "Store the verification output for every task in in this lab",
-        "/home/your-user-name/lab219_user_mgt/",
+      "steps": [ 
+        "Create lab220_user_mgt directory inside your home directory",
+        "Store the verification output for every task inside /home/your-user-name/lab220_user_mgt/ directory",
         "Create the following groups with the specified GIDs:",
         "platform 3101",
-        "developers 3102",
+        "engineers 3102",
         "database 3103",
         "support 3104",
         "Verify all four groups using getent group.",
         "Redirect the verification output to:",
-        "/home/your-user-name/lab219_user_mgt/task1-groups.txt"
+        "/home/your-user-name/lab220_user_mgt/task1-groups.txt"
       ]
     },
     {
@@ -47,13 +46,13 @@
       "title": "Create Users with Specific UIDs",
       "steps": [
         "Create the following users:",
-        "alex 2101",
-        "david 2102",
-        "maria 2103",
+        "max 2101",
+        "smith 2102",
+        "sarah 2103",
         "sophia 2104",
         "Each user should have a normal home directory.",
         "Verify the users using id <username>",
-        "Redirect the verification output to /home/your-user-name/lab219_user_mgt/task2-users.txt"
+        "Redirect the verification output to /home/your-user-name/lab220_user_mgt/task2-users.txt"
       ]
     },
     {
@@ -61,18 +60,18 @@
       "title": "Configure Supplementary Groups",
       "steps": [
         "Configure supplementary group membership for the following users as follows:",
-        "Add developers to alex's supplementary groups.",
-        "Add support to alex's supplementary groups without removing any existing supplementary groups.",
-        "Add platform to david's supplementary groups.",
-        "Add database to david’s supplementary groups without removing any existing supplementary groups.",
-        "Add developers to maria's supplementary groups.",
+        "Add engineers to max's supplementary groups.",
+        "Add support to max's supplementary groups without removing any existing supplementary groups.",
+        "Add platform to smith's supplementary groups.",
+        "Add database to smith’s supplementary groups without removing any existing supplementary groups.",
+        "Add engineers to sarah's supplementary groups.",
         "Add platform to sophia's supplementary groups.",
         "Add database to sophia’s supplementary groups without removing any existing supplementary groups.",
         "Do not change the users' primary groups.",
         "Important: Do not accidentally replace existing supplementary group memberships while adding a new group.",
         "Hint: Think carefully about the difference between usermod –G and usermod -aG",
         "Verify all four users using id users.",
-        "Redirect the output to /home/your-user-name/lab219_user_mgt/task3-groups.txt"
+        "Redirect the output to /home/your-user-name/lab220_user_mgt/task3-groups.txt"
       ]
     },
     {
@@ -86,7 +85,7 @@
         "Do not change any user's primary group.",
         "Verify all three accounts using id.",
         "Redirect the output to:",
-        "/home/your-user-name/lab219_user_mgt/task4-members.txt"
+        "/home/your-user-name/lab220_user_mgt/task4-members.txt"
       ]
     },
     {
@@ -94,16 +93,16 @@
       "title": "Set Passwords for Existing Users",
       "steps": [
         "Use the passwd command to set a password for the following users:",
-        "alex",
-        "david",
-        "maria",
+        "max",
+        "smith",
+        "sarah",
         "sophia",
         "Password choice is yours. You may choose any password you prefer.",
         "Do not place passwords in any verification file.",
         "Verify that each account has password information configured using appropriate account-management commands.",
         "Hint: passwd",
         "Redirect the verification output to:",
-        "/home/your-user-name/lab219_user_mgt/task5-passwords.txt",
+        "/home/your-user-name/lab220_user_mgt/task5-passwords.txt",
         "Important: Never record the actual passwords in the lab output."
       ]
     },
@@ -117,7 +116,7 @@
         "Verify that Maria's account is locked using an appropriate command.",
         "Do not delete the account.",
         "Redirect the output to:",
-        "/home/your-user-name/lab219_user_mgt/task6-lock-maria.txt"
+        "/home/your-user-name/lab220_user_mgt/task6-lock-sarah.txt"
       ]
     },
     {
@@ -129,7 +128,7 @@
         "Hint: Use passwd with the appropriate account-unlock option.",
         "Verify that Maria's account is no longer locked.",
         "Redirect the output to:",
-        "/home/your-user-name/lab219_user_mgt/task7-unlock-maria.txt"
+        "/home/your-user-name/lab220_user_mgt/task7-unlock-sarah.txt"
       ]
     },
     {
@@ -138,13 +137,13 @@
       "steps": [
         "The project has ended.",
         "Make the following changes:",
-        "Remove Alex from support and developers.",
-        "Remove Maria from support and developers.",
+        "Remove Alex from support and engineers.",
+        "Remove Maria from support and engineers.",
         "Remove Sophia from platform.",
         "Do not change their primary groups.",
         "Verify each account.",
         "Redirect the output to:",
-        "/home/your-user-name/lab219_user_mgt/task8-membership-removal.txt"
+        "/home/your-user-name/lab220_user_mgt/task8-membership-removal.txt"
       ]
     },
     {
@@ -160,7 +159,7 @@
         "getent group database",
         "does not return the group.",
         "Redirect the output to:",
-        "/home/your-user-name/lab219_user_mgt/task9-delete-database.txt"
+        "/home/your-user-name/lab220_user_mgt/task9-delete-database.txt"
       ]
     },
     {
@@ -173,7 +172,7 @@
         "- sophia no longer exists. Verify id sophia",
         "- /home/sophia no longer exists. Verify ls -ld /home/sophia",
         "Redirect the verification output to:",
-        "/home/your-user-name/lab219_user_mgt/task10-delete-sophia.txt"
+        "/home/your-user-name/lab220_user_mgt/task10-delete-sophia.txt"
       ]
     },
     {
@@ -184,20 +183,20 @@
         "Before deleting them, verify that no remaining user has them as a primary or supplementary group.",
         "Delete the groups.",
         "Then perform a final audit of the remaining accounts:",
-        "alex",
-        "david",
-        "maria",
+        "max",
+        "smith",
+        "sarah",
         "Verify that:",
         "- support does not exist.",
         "- platform does not exist.",
         "- database does not exist.",
-        "- developers exists.",
-        "- alex exists.",
-        "- david exists.",
-        "- maria exists.",
+        "- engineers exists.",
+        "- max exists.",
+        "- smith exists.",
+        "- sarah exists.",
         "- sophia does not exist.",
         "Redirect the complete verification output to:",
-        "/home/your-user-name/lab219_user_mgt/task11-final-audit.txt"
+        "/home/your-user-name/lab220_user_mgt/task11-final-audit.txt"
       ]
     }
   ],

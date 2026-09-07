@@ -8171,7 +8171,7 @@ validate_lab220_advanced_user_management() {
     echo "Checking Lab 220 - Linux User Management - Advanced..."
 
     HOME_DIR="/home/$STUDENT_NAME"
-    BASE="$HOME_DIR/lab219_user_mgt"
+    BASE="$HOME_DIR/lab220_user_mgt"
 
     LAB_NAME="Lab 220 - Linux User Management - Advanced"
     DATE=$(date "+%F %T")
@@ -8212,7 +8212,7 @@ validate_lab220_advanced_user_management() {
         TASK1_OK=1
 
         grep -Eq '^platform:x:3101:' "$TASK1" || TASK1_OK=0
-        grep -Eq '^developers:x:3102:' "$TASK1" || TASK1_OK=0
+        grep -Eq '^engineers:x:3102:' "$TASK1" || TASK1_OK=0
         grep -Eq '^database:x:3103:' "$TASK1" || TASK1_OK=0
         grep -Eq '^support:x:3104:' "$TASK1" || TASK1_OK=0
 
@@ -8235,13 +8235,13 @@ validate_lab220_advanced_user_management() {
 
         TASK2_OK=1
 
-        grep -Eq 'uid=2101\(alex\)' "$TASK2" || TASK2_OK=0
-        grep -Eq 'uid=2102\(david\)' "$TASK2" || TASK2_OK=0
-        grep -Eq 'uid=2103\(maria\)' "$TASK2" || TASK2_OK=0
+        grep -Eq 'uid=2101\(max\)' "$TASK2" || TASK2_OK=0
+        grep -Eq 'uid=2102\(smith\)' "$TASK2" || TASK2_OK=0
+        grep -Eq 'uid=2103\(sarah\)' "$TASK2" || TASK2_OK=0
         grep -Eq 'uid=2104\(sophia\)' "$TASK2" || TASK2_OK=0
 
         if [ "$TASK2_OK" -eq 1 ]; then
-            pass "Task 2: alex, david, maria, and sophia were created with the required UIDs"
+            pass "Task 2: max, smith, sarah, and sophia were created with the required UIDs"
         else
             fail "Task 2: task2-users.txt does not show all users with the required UIDs"
         fi
@@ -8261,22 +8261,22 @@ validate_lab220_advanced_user_management() {
 
         TASK3_OK=1
 
-        # Alex
-        grep -Eq 'uid=[0-9]+\(alex\).*gid=[0-9]+\(alex\).*groups=.*developers' "$TASK3" \
+        # max
+        grep -Eq 'uid=[0-9]+\(max\).*gid=[0-9]+\(max\).*groups=.*engineers' "$TASK3" \
             || TASK3_OK=0
 
-        grep -Eq 'uid=[0-9]+\(alex\).*gid=[0-9]+\(alex\).*groups=.*support' "$TASK3" \
+        grep -Eq 'uid=[0-9]+\(max\).*gid=[0-9]+\(max\).*groups=.*support' "$TASK3" \
             || TASK3_OK=0
 
-        # David
-        grep -Eq 'uid=[0-9]+\(david\).*gid=[0-9]+\(david\).*groups=.*platform' "$TASK3" \
+        # smith
+        grep -Eq 'uid=[0-9]+\(smith\).*gid=[0-9]+\(smith\).*groups=.*platform' "$TASK3" \
             || TASK3_OK=0
 
-        grep -Eq 'uid=[0-9]+\(david\).*gid=[0-9]+\(david\).*groups=.*database' "$TASK3" \
+        grep -Eq 'uid=[0-9]+\(smith\).*gid=[0-9]+\(smith\).*groups=.*database' "$TASK3" \
             || TASK3_OK=0
 
-        # Maria
-        grep -Eq 'uid=[0-9]+\(maria\).*gid=[0-9]+\(maria\).*groups=.*developers' "$TASK3" \
+        # sarah
+        grep -Eq 'uid=[0-9]+\(sarah\).*gid=[0-9]+\(sarah\).*groups=.*engineers' "$TASK3" \
             || TASK3_OK=0
 
         # Sophia
@@ -8307,13 +8307,13 @@ validate_lab220_advanced_user_management() {
 
         TASK4_OK=1
 
-        # David must NOT have database
-        if grep -E 'uid=[0-9]+\(david\)' "$TASK4" | grep -q 'database'; then
+        # smith must NOT have database
+        if grep -E 'uid=[0-9]+\(smith\)' "$TASK4" | grep -q 'database'; then
             TASK4_OK=0
         fi
 
-        # Maria must have support
-        grep -E 'uid=[0-9]+\(maria\)' "$TASK4" | grep -q 'support' \
+        # sarah must have support
+        grep -E 'uid=[0-9]+\(sarah\)' "$TASK4" | grep -q 'support' \
             || TASK4_OK=0
 
         # Sophia must NOT have database
@@ -8322,10 +8322,10 @@ validate_lab220_advanced_user_management() {
         fi
 
         # Primary groups must remain unchanged
-        grep -Eq 'uid=[0-9]+\(david\).*gid=[0-9]+\(david\)' "$TASK4" \
+        grep -Eq 'uid=[0-9]+\(smith\).*gid=[0-9]+\(smith\)' "$TASK4" \
             || TASK4_OK=0
 
-        grep -Eq 'uid=[0-9]+\(maria\).*gid=[0-9]+\(maria\)' "$TASK4" \
+        grep -Eq 'uid=[0-9]+\(sarah\).*gid=[0-9]+\(sarah\)' "$TASK4" \
             || TASK4_OK=0
 
         grep -Eq 'uid=[0-9]+\(sophia\).*gid=[0-9]+\(sophia\)' "$TASK4" \
@@ -8353,9 +8353,9 @@ validate_lab220_advanced_user_management() {
         TASK5_OK=1
 
         # Expected passwd -S output should show PS (Password Set)
-        grep -Eq '^alex[[:space:]]+PS[[:space:]]' "$TASK5" || TASK5_OK=0
-        grep -Eq '^david[[:space:]]+PS[[:space:]]' "$TASK5" || TASK5_OK=0
-        grep -Eq '^maria[[:space:]]+PS[[:space:]]' "$TASK5" || TASK5_OK=0
+        grep -Eq '^max[[:space:]]+PS[[:space:]]' "$TASK5" || TASK5_OK=0
+        grep -Eq '^smith[[:space:]]+PS[[:space:]]' "$TASK5" || TASK5_OK=0
+        grep -Eq '^sarah[[:space:]]+PS[[:space:]]' "$TASK5" || TASK5_OK=0
         grep -Eq '^sophia[[:space:]]+PS[[:space:]]' "$TASK5" || TASK5_OK=0
 
         # Make sure password hashes were NOT saved.
@@ -8378,23 +8378,23 @@ validate_lab220_advanced_user_management() {
     # TASK 6 - LOCK MARIA
     # ============================================================
 
-    TASK6="$BASE/task6-lock-maria.txt"
+    TASK6="$BASE/task6-lock-sarah.txt"
 
     if [ -f "$TASK6" ] && [ -s "$TASK6" ]; then
 
         TASK6_OK=1
 
-        # passwd -S maria normally reports LK when the password is locked.
-        grep -Eq '^maria[[:space:]]+LK[[:space:]]' "$TASK6" || TASK6_OK=0
+        # passwd -S sarah normally reports LK when the password is locked.
+        grep -Eq '^sarah[[:space:]]+LK[[:space:]]' "$TASK6" || TASK6_OK=0
 
         if [ "$TASK6_OK" -eq 1 ]; then
-            pass "Task 6: Maria's account was locked"
+            pass "Task 6: sarah's account was locked"
         else
-            fail "Task 6: task6-lock-maria.txt does not show Maria's account as locked"
+            fail "Task 6: task6-lock-sarah.txt does not show sarah's account as locked"
         fi
 
     else
-        fail "Task 6: task6-lock-maria.txt is missing or empty"
+        fail "Task 6: task6-lock-sarah.txt is missing or empty"
     fi
 
 
@@ -8402,28 +8402,28 @@ validate_lab220_advanced_user_management() {
     # TASK 7 - UNLOCK MARIA
     # ============================================================
 
-    TASK7="$BASE/task7-unlock-maria.txt"
+    TASK7="$BASE/task7-unlock-sarah.txt"
 
     if [ -f "$TASK7" ] && [ -s "$TASK7" ]; then
 
         TASK7_OK=1
 
-        # Maria should no longer show LK.
-        if grep -Eq '^maria[[:space:]]+LK[[:space:]]' "$TASK7"; then
+        # sarah should no longer show LK.
+        if grep -Eq '^sarah[[:space:]]+LK[[:space:]]' "$TASK7"; then
             TASK7_OK=0
         fi
 
         # Normal unlocked account with password should show PS.
-        grep -Eq '^maria[[:space:]]+PS[[:space:]]' "$TASK7" || TASK7_OK=0
+        grep -Eq '^sarah[[:space:]]+PS[[:space:]]' "$TASK7" || TASK7_OK=0
 
         if [ "$TASK7_OK" -eq 1 ]; then
-            pass "Task 7: Maria's account was unlocked"
+            pass "Task 7: sarah's account was unlocked"
         else
-            fail "Task 7: task7-unlock-maria.txt does not show Maria as unlocked"
+            fail "Task 7: task7-unlock-sarah.txt does not show sarah as unlocked"
         fi
 
     else
-        fail "Task 7: task7-unlock-maria.txt is missing or empty"
+        fail "Task 7: task7-unlock-sarah.txt is missing or empty"
     fi
 
 
@@ -8437,13 +8437,13 @@ validate_lab220_advanced_user_management() {
 
         TASK8_OK=1
 
-        # Alex must not have support or developers.
-        if grep -E 'uid=[0-9]+\(alex\)' "$TASK8" | grep -Eq 'support|developers'; then
+        # max must not have support or engineers.
+        if grep -E 'uid=[0-9]+\(max\)' "$TASK8" | grep -Eq 'support|engineers'; then
             TASK8_OK=0
         fi
 
-        # Maria must not have support or developers.
-        if grep -E 'uid=[0-9]+\(maria\)' "$TASK8" | grep -Eq 'support|developers'; then
+        # sarah must not have support or engineers.
+        if grep -E 'uid=[0-9]+\(sarah\)' "$TASK8" | grep -Eq 'support|engineers'; then
             TASK8_OK=0
         fi
 
@@ -8453,10 +8453,10 @@ validate_lab220_advanced_user_management() {
         fi
 
         # Primary groups must remain unchanged.
-        grep -Eq 'uid=[0-9]+\(alex\).*gid=[0-9]+\(alex\)' "$TASK8" \
+        grep -Eq 'uid=[0-9]+\(max\).*gid=[0-9]+\(max\)' "$TASK8" \
             || TASK8_OK=0
 
-        grep -Eq 'uid=[0-9]+\(maria\).*gid=[0-9]+\(maria\)' "$TASK8" \
+        grep -Eq 'uid=[0-9]+\(sarah\).*gid=[0-9]+\(sarah\)' "$TASK8" \
             || TASK8_OK=0
 
         grep -Eq 'uid=[0-9]+\(sophia\).*gid=[0-9]+\(sophia\)' "$TASK8" \
@@ -8548,10 +8548,10 @@ validate_lab220_advanced_user_management() {
         getent group database >/dev/null 2>&1 && TASK11_OK=0
 
         # --------------------------------------------------------
-        # developers MUST exist
+        # engineers MUST exist
         # --------------------------------------------------------
 
-        if ! getent group developers >/dev/null 2>&1; then
+        if ! getent group engineers >/dev/null 2>&1; then
             TASK11_OK=0
         fi
 
@@ -8559,9 +8559,9 @@ validate_lab220_advanced_user_management() {
         # Users that MUST exist
         # --------------------------------------------------------
 
-        getent passwd alex >/dev/null 2>&1 || TASK11_OK=0
-        getent passwd david >/dev/null 2>&1 || TASK11_OK=0
-        getent passwd maria >/dev/null 2>&1 || TASK11_OK=0
+        getent passwd max >/dev/null 2>&1 || TASK11_OK=0
+        getent passwd smith >/dev/null 2>&1 || TASK11_OK=0
+        getent passwd sarah >/dev/null 2>&1 || TASK11_OK=0
 
         # --------------------------------------------------------
         # Sophia MUST NOT exist
@@ -8573,7 +8573,7 @@ validate_lab220_advanced_user_management() {
         # Check saved audit for expected account/group results
         # --------------------------------------------------------
 
-        grep -Eq '^developers:x:' "$TASK11" || TASK11_OK=0
+        grep -Eq '^engineers:x:' "$TASK11" || TASK11_OK=0
 
         if grep -Eq '^support:x:' "$TASK11"; then
             TASK11_OK=0

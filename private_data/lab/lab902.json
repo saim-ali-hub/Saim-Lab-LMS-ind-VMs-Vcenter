@@ -1,0 +1,156 @@
+{
+  "lab_id": "lab903.json",
+  "title": "Technical Screening Round (TSR) - 2",
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "VMware",
+      "steps": [
+        "1. What is virtualization?",
+        "2. What is a Virtual Machine (VM)?",
+        "3. What virtualization platforms have you used?",
+        "4. What is a Hypervisor?",
+        "5. What are the types of hypervisors?",
+        "6. What is VMware ESXi?",
+        "7. What is vCenter Server?",
+        "8. Can ESXi work without vCenter?",
+        "9. What is the difference between ESXi and vCenter?",
+        "10. What file extension does a VMware virtual disk use?",
+        "11. What is the file extension of a VM configuration file?",
+        "12. What is vMotion?",
+        "13. What are the basic requirements for vMotion?",
+        "14. What is Storage vMotion?",
+        "15. What is the difference between vMotion and Storage vMotion?",
+        "16. What is High Availability (HA)?",
+        "17. What is Fault Tolerance (FT)?",
+        "18. What is Distributed Resource Scheduler (DRS)?",
+        "19. What is a datastore?",
+        "20. What is the difference between Thick Provisioning and Thin Provisioning?",
+        "21. What is a VMware snapshot?",
+        "22. Can snapshots replace backups?",
+        "23. What happens if snapshots remain for a long time?",
+        "24. What is the difference between a Standard Switch and a Distributed Switch?",
+        "25. What are Port Groups?",
+        "26. What is the difference between local storage and shared storage?",
+        "27. What are the different types of shared storage?",
+        "28. What is Multipathing?",
+        "29. What command do you use to check multipathing in Linux?",
+        "30. Walk me through the process of putting an ESXi host into Maintenance Mode.",
+        "31. What happens to HA when an ESXi host is in Maintenance Mode?",
+        "32. What is template in VMware environment?",
+        "33. How does a VMware template differ from a virtual machine clone?",
+        "34. A datastore is full. How would you resolve the issue?",
+        "35. A virtual machine will not power on. What would you check?",
+        "36. What are the most common reasons a VM doesn't power on?"
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Fundamentals of AWS (Amazon Web Services)",
+      "steps": [
+        "37. What is cloud?",
+        "38. What is the difference between traditional data centers and AWS cloud infrastructure?",
+        "39. What are the main components of AWS Global Infrastructure?",
+        "40. What factors should be considered when selecting an AWS Region?",
+        "41. Why does AWS use multiple Availability Zones?",
+        "42. What is difference between AWS Region and Availability Zone?",
+        "43. What is edge location Edge location?",
+        "44. What is the difference between an Edge Location and an Availability Zone?",
+        "45. What is the difference between scalability and elasticity?",
+        "46. What is difference between vertical scaling and horizontal scaling?",
+        "47. What is the difference between High Availability and fault tolerance?",
+        "48. What is disaster recovery?"
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "AWS Computing Models & Deployment Models",
+      "steps": [
+        "49. What are cloud computing models?",
+        "50. What are the three main cloud service models?",
+        "51. What is difference between IaaS and PaaS?",
+        "52. What is difference between PaaS and SaaS?",
+        "53. What are major cloud deployment models?",
+        "54. What is difference between public and private cloud?",
+        "55. Why do organizations adopt Hybrid Cloud strategies?",
+        "56. What is Vendor Lock-in?",
+        "57. How can organizations reduce Vendor Lock-in?",
+        "58. What is the difference between AWS VPN and Direct Connect?"
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "EC2 (Elastic Compute Cloud)",
+      "steps": [
+        "59. What is Amazon EC2?",
+        "60. What are the different EC2 instance types?",
+        "61. What are the diverse EC2 options offered by AWS?",
+        "62. What is an Amazon Machine Image (AMI)?",
+        "63. What is the difference between an AMI and an EC2 instance?",
+        "64. What are On-Demand Instances?",
+        "65. What are Reserved Instances?",
+        "66. What are Spot Instances?",
+        "67. What are Dedicated Hosts?",
+        "68. How do you connect to a Linux EC2 instance?",
+        "69. What is the difference between Stop and Terminate of EC2 instance?",
+        "70. What are Security Groups?",
+        "71. What us difference between a security group and NACL?"
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "IAM (Users and Roles)",
+      "steps": [
+        "72. What is IAM?",
+        "73. Can you identify the key components of IAM in AWS?",
+        "74. Why is an IAM role necessary?",
+        "75. What sets IAM roles apart from policies?",
+        "76. Explain the concept of MFA in IAM.",
+        "77. What is the Principle of Least Privilege?",
+        "78. What is Multi-Factor Authentication (MFA)?",
+        "79. What is the difference between an IAM User and an IAM Role?",
+        "80. What is the difference between an IAM Role and Policy?",
+        "81. What are AWS Managed Policies?",
+        "82. What is difference between authentication and authorization?",
+        "83. How does an EC2 instance access S3 securely?"
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "EBS (Elastic Block Store)",
+      "steps": [
+        "84. What is Amazon EBS?",
+        "85. What are the different EBS volume types?",
+        "86. What is gp3 storage?",
+        "87. Can an EBS volume be attached to multiple EC2 instances?",
+        "88. Can you increase the size of an EBS volume?",
+        "89. What happens when an EC2 instance is terminated?",
+        "90. What is an EBS Snapshot?",
+        "91. How do you restore an EBS volume from a snapshot?",
+        "92. What is differences between Amazon EBS and EFS.",
+        "93. Can snapshots be copied across Regions?"
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "S3 (Simple Storage Service)",
+      "steps": [
+        "94. What is Amazon S3?",
+        "95. What type of storage is S3?",
+        "96. What is difference between Amazon EBS and S3 storage?",
+        "97. What is difference between S3 Bucket and S3 Object?",
+        "98. What is Bucket Policy?",
+        "99. What is the difference between a Bucket Policy and an IAM Policy?",
+        "100. What are S3 Storage Classes?",
+        "101. What is difference between S3 Standard and S3 Galcier?",
+        "102. What is S3 Intelligent-Tiering?",
+        "103. What is S3 Glacier Deep Archive?",
+        "104. What is Versioning?",
+        "105. What is Cross-Region Replication?",
+        "106. What is difference between Server-Side Encryption and Client-Side Encryption?",
+        "107. Can S3 host a static website?",
+        "108. What is Object Lock?"
+      ]
+    }
+  ]
+}

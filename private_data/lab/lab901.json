@@ -1,0 +1,106 @@
+{
+  "lab_id": "lab901.json",
+  "title": "Technical Screening Round -1",
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Server Hardware & BIOS",
+      "steps": [
+        "1. What is BIOS and what are its main functions in a server?",
+        "2. What happens during POST (Power-On Self-Test)?",
+        "3. What is the purpose of PCIe slots in a server?",
+        "4. What is a hot-swappable component?"
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Networking",
+      "steps": [
+        "5. What is a MAC address?",
+        "6. What is the purpose of a MAC address?",
+        "7. What is an IP address?",
+        "8. What is the difference between IP address and MAC address?",
+        "9. How do you check assigned IP addresses in Linux?",
+        "10. What is a subnet mask?",
+        "11. What is the default gateway?",
+        "12. How do you check the default gateway?",
+        "13. How do you check the routing table?",
+        "14. What is difference between a router and switch.",
+        "15. What is SSH used for?",
+        "16. What port does SSH use?"
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Power & Data Center Operations",
+      "steps": [
+        "17. Why do servers have dual power supplies?",
+        "18. Do you have experience of rack and stack of servers?",
+        "19. What are the steps involved in rack and stack process?",
+        "20. What is a KVM switch and what is purpose?"
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Storage, RAID & Disks",
+      "steps": [
+        "21. You have 8 physical disks of different sizes—how can you combine them into one logical storage unit?",
+        "22. What is RAID and why is it used in servers?",
+        "23. What are the advantages of combining multiple disks into one logical volume?",
+        "24. What are the disadvantages of combining multiple disks into one logical unit?",
+        "25. What is difference between RAID 0 and RAID 1?",
+        "26. What is difference between RAID 5 and RAID 6?",
+        "27. What is RAID 10.",
+        "28. Which RAID level provides best performance and which provides best redundancy?",
+        "29. Which RAID level would you choose for critical database servers and why?",
+        "30. What is a RAID controller card and why is it used?",
+        "31. What is the difference between hardware RAID and software RAID?",
+        "32. How does RAID affect performance and capacity?",
+        "33. How does RAID improve fault tolerance?"
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Virtualization",
+      "steps": [
+        "34. What is virtualization?",
+        "35. What is a Virtual Machine (VM)?",
+        "36. What virtualization platforms have you used?",
+        "37. What is a Hypervisor?",
+        "38. What are the types of hypervisors?",
+        "39. What is out-of-band management and why is it important?",
+        "40. What is iDRAC, and iLO?",
+        "41. What are key steps to configure iDRAC?",
+        "42. How would you access a server if the operating system is down?",
+        "43. What is VMware ESXi?",
+        "44. What is vCenter Server?",
+        "45. Can ESXi work without vCenter?",
+        "46. What is the difference between ESXi and vCenter?",
+        "47. What file extension does a VMware virtual disk use?",
+        "48. What is the file extension of a VM configuration file?",
+        "49. What is vMotion?",
+        "50. What are the basic requirements for vMotion?",
+        "51. What is Storage vMotion?",
+        "52. What is the difference between vMotion and Storage vMotion?",
+        "53. What is High Availability (HA)?",
+        "54. What is Fault Tolerance (FT)?",
+        "55. What is Distributed Resource Scheduler (DRS)?",
+        "56. What is a datastore?",
+        "57. What is the difference between Thick Provisioning and Thin Provisioning?",
+        "58. What is a VMware snapshot?",
+        "59. Can snapshots replace backups?",
+        "60. What happens if snapshots remain for a long time?",
+        "61. What is the difference between a Standard Switch and a Distributed Switch?",
+        "62. What are Port Groups?",
+        "63. What is the difference between local storage and shared storage?",
+        "64. What are the different types of shared storage?",
+        "65. What is Multipathing?",
+        "66. What command do you use to check multipathing in Linux?",
+        "67. Walk me through the process of putting an ESXi host into Maintenance Mode.",
+        "68. What happens to HA when an ESXi host is in Maintenance Mode?",
+        "69. What is template in VMware environment?",
+        "70. How does a VMware template differ from a virtual machine clone?"
+      ]
+    }
+  ]
+}
