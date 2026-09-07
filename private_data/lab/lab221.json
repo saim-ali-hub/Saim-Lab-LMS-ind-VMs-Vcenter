@@ -1,0 +1,120 @@
+{
+  "lab_id": "lab221",
+  "title": "Lab 221: Linux Package Management",
+  "description": "The objective of this lab is to develop practical skills in Linux package management using YUM, including identifying the package manager, listing installed packages, searching repositories, inspecting package information, determining package installation status, identifying which package provides a command, installing packages, and removing packages.",
+  "lab_objective": {
+    "description": "The objective of this lab is to develop practical skills in managing software packages on a Linux system using YUM.",
+    "objectives": [
+      "Understand the role of a Linux package manager.",
+      "Identify the installed YUM version.",
+      "Display and inspect currently installed packages.",
+      "Search configured repositories for available packages.",
+      "Display detailed package information.",
+      "Determine whether a specific package is installed.",
+      "Identify which package provides a command or file.",
+      "Install software packages using YUM.",
+      "Verify successful package installation.",
+      "Remove software packages safely using YUM.",
+      "Verify that a package has been removed.",
+      "Understand the basic workflow of package installation and removal.",
+      "Practice saving package-management command output for verification."
+    ],
+  "scenario": [
+    "You are working as a Linux system administrator responsible for maintaining software packages on a production server.\n\nYour responsibilities include identifying the available package manager, reviewing installed software, searching configured repositories, inspecting package information, determining whether software is installed, identifying which package provides a required command, installing software when required, and safely removing software that is no longer needed.\n\nYou must follow the package-management procedures carefully and document the results of each task in the specified verification files."
+  ]
+ },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Identify the Package Manager",
+      "steps": [
+        "Before starting the lab, execute: yum remove httpd -y",
+        "Create a lab221_pkg_mgt directory inside your home directory.",
+        "Determine which package manager is available on the system.",
+        "Display the installed YUM version.",
+        "Hint: yum --version",
+        "Save the output of the command showing the installed YUM version to /home/your-user-name/lab221_pkg_mgt/package_manager.txt"
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Display Installed Packages",
+      "steps": [
+        "Display the list of packages currently installed on the system.",
+        "Review the package name, architecture, and installed version information.",
+        "Hint: yum list installed",
+        "Save the complete output to /home/your-user-name/lab221_pkg_mgt/installed_packages.txt"
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Search for a Package",
+      "steps": [
+        "Search the configured repositories for packages related to httpd.",
+        "Review the search results and identify packages related to the Apache HTTP Server.",
+        "Hint: yum search httpd",
+        "Save the search results to /home/your-user-name/lab221_pkg_mgt/httpd_search.txt"
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Display Package Information",
+      "steps": [
+        "Display detailed information about the httpd package.",
+        "The output must include information such as:",
+        "Package name",
+        "Version",
+        "Architecture",
+        "Repository",
+        "Size",
+        "Summary",
+        "Hint: yum info httpd",
+        "Save the output to /home/your-user-name/lab221_pkg_mgt/httpd_info.txt"
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Determine Whether a Package Is Installed",
+      "steps": [
+        "Use YUM to determine whether the httpd package is currently installed.",
+        "Display the installed-package listing for httpd.",
+        "Hint: yum list installed httpd",
+        "Save the package-listing output to /home/your-user-name/lab221_pkg_mgt/httpd_installed.txt"
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Find Which Package Provides a Command",
+      "steps": [
+        "Determine which package provides the curl command.",
+        "Use the package manager to search for the package that provides the curl executable.",
+        "Hint: yum provides '*/curl'",
+        "Save the result to /home/your-user-name/lab221_pkg_mgt/curl_provider.txt",
+        "Real-world: Administrators frequently need to identify which package provides a missing command, executable, library, or configuration file."
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "Install a Package",
+      "steps": [
+        "Install the httpd package using YUM.",
+        "After installation, verify that the httpd package is installed.",
+        "Hint: yum install httpd",
+        "Then verify using: yum list installed httpd",
+        "Save the verification output to /home/your-user-name/lab221_pkg_mgt/httpd_install_status.txt"
+      ]
+    },
+    {
+      "task_number": 8,
+      "title": "Remove a Package",
+      "steps": [
+        "Remove the httpd package that you installed in the previous task.",
+        "Verify that the httpd package is no longer installed.",
+        "Hint: yum remove httpd",
+        "Validate using 'yum list installed httpd'",
+        "Save the verification output to /home/your-user-name/lab221_pkg_mgt/httpd_remove_status.txt"
+      ]
+    }
+  ],
+  "completion_message": "Congratulations! You have completed Lab 221 - Linux Package Management. You identified the installed package manager and YUM version, reviewed installed packages, searched repositories, inspected package information, determined package installation status, identified which package provides a command, installed and verified a package, and safely removed the package using standard Linux package-management commands."
+}

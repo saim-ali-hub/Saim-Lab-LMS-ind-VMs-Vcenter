@@ -80,6 +80,9 @@ ssh \
         lab218) validate_lab218_advanced_service_management ;;
         lab219) validate_lab219_user_management ;;
         lab220) validate_lab220_advanced_user_management ;;
+        lab221) validate_lab221_package_management ;;
+        lab222) validate_lab222_advanced_package_management ;;
+
         *) echo 'Invalid lab'; exit 1 ;;
      esac"
 

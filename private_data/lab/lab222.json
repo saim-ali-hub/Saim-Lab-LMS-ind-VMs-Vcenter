@@ -1,0 +1,173 @@
+{
+  "lab_id": "lab222",
+  "title": "Lab 222: Linux Package Management — Advanced",
+  "description": "The objective of this lab is to develop practical skills in advanced Linux package management using DNF and RPM, including identifying the package manager, inspecting installed packages, searching repositories, displaying package information, determining package installation status, identifying package providers, installing and removing packages, examining RPM metadata, listing package-owned files, determining file ownership, checking for available updates, and inspecting enabled repositories.",
+  "lab_objective": {
+    "description": "The objective of this lab is to develop practical skills in managing and inspecting Linux software packages using DNF and RPM.",
+    "objectives": [
+      "Understand the role of DNF as a Linux package manager.",
+      "Identify the installed DNF version.",
+      "Display and inspect currently installed packages.",
+      "Search configured repositories for available packages.",
+      "Display detailed package information using DNF.",
+      "Determine whether a specific package is installed.",
+      "Identify which package provides a command or file.",
+      "Install software packages using DNF.",
+      "Verify successful package installation.",
+      "Understand the relationship between DNF and RPM.",
+      "Inspect installed RPM package metadata.",
+      "List files installed by an RPM package.",
+      "Determine which installed package owns a specific file.",
+      "Check the system for available package updates.",
+      "Display configured and enabled software repositories.",
+      "Remove software packages safely using DNF.",
+      "Verify that a package has been removed.",
+      "Practice documenting package-management operations using command output."
+    ],
+  "scenario": [
+    "You are working as a Linux system administrator responsible for maintaining software packages on a production server.\n\nYour responsibilities include using DNF to search repositories, inspect installed and available packages, install and remove software, and check for updates. You will also use the RPM utility to inspect package metadata, identify files installed by a package, and determine package ownership of system files.\n\nAs part of your package-management responsibilities, you must understand the difference between high-level package management with DNF and package inspection with RPM. You must carefully perform each task and document the required command output for verification."
+  ]
+ },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Identify the Package Manager",
+      "steps": [
+        "Create a lab222_pkg_mgt directory inside your home directory.",
+        "Determine which package manager is available on the system.",
+        "Display the installed DNF version.",
+        "Save the output of the command showing the installed DNF version to /home/your-user-name/lab222_pkg_mgt/package_manager.txt",
+        "Hint: dnf --version"
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Display Installed Packages",
+      "steps": [
+        "Display the list of packages currently installed on the system.",
+        "Review the package name, architecture, and installed version information.",
+        "Save the complete output to /home/your-user-name/lab222_pkg_mgt/installed_packages.txt",
+        "Hint: dnf list installed"
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Search for a Package",
+      "steps": [
+        "Search the configured repositories for packages related to nfs-utils.",
+        "Review the search results and identify packages related to NFS utilities.",
+        "Save the search results to /home/your-user-name/lab222_pkg_mgt/nfs-utils_search.txt",
+        "Hint: dnf search nfs-utils"
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Display Package Information",
+      "steps": [
+        "Display detailed information about the nfs-utils package.",
+        "Your output must include information such as:",
+        "Package name",
+        "Version",
+        "Architecture",
+        "Repository",
+        "Size",
+        "Summary",
+        "Save the output to /home/your-user-name/lab222_pkg_mgt/nfs-utils_info.txt",
+        "Hint: dnf info nfs-utils"
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Determine Whether a Package Is Installed",
+      "steps": [
+        "Determine whether the nfs-utils package is currently installed.",
+        "Save the appropriate package-listing output to /home/your-user-name/lab222_pkg_mgt/nfs-utils_installed.txt",
+        "Hint: dnf list installed nfs-utils"
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Find Which Package Provides a Command",
+      "steps": [
+        "Determine which package provides the curl command.",
+        "Save the result to /home/your-user-name/lab222_pkg_mgt/curl_provider.txt",
+        "Hint: dnf provides '*/curl'",
+        "Real-world: Administrators frequently need to identify which package provides a missing command or library."
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "Install a Package",
+      "steps": [
+        "Install the nfs-utils package.",
+        "After installation, verify that the package is installed.",
+        "Validate using: dnf list installed nfs-utils",
+        "Save the verification output to /home/your-user-name/lab222_pkg_mgt/nfs-utils_install_status.txt",
+        "Hint: dnf install nfs-utils"
+      ]
+    },
+    {
+      "task_number": 8,
+      "title": "Examine an Installed RPM Package",
+      "steps": [
+        "Use the rpm command to display detailed information about the installed nfs-utils package.",
+        "The output must show information about:",
+        "Name",
+        "Version",
+        "Release",
+        "Architecture",
+        "Save the output to /home/your-user-name/lab222_pkg_mgt/rpm_package_info.txt",
+        "Hint: rpm -qi nfs-utils"
+      ]
+    },
+    {
+      "task_number": 9,
+      "title": "List Files Installed by a Package",
+      "steps": [
+        "Use RPM to display the files that belong to the installed nfs-utils package.",
+        "Save the output to /home/your-user-name/lab222_pkg_mgt/package_files.txt",
+        "Hint: rpm -ql nfs-utils"
+      ]
+    },
+    {
+      "task_number": 10,
+      "title": "Determine Package Ownership of a File",
+      "steps": [
+        "Use RPM to determine which installed package owns /etc/hostname.",
+        "Save the result to /home/your-user-name/lab222_pkg_mgt/hostname_owner.txt",
+        "Hint: rpm -qf /etc/hostname"
+      ]
+    },
+    {
+      "task_number": 11,
+      "title": "Check for Available Updates",
+      "steps": [
+        "Check whether updates are available for packages on the system.",
+        "Save the output to /home/your-user-name/lab222_pkg_mgt/available_updates.txt",
+        "Hint: dnf check-update",
+        "Important: dnf check-update may return exit status 100 when updates are available. That is normal."
+      ]
+    },
+    {
+      "task_number": 12,
+      "title": "Display Repository Information",
+      "steps": [
+        "Display the repositories currently configured and enabled on the system.",
+        "Save the output to /home/your-user-name/lab222_pkg_mgt/enabled_repositories.txt",
+        "Hint: dnf repolist"
+      ]
+    },
+    {
+      "task_number": 13,
+      "title": "Remove a Package",
+      "steps": [
+        "Remove the nfs-utils package that you installed in Task 7.",
+        "Verify that the nfs-utils package is no longer installed.",
+        "Validate using: dnf list installed nfs-utils",
+        "Save the verification output to /home/your-user-name/lab222_pkg_mgt/nfs-utils_remove_status.txt",
+        "Hint: dnf remove nfs-utils"
+      ]
+    }
+  ],
+  "completion_message": "Congratulations! You have completed Lab 222 - Linux Package Management - Advanced. You used DNF to inspect installed packages, search repositories, display package information, determine package installation status, identify package providers, install and remove software, check for updates, and inspect enabled repositories. You also used RPM to examine package metadata, list files installed by a package, and determine package ownership of a system file. These are essential skills for Linux system administrators responsible for maintaining and troubleshooting software on production systems."
+}

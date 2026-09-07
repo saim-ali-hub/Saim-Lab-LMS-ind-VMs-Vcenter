@@ -8754,3 +8754,796 @@ HTML
 }
 
 #=========================================================================
+
+validate_lab221_package_management() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "Checking Lab 221 - Linux Package Management..."
+
+    HOME_DIR="/home/$STUDENT_NAME"
+    BASE="$HOME_DIR/lab221_pkg_mgt"
+
+    LAB_NAME="Lab 221 - Linux Package Management"
+    DATE=$(date "+%F %T")
+
+    TOTAL_TASKS=8
+    PASSED=0
+
+    # ============================================================
+    # HELPERS
+    # ============================================================
+
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+
+    # ============================================================
+    # TASK 1 - IDENTIFY THE PACKAGE MANAGER
+    # ============================================================
+
+    TASK1="$BASE/package_manager.txt"
+
+    if [ -f "$TASK1" ] && [ -s "$TASK1" ]; then
+
+        TASK1_OK=1
+
+        # YUM version output should contain a version number
+        grep -Eq '^[0-9]+\.[0-9]+' "$TASK1" || TASK1_OK=0
+
+        if [ "$TASK1_OK" -eq 1 ]; then
+            pass "Task 1: YUM version was identified and saved correctly"
+        else
+            fail "Task 1: package_manager.txt does not show a valid YUM version"
+        fi
+
+    else
+        fail "Task 1: package_manager.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 2 - DISPLAY INSTALLED PACKAGES
+    # ============================================================
+
+    TASK2="$BASE/installed_packages.txt"
+
+    if [ -f "$TASK2" ] && [ -s "$TASK2" ]; then
+
+        TASK2_OK=1
+
+        # Expected yum list installed header
+        grep -Eq 'Installed Packages' "$TASK2" || TASK2_OK=0
+
+        if [ "$TASK2_OK" -eq 1 ]; then
+            pass "Task 2: installed package list was saved correctly"
+        else
+            fail "Task 2: installed_packages.txt does not appear to contain yum installed-package output"
+        fi
+
+    else
+        fail "Task 2: installed_packages.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 3 - SEARCH FOR HTTPD
+    # ============================================================
+
+    TASK3="$BASE/httpd_search.txt"
+
+    if [ -f "$TASK3" ] && [ -s "$TASK3" ]; then
+
+        TASK3_OK=1
+
+        # Search results should contain httpd
+        grep -qi 'httpd' "$TASK3" || TASK3_OK=0
+
+        if [ "$TASK3_OK" -eq 1 ]; then
+            pass "Task 3: repository search results for httpd were saved correctly"
+        else
+            fail "Task 3: httpd_search.txt does not show httpd search results"
+        fi
+
+    else
+        fail "Task 3: httpd_search.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 4 - DISPLAY HTTPD PACKAGE INFORMATION
+    # ============================================================
+
+    TASK4="$BASE/httpd_info.txt"
+
+    if [ -f "$TASK4" ] && [ -s "$TASK4" ]; then
+
+        TASK4_OK=1
+
+        # Package name
+        grep -Eq '^Name[[:space:]]*:[[:space:]]*httpd' "$TASK4" || TASK4_OK=0
+
+        # Version
+        grep -Eq '^Version[[:space:]]*:' "$TASK4" || TASK4_OK=0
+
+        # Architecture
+        grep -Eq '^Architecture[[:space:]]*:' "$TASK4" || TASK4_OK=0
+
+        # Repository
+        grep -Eq '^Repository[[:space:]]*:' "$TASK4" || TASK4_OK=0
+
+        # Size
+        grep -Eq '^Size[[:space:]]*:' "$TASK4" || TASK4_OK=0
+
+        # Summary
+        grep -Eq '^Summary[[:space:]]*:' "$TASK4" || TASK4_OK=0
+
+        if [ "$TASK4_OK" -eq 1 ]; then
+            pass "Task 4: httpd package information was displayed and saved correctly"
+        else
+            fail "Task 4: httpd_info.txt does not contain all required package information"
+        fi
+
+    else
+        fail "Task 4: httpd_info.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 5 - DETERMINE WHETHER HTTPD IS INSTALLED
+    # ============================================================
+
+    TASK5="$BASE/httpd_installed.txt"
+
+    if [ -f "$TASK5" ] && [ -s "$TASK5" ]; then
+
+        TASK5_OK=1
+
+        # httpd should NOT be installed at this point
+        # yum list installed httpd normally returns:
+        # Error: No matching Packages to list
+
+        if grep -Eq 'No matching Packages|Error:' "$TASK5"; then
+            TASK5_OK=1
+        else
+            # Also allow output showing no installed httpd entry
+            if grep -Eq '^httpd[[:space:]]' "$TASK5"; then
+                TASK5_OK=0
+            fi
+        fi
+
+        if [ "$TASK5_OK" -eq 1 ]; then
+            pass "Task 5: httpd was correctly determined to be not installed"
+        else
+            fail "Task 5: httpd_installed.txt indicates that httpd may be installed"
+        fi
+
+    else
+        fail "Task 5: httpd_installed.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 6 - FIND WHICH PACKAGE PROVIDES CURL
+    # ============================================================
+
+    TASK6="$BASE/curl_provider.txt"
+
+    if [ -f "$TASK6" ] && [ -s "$TASK6" ]; then
+
+        TASK6_OK=1
+
+        # Provider search should contain curl
+        grep -qi 'curl' "$TASK6" || TASK6_OK=0
+
+        if [ "$TASK6_OK" -eq 1 ]; then
+            pass "Task 6: package provider for curl was identified correctly"
+        else
+            fail "Task 6: curl_provider.txt does not show a package providing curl"
+        fi
+
+    else
+        fail "Task 6: curl_provider.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 7 - INSTALL HTTPD
+    # ============================================================
+
+    TASK7="$BASE/httpd_install_status.txt"
+
+    if [ -f "$TASK7" ] && [ -s "$TASK7" ]; then
+
+        TASK7_OK=1
+
+        # Verification should show httpd installed
+        grep -Eq '^httpd\.' "$TASK7" || \
+        grep -Eq '^httpd[[:space:]]' "$TASK7" || \
+        grep -Eq 'httpd-[0-9]' "$TASK7" || \
+        TASK7_OK=0
+
+        if [ "$TASK7_OK" -eq 1 ]; then
+            pass "Task 7: httpd was installed and verified successfully"
+        else
+            fail "Task 7: httpd_install_status.txt does not show httpd as installed"
+        fi
+
+    else
+        fail "Task 7: httpd_install_status.txt is missing or empty"
+    fi
+
+
+    # ============================================================
+    # TASK 8 - REMOVE HTTPD
+    # ============================================================
+
+    TASK8="$BASE/httpd_remove_status.txt"
+
+    if [ -f "$TASK8" ] && [ -s "$TASK8" ]; then
+
+        TASK8_OK=1
+
+        # After removal, httpd should not appear as installed
+        if grep -Eq '^httpd[[:space:]]' "$TASK8"; then
+            TASK8_OK=0
+        fi
+
+        # Expected output from yum list installed httpd
+        if ! grep -Eq 'No matching Packages|Error:' "$TASK8"; then
+            # If no error is present, make sure an installed httpd
+            # package entry is not present.
+            if grep -qi 'httpd-[0-9]' "$TASK8"; then
+                TASK8_OK=0
+            fi
+        fi
+
+        if [ "$TASK8_OK" -eq 1 ]; then
+            pass "Task 8: httpd was removed and verified successfully"
+        else
+            fail "Task 8: httpd_remove_status.txt indicates that httpd may still be installed"
+        fi
+
+    else
+        fail "Task 8: httpd_remove_status.txt is missing or empty"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+
+#========================================================================
+
+validate_lab222_advanced_package_management() {
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "Checking Lab 222 - Linux Package Management - Advanced..."
+
+    HOME_DIR="/home/$STUDENT_NAME"
+    BASE="$HOME_DIR/lab222_pkg_mgt"
+
+    LAB_NAME="Lab 222 - Linux Package Management - Advanced"
+    DATE=$(date "+%F %T")
+
+    TOTAL_TASKS=13
+    PASSED=0
+
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+
+    # ============================================================
+    # Task 1 - DNF Version
+    # ============================================================
+
+    FILE="$BASE/package_manager.txt"
+
+    if [ -s "$FILE" ] && grep -Eq '[0-9]+\.[0-9]+' "$FILE"; then
+        pass "Task 1: package_manager.txt contains DNF version information"
+    else
+        fail "Task 1: package_manager.txt is missing, empty, or does not contain DNF version"
+    fi
+
+
+    # ============================================================
+    # Task 2 - Installed Packages
+    # ============================================================
+
+    FILE="$BASE/installed_packages.txt"
+
+    if [ -s "$FILE" ] && grep -Eq 'Installed Packages|Installed packages' "$FILE"; then
+        pass "Task 2: installed_packages.txt contains installed package information"
+    else
+        fail "Task 2: installed_packages.txt is missing or does not contain installed package information"
+    fi
+
+
+    # ============================================================
+    # Task 3 - Search nfs-utils
+    # ============================================================
+
+    FILE="$BASE/nfs-utils_search.txt"
+
+    if [ -s "$FILE" ] && grep -qi 'nfs-utils' "$FILE"; then
+        pass "Task 3: nfs-utils search results saved correctly"
+    else
+        fail "Task 3: nfs-utils_search.txt is missing or does not contain nfs-utils"
+    fi
+
+
+    # ============================================================
+    # Task 4 - DNF Info nfs-utils
+    # ============================================================
+
+    FILE="$BASE/nfs-utils_info.txt"
+
+    if [ -s "$FILE" ] \
+        && grep -Eq '^Name[[:space:]]*:[[:space:]]*nfs-utils' "$FILE" \
+        && grep -Eq '^Version[[:space:]]*:' "$FILE" \
+        && grep -Eq '^Architecture[[:space:]]*:' "$FILE" \
+        && grep -Eq '^Repository[[:space:]]*:' "$FILE" \
+        && grep -Eq '^Size[[:space:]]*:' "$FILE" \
+        && grep -Eq '^Summary[[:space:]]*:' "$FILE"
+    then
+        pass "Task 4: nfs-utils information contains required package details"
+    else
+        fail "Task 4: nfs-utils_info.txt is missing or required package details are incomplete"
+    fi
+
+
+    # ============================================================
+    # Task 5 - Determine if nfs-utils is Installed
+    # ============================================================
+
+    FILE="$BASE/nfs-utils_installed.txt"
+
+    if [ -s "$FILE" ] \
+        && (grep -qi 'nfs-utils' "$FILE" || grep -qi 'No matching Packages' "$FILE" || grep -qi 'No match for argument' "$FILE")
+    then
+        pass "Task 5: nfs-utils installation information saved correctly"
+    else
+        fail "Task 5: nfs-utils_installed.txt is missing or does not contain nfs-utils information"
+    fi
+
+
+    # ============================================================
+    # Task 6 - Find Package Providing curl
+    # ============================================================
+
+    FILE="$BASE/curl_provider.txt"
+
+    if [ -s "$FILE" ] \
+        && grep -qi 'curl' "$FILE"
+    then
+        pass "Task 6: curl provider information saved correctly"
+    else
+        fail "Task 6: curl_provider.txt is missing or does not contain curl provider information"
+    fi
+
+
+    # ============================================================
+    # Task 7 - Install nfs-utils
+    # ============================================================
+
+    FILE="$BASE/nfs-utils_install_status.txt"
+
+    if [ -s "$FILE" ]; then
+        if grep -Eq '^[[:space:]]*nfs-utils\.' "$FILE" || grep -Eq 'nfs-utils-[0-9]' "$FILE"
+        then
+            pass "Task 7: nfs-utils installation status confirms package installation"
+        else
+            fail "Task 7: nfs-utils_install_status.txt does not confirm nfs-utils installation"
+        fi
+    else
+        fail "Task 7: nfs-utils_install_status.txt is missing or empty"
+    fi
+
+    # ============================================================
+    # Task 8 - RPM Package Information
+    # ============================================================
+
+    FILE="$BASE/rpm_package_info.txt"
+
+    if [ -s "$FILE" ] \
+        && grep -Eq '^Name[[:space:]]*:[[:space:]]*nfs-utils' "$FILE" \
+        && grep -Eq '^Version[[:space:]]*:' "$FILE" \
+        && grep -Eq '^Release[[:space:]]*:' "$FILE" \
+        && grep -Eq '^Architecture[[:space:]]*:' "$FILE"
+    then
+        pass "Task 8: rpm -qi nfs-utils information is complete"
+    else
+        fail "Task 8: rpm_package_info.txt is missing or required RPM information is incomplete"
+    fi
+
+
+    # ============================================================
+    # Task 9 - List Files Installed by nfs-utils
+    # ============================================================
+
+    FILE="$BASE/package_files.txt"
+
+    if [ -s "$FILE" ] \
+        && grep -Eq '^/' "$FILE"
+    then
+        pass "Task 9: package_files.txt contains files installed by nfs-utils"
+    else
+        fail "Task 9: package_files.txt is missing or does not contain package file paths"
+    fi
+
+
+    # ============================================================
+    # Task 10 - Package Owning /etc/hostname
+    # ============================================================
+
+    FILE="$BASE/hostname_owner.txt"
+
+    if [ -s "$FILE" ] \
+        && grep -Eq '^[[:alnum:]_.+-]+-[0-9][^[:space:]]*\.(x86_64|noarch|aarch64|i686|i386)$' "$FILE"
+    then
+        pass "Task 10: package owning /etc/hostname identified correctly"
+    else
+        fail "Task 10: hostname_owner.txt is missing or does not contain rpm ownership information"
+    fi
+
+
+    # ============================================================
+    # Task 11 - Check Available Updates
+    # ============================================================
+
+    FILE="$BASE/available_updates.txt"
+
+    if [ -s "$FILE" ] \
+        && ! grep -qiE 'Error:|Unable to find a match|No such command' "$FILE"
+    then
+        pass "Task 11: available_updates.txt contains DNF update-check information"
+    else
+        fail "Task 11: available_updates.txt is missing or contains a DNF error"
+    fi
+
+
+    # ============================================================
+    # Task 12 - Enabled Repositories
+    # ============================================================
+
+    FILE="$BASE/enabled_repositories.txt"
+
+    if [ -s "$FILE" ] \
+        && grep -Eq 'repo id|repo name|repo-id|repo-name' "$FILE"
+    then
+        pass "Task 12: enabled repositories information saved correctly"
+    else
+        fail "Task 12: enabled_repositories.txt is missing or does not contain repository information"
+    fi
+
+
+    # ============================================================
+    # Task 13 - Remove nfs-utils
+    # ============================================================
+
+    FILE="$BASE/nfs-utils_remove_status.txt"
+
+    if [ -s "$FILE" ] \
+        && (
+            grep -qiE 'No matching Packages|No match for argument|removed|Removing' "$FILE" \
+            || ! grep -Eq '^[[:space:]]*nfs-utils\.' "$FILE"
+        )
+    then
+        pass "Task 13: nfs-utils removal status saved correctly"
+    else
+        fail "Task 13: nfs-utils_remove_status.txt does not confirm nfs-utils removal"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#=======================================================================
