@@ -1,0 +1,22 @@
+Team!!
+
+If y’all want to practice any of the older labs and need the original directory/file structure, please run the following command:
+
+scp -r VPN_USER@192.168.111.165:/tmp/{vim_practice.txt,search_lab,onboarding_kit,lab211_review,lab214_test,archive_lab} /tmp/
+
+When prompted for a password, use your LDAP/VPN password.
+
+This will copy the required files and directories into your /tmp directory so you can practice the older labs. 
+
+
+SET ACL FOR GROUP:
+==================
+setfacl -m g:"domain users":r /tmp/vim_practice.txt
+
+setfacl -R -m g:"domain users":rX /tmp/search_lab
+setfacl -R -m g:"domain users":rX /tmp/onboarding_kit
+setfacl -R -m g:"domain users":rX /tmp/lab211_review
+setfacl -R -m g:"domain users":rX /tmp/lab214_test
+setfacl -R -m g:"domain users":rX /tmp/archive_lab
+
+scp -r VPN_USER_NAME@192.168.111.165:/tmp/{vim_practice.txt,search_lab,onboarding_kit,lab211_review,lab214_test,archive_lab} /tmp/
