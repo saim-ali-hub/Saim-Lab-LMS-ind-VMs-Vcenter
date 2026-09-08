@@ -36,8 +36,9 @@
         "Create a lab222_pkg_mgt directory inside your home directory.",
         "Determine which package manager is available on the system.",
         "Display the installed DNF version.",
-        "Save the output of the command showing the installed DNF version to /home/your-user-name/lab222_pkg_mgt/package_manager.txt",
-        "Hint: dnf --version"
+        "Save the output of the command, including any error or diagnostic message, to /home/your-user-name/lab222_pkg_mgt/package_manager.txt",
+        "Hint: dnf --version",
+        "Hint: Redirect both standard output and standard error to the file using: > file 2>&1"
       ]
     },
     {
@@ -46,8 +47,9 @@
       "steps": [
         "Display the list of packages currently installed on the system.",
         "Review the package name, architecture, and installed version information.",
-        "Save the complete output to /home/your-user-name/lab222_pkg_mgt/installed_packages.txt",
-        "Hint: dnf list installed"
+        "Save the complete output, including any error or diagnostic message, to /home/your-user-name/lab222_pkg_mgt/installed_packages.txt",
+        "Hint: dnf list installed",
+        "Hint: Redirect both standard output and standard error to the file using: > file 2>&1"
       ]
     },
     {
@@ -56,8 +58,9 @@
       "steps": [
         "Search the configured repositories for packages related to nfs-utils.",
         "Review the search results and identify packages related to NFS utilities.",
-        "Save the search results to /home/your-user-name/lab222_pkg_mgt/nfs-utils_search.txt",
-        "Hint: dnf search nfs-utils"
+        "Save the search results, including any error or diagnostic message, to /home/your-user-name/lab222_pkg_mgt/nfs-utils_search.txt",
+        "Hint: dnf search nfs-utils",
+        "Hint: Redirect both standard output and standard error to the file using: > file 2>&1"
       ]
     },
     {
@@ -72,8 +75,9 @@
         "Repository",
         "Size",
         "Summary",
-        "Save the output to /home/your-user-name/lab222_pkg_mgt/nfs-utils_info.txt",
-        "Hint: dnf info nfs-utils"
+        "Save the output, including any error or diagnostic message, to /home/your-user-name/lab222_pkg_mgt/nfs-utils_info.txt",
+        "Hint: dnf info nfs-utils",
+        "Hint: Redirect both standard output and standard error to the file using: > file 2>&1"
       ]
     },
     {
@@ -81,8 +85,9 @@
       "title": "Determine Whether a Package Is Installed",
       "steps": [
         "Determine whether the nfs-utils package is currently installed.",
-        "Save the appropriate package-listing output to /home/your-user-name/lab222_pkg_mgt/nfs-utils_installed.txt",
-        "Hint: dnf list installed nfs-utils"
+        "Save the appropriate package-listing output, including any error or diagnostic message, to /home/your-user-name/lab222_pkg_mgt/nfs-utils_installed.txt",
+        "Hint: dnf list installed nfs-utils",
+        "Hint: Redirect both standard output and standard error to the file using: > file 2>&1"
       ]
     },
     {
@@ -90,8 +95,9 @@
       "title": "Find Which Package Provides a Command",
       "steps": [
         "Determine which package provides the curl command.",
-        "Save the result to /home/your-user-name/lab222_pkg_mgt/curl_provider.txt",
+        "Save the result,including any error or diagnostic message, to /home/your-user-name/lab222_pkg_mgt/curl_provider.txt",
         "Hint: dnf provides '*/curl'",
+        "Hint: Redirect both standard output and standard error to the file using: > file 2>&1",
         "Real-world: Administrators frequently need to identify which package provides a missing command or library."
       ]
     },
@@ -102,8 +108,9 @@
         "Install the nfs-utils package.",
         "After installation, verify that the package is installed.",
         "Validate using: dnf list installed nfs-utils",
-        "Save the verification output to /home/your-user-name/lab222_pkg_mgt/nfs-utils_install_status.txt",
-        "Hint: dnf install nfs-utils"
+        "Save the verification output,including any error or diagnostic message, to /home/your-user-name/lab222_pkg_mgt/nfs-utils_install_status.txt",
+        "Hint: dnf install nfs-utils",
+        "Hint: Redirect both standard output and standard error to the file using: > file 2>&1"
       ]
     },
     {
@@ -116,8 +123,9 @@
         "Version",
         "Release",
         "Architecture",
-        "Save the output to /home/your-user-name/lab222_pkg_mgt/rpm_package_info.txt",
-        "Hint: rpm -qi nfs-utils"
+        "Save the output, including any error or diagnostic message, to /home/your-user-name/lab222_pkg_mgt/rpm_package_info.txt",
+        "Hint: rpm -qi nfs-utils",
+        "Hint: Redirect both standard output and standard error to the file using: > file 2>&1"
       ]
     },
     {
@@ -125,8 +133,9 @@
       "title": "List Files Installed by a Package",
       "steps": [
         "Use RPM to display the files that belong to the installed nfs-utils package.",
-        "Save the output to /home/your-user-name/lab222_pkg_mgt/package_files.txt",
-        "Hint: rpm -ql nfs-utils"
+        "Save the output, including any error or diagnostic message, to /home/your-user-name/lab222_pkg_mgt/package_files.txt",
+        "Hint: rpm -ql nfs-utils",
+        "Hint: Redirect both standard output and standard error to the file using: > file 2>&1"
       ]
     },
     {
@@ -134,8 +143,9 @@
       "title": "Determine Package Ownership of a File",
       "steps": [
         "Use RPM to determine which installed package owns /etc/hostname.",
-        "Save the result to /home/your-user-name/lab222_pkg_mgt/hostname_owner.txt",
-        "Hint: rpm -qf /etc/hostname"
+        "Save the result, including any error or diagnostic message, to /home/your-user-name/lab222_pkg_mgt/hostname_owner.txt",
+        "Hint: rpm -qf /etc/hostname",
+        "Hint: Redirect both standard output and standard error to the file using: > file 2>&1"
       ]
     },
     {
@@ -143,8 +153,9 @@
       "title": "Check for Available Updates",
       "steps": [
         "Check whether updates are available for packages on the system.",
-        "Save the output to /home/your-user-name/lab222_pkg_mgt/available_updates.txt",
+        "Save the output, including any error or diagnostic message, to /home/your-user-name/lab222_pkg_mgt/available_updates.txt",
         "Hint: dnf check-update",
+        "Hint: Redirect both standard output and standard error to the file using: > file 2>&1",
         "Important: dnf check-update may return exit status 100 when updates are available. That is normal."
       ]
     },
@@ -153,8 +164,9 @@
       "title": "Display Repository Information",
       "steps": [
         "Display the repositories currently configured and enabled on the system.",
-        "Save the output to /home/your-user-name/lab222_pkg_mgt/enabled_repositories.txt",
-        "Hint: dnf repolist"
+        "Save the output, including any error or diagnostic message, to /home/your-user-name/lab222_pkg_mgt/enabled_repositories.txt",
+        "Hint: dnf repolist",
+        "Hint: Redirect both standard output and standard error to the file using: > file 2>&1"
       ]
     },
     {
@@ -164,8 +176,9 @@
         "Remove the nfs-utils package that you installed in Task 7.",
         "Verify that the nfs-utils package is no longer installed.",
         "Validate using: dnf list installed nfs-utils",
-        "Save the verification output to /home/your-user-name/lab222_pkg_mgt/nfs-utils_remove_status.txt",
-        "Hint: dnf remove nfs-utils"
+        "Save the verification output, including any error or diagnostic message, to /home/your-user-name/lab222_pkg_mgt/nfs-utils_remove_status.txt",
+        "Hint: dnf remove nfs-utils",
+        "Hint: Redirect both standard output and standard error to the file using: > file 2>&1"
       ]
     }
   ],
