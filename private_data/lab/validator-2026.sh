@@ -11432,7 +11432,7 @@ validate_lab227_ssh_scp() {
 
         FILE_COUNT=$(find "$LAB_REFERENCE" -type f 2>/dev/null | wc -l)
 
-        if [ "$FILE_COUNT" -ge 10 ]; then
+        if [ "$FILE_COUNT" -eq 10 ]; then
             pass "Task 10 - complete lab227 directory transferred"
         else
             fail "Task 10 - lab227 directory is empty"
