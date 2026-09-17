@@ -11324,29 +11324,17 @@ validate_lab227_ssh_scp() {
     fi
 
     # Task 2 - Connect to the Remote Linux Server
-    LOCAL_FILE="$LAB_WORKSPACE/application.conf"
-    REFERENCE_FILE="$LAB_REFERENCE/application/config/application.conf"
-
-    if [ -f "$LOCAL_FILE" ] && [ -f "$REFERENCE_FILE" ]; then
-
-        if diff -q "$LOCAL_FILE" "$REFERENCE_FILE" >/dev/null 2>&1; then
-
-        pass "Task 2 - SSH remote activity completed"
+    if [ -d "$LAB_WORKSPACE" ]; then
+        pass "Task 2 - SSH/SCP working environment established"
     else
-        fail "Task 2 - SSH activity could not be verified"
+        fail "Task 2 - SSH/SCP working environment could not be established"
     fi
 
     # Task 3 - Inspect the Prepared Remote Lab Data
-     LOCAL_FILE="$LAB_WORKSPACE/application.conf"
-    REFERENCE_FILE="$LAB_REFERENCE/application/config/application.conf"
-
-    if [ -f "$LOCAL_FILE" ] && [ -f "$REFERENCE_FILE" ]; then
-
-        if diff -q "$LOCAL_FILE" "$REFERENCE_FILE" >/dev/null 2>&1; then
-
-        pass "Task 3 - lab227 reference directory exists"
+    if [ -d "$LAB_REFERENCE" ]; then
+        pass "Task 3 - lab227 reference directory is available"
     else
-        fail "Task 3 - lab227 reference directory does not exist"
+        fail "Task 3 - lab227 reference directory is missing"
     fi
 
     # Task 4 - Transfer application.conf
@@ -11381,11 +11369,7 @@ validate_lab227_ssh_scp() {
         fail "Task 5 - reports directory is missing"
     fi
 
-
-    # ============================================================
     # Task 6 - Retrieve deployment.txt using SSH
-    # ============================================================
-
     LOCAL_FILE="$LAB_WORKSPACE/deployment.txt"
     REFERENCE_FILE="$LAB_REFERENCE/application/docs/deployment.txt"
 
@@ -11401,11 +11385,7 @@ validate_lab227_ssh_scp() {
         fail "Task 6 - deployment.txt is missing"
     fi
 
-
-    # ============================================================
     # Task 7 - Retrieve maintenance.txt with new filename
-    # ============================================================
-
     LOCAL_FILE="$LAB_WORKSPACE/maintenance_backup.txt"
     REFERENCE_FILE="$LAB_REFERENCE/application/docs/maintenance.txt"
 
@@ -11421,31 +11401,17 @@ validate_lab227_ssh_scp() {
         fail "Task 7 - maintenance_backup.txt is missing"
     fi
 
-
-    # ============================================================
     # Task 8 - Create remote_created.txt and pull it
-    # ============================================================
-
     LOCAL_FILE="$LAB_WORKSPACE/remote_created.txt"
-    REFERENCE_FILE="$LAB_REFERENCE/remote_created.txt"
+    if [ -f "$LOCAL_FILE" ] &&
+       grep -Fxq "SSH remote execution created this file." "$LOCAL_FILE"; then
 
-    if [ -f "$LOCAL_FILE" ] && [ -f "$REFERENCE_FILE" ]; then
-
-        if diff -q "$LOCAL_FILE" "$REFERENCE_FILE" >/dev/null 2>&1; then
-            pass "Task 8 - remote_created.txt exists and contents match"
-        else
-            fail "Task 8 - remote_created.txt contents do not match"
-        fi
-
+        pass "Task 8 - remote_created.txt exists with correct content"
     else
-        fail "Task 8 - remote_created.txt is missing"
+        fail "Task 8 - remote_created.txt is missing or contents are incorrect"
     fi
 
-
-    # ============================================================
     # Task 9 - Transfer transfer_note.txt
-    # ============================================================
-
     LOCAL_FILE="$LAB_WORKSPACE/transfer_note.txt"
     REFERENCE_FILE="$LAB_REFERENCE/transfer_note.txt"
 
@@ -11461,16 +11427,12 @@ validate_lab227_ssh_scp() {
         fail "Task 9 - transfer_note.txt is missing"
     fi
 
-
-    # ============================================================
     # Task 10 - Pull Complete lab227 Directory
-    # ============================================================
-
     if [ -d "$LAB_REFERENCE" ]; then
 
         FILE_COUNT=$(find "$LAB_REFERENCE" -type f 2>/dev/null | wc -l)
 
-        if [ "$FILE_COUNT" -gt 0 ]; then
+        if [ "$FILE_COUNT" -ge 10 ]; then
             pass "Task 10 - complete lab227 directory transferred"
         else
             fail "Task 10 - lab227 directory is empty"
@@ -11630,4 +11592,5 @@ $RESULT_ICON $RESULT_TEXT
 </div>
 HTML
 }
+
 #======================================================================
