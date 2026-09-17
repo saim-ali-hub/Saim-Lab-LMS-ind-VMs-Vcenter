@@ -1,0 +1,5 @@
+System Report
+Server Role: Application Server
+Operating System: Linux
+Environment: Training
+Status: Operational

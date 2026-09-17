@@ -1,0 +1,7 @@
+Deployment Procedure
+====================
+
+1. Verify configuration.
+2. Verify application data.
+3. Start the application.
+4. Check application logs.

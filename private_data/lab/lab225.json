@@ -1,0 +1,190 @@
+{
+  "lab_id": 225,
+  "title": "Managing Static IP Address - Using NMCLI",
+  "description": "Configure and validate a static IPv4 address on a Linux system using NetworkManager.",
+  "lab_objective": {
+    "description": "In this lab, students will learn how to configure a static IP address using NetworkManager's text-based interface and command-line interface, understand IPv4 addressing concepts such as IP address and prefix, configure a gateway and DNS servers, activate the connection, and validate network connectivity step by step.",
+    "objectives": [
+      "Understand what nmtui is and how it is used to manage NetworkManager connections.",
+      "Identify the current network configuration using nmcli dev show.",
+      "Configure a static IPv4 address using nmtui.",
+      "Understand the difference between an IP address, prefix, gateway, and DNS server.",
+      "Configure a default gateway and DNS servers.",
+      "Enable automatic connection for the network profile.",
+      "Activate the modified NetworkManager connection.",
+      "Validate the IP address, routing table, NetworkManager status, and connection profile.",
+      "Test network connectivity in a layered troubleshooting approach.",
+      "Differentiate between connectivity problems and DNS resolution problems.",
+      "Understand the difference between nmtui and nmcli.",
+      "Discover network devices and connection profiles using nmcli.",
+      "View detailed NetworkManager connection information using nmcli.",
+      "Configure a static IPv4 address using nmcli.",
+      "Understand the difference between modifying a connection profile and activating a connection.",
+      "Use nmcli for remote administration, troubleshooting, and command-line based network configuration."
+    ],
+    "scenario": [
+      "You are a Linux administrator responsible for configuring networking on a Linux VM. The VM currently has a NetworkManager connection, and you need to configure a static IPv4 address instead of relying on DHCP. You must first identify the current network configuration and then configure the static IP address, prefix, gateway, and DNS servers. After making the changes, activate the connection and validate the configuration. Finally, test connectivity from the local interface to the gateway, then to an external IP address, and finally test DNS name resolution.",
+      "You already know how to configure static IPv4 address Using nmtui (NetworkManager Text User Interface)",
+      "Now configure Networking Using nmcli. You know nmtui gives us an interactive interface. nmcli allows us to perform the same NetworkManager operations directly from the command line.",
+      "This is especially useful for: Automation, Remote administration, Scripts, Troubleshooting, Servers without graphical interfaces, and Faster configuration."
+    ]
+  },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Discover Network Devices Using nmcli",
+      "steps": [
+        "Run:",
+        "nmcli device status",
+        "Example:",
+        "DEVICE   TYPE      STATE       CONNECTION",
+        "ens192   ethernet  connected   ens192",
+        "lo       loopback  unmanaged   --",
+        "We can identify:",
+        "DEVICE = ens192",
+        "TYPE = ethernet",
+        "STATE = connected",
+        "CONNECTION = ens192"
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "View Existing Connection Profiles",
+      "steps": [
+        "Run:",
+        "nmcli connection show",
+        "Example:",
+        "NAME     UUID                                  TYPE      DEVICE",
+        "ens192   xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx  ethernet  ens192",
+        "Explain the difference:",
+        "Device:",
+        "ens192",
+        "Connection profile:",
+        "ens192"
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "View Detailed Connection Information",
+      "steps": [
+        "Run:",
+        "nmcli connection show ens192",
+        "This displays many NetworkManager settings.",
+        "You do not need to memorize all of them.",
+        "Look for concepts such as:",
+        "connection.interface-name",
+        "ipv4.method",
+        "ipv4.addresses",
+        "ipv4.gateway",
+        "ipv4.dns",
+        "connection.autoconnect"
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Configure Static IP Using nmcli",
+      "steps": [
+        "Now that students understand what they are configuring, use the command-line method.",
+        "nmtui gives us an interactive interface. nmcli allows us to perform the same NetworkManager operations directly from the command line.",
+        "This is especially useful for:",
+        "Automation",
+        "Remote administration",
+        "Scripts",
+        "Troubleshooting",
+        "Servers without graphical interfaces",
+        "Faster configuration"
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Create a New Connection",
+      "steps": [
+        "Connection Name: my-static-ens192",
+        "Connection interface name: ens192",
+        "Type: Ethernet",
+        "Command:",
+        "Use command 'nmcli connection add'"
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Set Method of Obtaining IP to Manual",
+      "steps": [
+        "Connection Name: my-static-ens192",
+        "Method: manual",
+        "Why?",
+        "Because we are telling NetworkManager:",
+        "Do not obtain the IPv4 address automatically using DHCP. We will provide the configuration manually.",
+        "Command:",
+        "Use command 'nmcli connection modify my-static-ens192'",
+        "Hint: ipv4.method"
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "Assign the IP Address",
+      "steps": [
+        "Hint: ipv4.addresses",
+        "This modifies the IPv4 address assigned through the NetworkManager connection profile."
+      ]
+    },
+    {
+      "task_number": 8,
+      "title": "Configure the Gateway",
+      "steps": [
+        "Hint: ipv4.gateway",
+        "This establishes the default gateway for the connection."
+      ]
+    },
+    {
+      "task_number": 9,
+      "title": "Configure DNS",
+      "steps": [
+        "Hint: ipv4.dns",
+        "Add atleast two DNS one from your network and other public '8.8.8.8'",
+        "Again, in a corporate environment, use the DNS servers specified by the organization."
+      ]
+    },
+    {
+      "task_number": 10,
+      "title": "Enable Automatic Connection",
+      "steps": [
+        "Hint: connection.autoconnect",
+        "This tells NetworkManager to automatically activate this connection when appropriate."
+      ]
+    },
+    {
+      "task_number": 11,
+      "title": "Apply the Configuration",
+      "steps": [
+        "The profile has now been modified.",
+        "You should understand:",
+        "Modifying a NetworkManager connection profile and activating that profile are two related but separate actions.",
+        "Activate it with:",
+        "nmcli connection up my-static-ens192",
+        "If the connection is already active, NetworkManager may apply the updated configuration when the connection is reactivated."
+      ]
+    },
+    {
+      "task_number": 12,
+      "title": "Validate Connection Profile",
+      "steps": [
+        "Run:",
+        "ip addr show ens192",
+        "Then:",
+        "ip route",
+        "Then:",
+        "nmcli device status",
+        "Then:",
+        "nmcli connection show ens192",
+        "Finally:",
+        "ping -c 4 <gateway>",
+        "and, if appropriate:",
+        "ping -c 4 8.8.8.8",
+        "and:",
+        "getent hosts google.com"
+      ]
+    }
+  ],
+  "completion_message": "You have successfully configured and validated a static IP address using both nmtui and nmcli, activated the NetworkManager connection, verified the IP configuration and routing, and tested connectivity from the local interface through the gateway, external IP, and DNS resolution."
+}

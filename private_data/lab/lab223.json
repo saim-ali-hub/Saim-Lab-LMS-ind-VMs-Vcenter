@@ -1,0 +1,253 @@
+{
+  "lab_id": "lab223",
+  "title": "Lab 223: Apache Web Server Configuration",
+  "description": "By completing this lab, you will learn how to install the Apache httpd package, understand the difference between a package and a service, identify the Apache service name, identify the Apache document root, identify the Apache configuration file, create and modify index.html, start, stop, and enable the Apache service, configure the firewall using a predefined service, configure the firewall using a specific port, test web accessibility from a browser, configure Apache to use a custom port, check and configure SELinux, and understand how service status, firewall rules, and Apache configuration affect web accessibility.",
+  "lab_objective": {
+    "description": "By completing this lab, you will learn how to:",
+    "objectives": [
+      "Install the Apache httpd package.",
+      "Understand the difference between a package and a service.",
+      "Identify the Apache service name.",
+      "Identify the Apache document root.",
+      "Identify the Apache configuration file.",
+      "Create and modify index.html.",
+      "Start, stop, and enable the Apache service.",
+      "Configure the firewall using a predefined service.",
+      "Configure the firewall using a specific port.",
+      "Test web accessibility from a browser.",
+      "Configure Apache to use a custom port.",
+      "Check and configure SELinux.",
+      "Understand how service status, firewall rules, and Apache configuration affect web accessibility."
+    ],
+  "scenario": [
+    "You are working as a Linux system administrator responsible for configuring and maintaining an Apache web server on a Linux server.",
+    "In this lab, you will install the Apache web server package, manage the Apache service, configure web content, manage the firewall, and test web accessibility from a browser.",
+    "You will first configure Apache using its default HTTP port and verify that the web content is accessible. You will then stop the Apache service and verify that the website becomes inaccessible. After starting the service again, you will verify that the website becomes accessible.",
+    "In the second phase, you will configure Apache to use a custom port 8181. You will configure SELinux in permissive mode, update the firewall to allow the custom port, and verify web accessibility. You will again stop and start the Apache service and test the website after each service-state change."
+  ]
+ },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Prepare the Lab Environment",
+      "steps": [
+        "Create a directory named lab223_apache_config inside your home directory.",
+        "Store all required output files for this lab inside the lab223_apache_config directory.",
+        "Switch to the root user before performing the system administration tasks.",
+        "Remove http package if already installed. Use following command:",
+        "dnf remove httpd -y",
+        "remove firewall rule",
+        "firewall-cmd --remove-service=http --permanent",
+        "firewall-cmd --reload"
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Install the Apache Package",
+      "steps": [
+        "Apache is provided by the httpd package.",
+        "Using the dnf package manager, install the httpd package.",
+        "Verify that the httpd package is installed using dnf package manager.",
+        "Display the installed httpd package information."
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Understand the Apache Service",
+      "steps": [
+        "The Apache service is named httpd.",
+        "Check the status of the httpd service.",
+        "Determine whether the service is currently running."
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Enable and Start Apache",
+      "steps": [
+        "Enable the httpd service so that it starts automatically when the system boots.",
+        "Verify that the httpd service is enabled.",
+        "Start the httpd service.",
+        "Verify that the httpd service is running."
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Identify Apache Document Root",
+      "steps": [
+        "The default Apache document root is /var/www/html",
+        "Change to the Apache document root.",
+        "Verify that the directory exists."
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Create index.html",
+      "steps": [
+        "Inside the Apache document root, create a file named:",
+        "/var/www/html/index.html",
+        "Use Vim editor and configure the file to display the following two lines:",
+        "LINOOPTEK COACHING",
+        "I am excited to learn Apache web server",
+        "Verify the contents of index.html."
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "Identify Apache Configuration",
+      "steps": [
+        "The main Apache configuration file is /etc/httpd/conf/httpd.conf",
+        "Verify that the Apache configuration file exists.",
+        "Identify the default HTTP listening port configured for Apache.",
+        "ss -tunap | grep http",
+        "Verify that Apache is configured to listen on the default HTTP port.",
+        "You should see ‘LISTEN’ and :80",
+        "Redirect output of 'ss -tunap | grep http' into /home/your-user-name/lab223_apache_config/ss_task7.txt"
+      ]
+    },
+    {
+      "task_number": 8,
+      "title": "Manage Firewall Using HTTP Service",
+      "steps": [
+        "Check the current firewall service status.",
+        "Identify whether the firewall is running.",
+        "List the currently allowed firewall services.",
+        "Add the predefined http service to the firewall.",
+        "Make the firewall rule persistent.",
+        "Reload the firewall configuration.",
+        "Verify that the http service is now allowed through the firewall."
+      ]
+    },
+    {
+      "task_number": 9,
+      "title": "Access Apache Using Default Port",
+      "steps": [
+        "Determine the IP address of the Linux server.",
+        "Open a web browser and access the Apache server using http://SERVER_IP",
+        "Replace SERVER_IP with the actual IP address of your VM.",
+        "Verify that the browser displays:",
+        "LINOOPTEK COACHING",
+        "I am excited to learn Apache web server",
+        "Execute curl localhost command and redirect the output into /home/your-user-name/lab223_apache_config/apache_access_task9"
+      ]
+    },
+    {
+      "task_number": 10,
+      "title": "Stop Apache and Test Accessibility",
+      "steps": [
+        "Stop the httpd service.",
+        "Verify that the httpd service is stopped.",
+        "From the browser, try to access again http://SERVER_IP",
+        "Verify that the web page is no longer accessible."
+      ]
+    },
+    {
+      "task_number": 11,
+      "title": "Start Apache and Test Accessibility Again",
+      "steps": [
+        "Start the httpd service again.",
+        "Verify that the service is running.",
+        "From the browser, access http://SERVER_IP",
+        "Verify that the web page is accessible again.",
+        "Confirm that the page displays:",
+        "LINOOPTEK COACHING",
+        "I am excited to learn Apache web server",
+        "Execute curl localhost command and redirect the output into /home/your-user-name/lab223_apache_config/apache_access_task11"
+      ]
+    },
+    {
+      "task_number": 12,
+      "title": "Configure Apache to Use Port 8181",
+      "steps": [
+        "Use vim editor to open the Apache configuration file /etc/httpd/conf/httpd.conf",
+        "Locate the Apache Listen directive.",
+        "Change the Apache listening port to 8181",
+        "Save the configuration.",
+        "Restart httpd service. If you are getting error no worries, it was expected.",
+        "Move to next step."
+      ]
+    },
+    {
+      "task_number": 13,
+      "title": "Configure SELinux",
+      "steps": [
+        "Check the current SELinux status ‘getenforce’",
+        "Display the current SELinux mode.",
+        "For this lab, configure SELinux to operate in permissive mode. ‘setenforce 0’",
+        "Verify that SELinux is now operating in permissive mode. ‘getenforce’"
+      ]
+    },
+    {
+      "task_number": 14,
+      "title": "Validate Apache Configuration",
+      "steps": [
+        "Before restarting Apache, validate the Apache configuration.",
+        "Execute command ‘httpd -t’",
+        "Verify that the configuration contains no syntax errors.",
+        "You should get syntax OK",
+        "If errors are reported, correct the Apache configuration."
+      ]
+    },
+    {
+      "task_number": 15,
+      "title": "Restart Apache on Port 8181",
+      "steps": [
+        "Restart the httpd service.",
+        "Verify that the httpd service is running.",
+        "Verify that Apache is listening on TCP port 8181.",
+        "ss -tunap | grep http",
+        "You should see LISTEN and :8181"
+      ]
+    },
+    {
+      "task_number": 16,
+      "title": "Allow Port 8181 Through the Firewall",
+      "steps": [
+        "Check the current firewall configuration.",
+        "Add TCP port 8181 to the firewall. Make the firewall rule persistent.",
+        "firewall-cmd --add-port=8181/tcp --permanent",
+        "Reload the firewall configuration.",
+        "firewall-cmd --reload",
+        "Verify that TCP port 8181 is allowed through the firewall.",
+        "firewall-cmd --list-all"
+      ]
+    },
+    {
+      "task_number": 17,
+      "title": "Access Apache Using Port 8181",
+      "steps": [
+        "From a web browser, access http://SERVER_IP:8181",
+        "Replace SERVER_IP with the IP address of your VM.",
+        "Verify that the Apache web page is accessible.",
+        "Confirm that the browser displays:",
+        "LINOOPTEK COACHING",
+        "I am excited to learn Apache web server"
+      ]
+    },
+    {
+      "task_number": 18,
+      "title": "Stop Apache and Test Port 8181",
+      "steps": [
+        "Stop the httpd service.",
+        "Verify that the service is stopped.",
+        "From the browser, access http://SERVER_IP:8181",
+        "Verify that the web page is no longer accessible."
+      ]
+    },
+    {
+      "task_number": 19,
+      "title": "Start Apache and Test Port 8181 Again",
+      "steps": [
+        "Start the httpd service.",
+        "Verify that the service is running.",
+        "Verify that Apache is listening on port 8181.",
+        "ss -tunap | grep http",
+        "From the browser, access http://SERVER_IP:8181",
+        "Verify that the web page is accessible again.",
+        "Confirm that the browser displays:",
+        "LINOOPTEK COACHING",
+        "I am excited to learn Apache web server"
+      ]
+    }
+  ],
+  "completion_message": "Congratulations! You have completed Lab 223 - Apache Web Server Configuration. You installed and configured the Apache web server, managed the Apache service, configured web content, configured the firewall, configured Apache to use a custom port, configured SELinux in permissive mode, validated the Apache configuration, and tested web accessibility using both the default HTTP port and custom port 8181."
+}

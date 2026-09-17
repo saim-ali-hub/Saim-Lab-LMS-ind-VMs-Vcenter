@@ -1,0 +1,2 @@
+This file was prepared by the instructor on the remote Linux server.
+It is used to practice SCP file transfer.

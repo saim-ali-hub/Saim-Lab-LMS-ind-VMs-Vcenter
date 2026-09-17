@@ -1,0 +1,3 @@
+Customer Portal Maintenance Notes
+Regular application maintenance is performed during the scheduled maintenance window.
+Configuration files must be backed up before changes.

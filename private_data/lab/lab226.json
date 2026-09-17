@@ -1,0 +1,153 @@
+{
+  "lab_id": "lab226",
+  "title": "Remote Command Execution and File Transfer Using SSH and SCP",
+  "description": "Learn how to remotely execute commands using SSH and securely transfer files and directories between a personal VM and a remote Linux server using SCP.",
+  
+  "lab_objective": {
+   "description": "By completing this lab, students will learn how to:", 
+    "objectives": [
+    "Connect to a remote Linux system using SSH.",
+    "Execute commands remotely without opening an interactive shell.",
+    "Create directories and files on a remote system.",
+    "Use scp to transfer files from the local system to a remote system.",
+    "Use scp to copy files from a remote system to the local system.",
+    "Use scp -r to recursively transfer directory structures.",
+    "Verify transferred files and their contents.",
+    "Understand the difference between push and pull operations."
+   ],
+  "scenario": [
+     "You are a Linux administrator responsible for managing multiple Linux servers. A remote server is available to you through SSH. You need to perform some administrative tasks remotely and transfer configuration and documentation files between your student VM and the remote server. The remote server administrator has provided you with SSH access.",
+    "key_concepts", 
+    "Secure Shell is used to connect to a remote Linux system and execute commands remotely.", 
+    "Remote Command Execution: SSH can execute a command remotely without opening an interactive shell by placing the command in quotes.",
+    "SCP Push - Copying a file or directory from the local system to the remote system.",
+    "SCP Pull - Copying a file or directory from the remote system to the local system.",
+    "SCP -r: The -r option allows SCP to recursively copy directories and their contents.",
+    "Passwordless SSH - SSH public-key authentication allows users to authenticate using an SSH key pair instead of entering a password."
+   ]
+  },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Connect to the Remote Server",
+      "steps": [
+        "Generate SSH keys for <your_username> on your personal VM.",
+        "Validate key pair is created.",
+        "Copy the public key for <your_username> over to 192.168.111.165.",
+        "Once copied ensure you are able to SSH in to 192.168.111.165 without a password.",
+        "Please generate the SSH key pair on 192.168.111.165 for <your_username>, and copy the public key to your personal VM, to <your_username> to ensure 2 way passwordless SSH.",
+        "Test your SSH keybased authentication."
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Remote System Information",
+      "steps": [
+        "From 192.168.111.165, use SSH create a directory named “/home/your_username/lab226_remote” on your personal VM.",
+        "From 192.168.111.165, use SSH to check IP address of your personal VM and save the output in /home/your_username/lab226_remote/remote_ipaddr on your personal VM.",
+        "From 192.168.111.165, use SSH to check block devices attached to your personal VM and save the output in ‘/home/your_username/lab226_remote/lsblk_output’ on your personal VM."
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "SCP by Pushing Method",
+      "steps": [
+        "scp means Secure Copy. It uses SSH to securely transfer files between systems.",
+        "The basic syntax is:",
+        "scp source destination",
+        "There are two important directions:",
+        "Push: Local System to Remote System",
+        "Pull: Local System from Remote System",
+        "First return to your personal VM. You are back on your local system and for rest of lab would stay in your home directory.",
+        "Create a file using the following command:",
+        "echo 'This file was created on the student VM.' > ~/student_notes.txt",
+        "Now push the file to the remote server using following command:",
+        "scp ~/student_notes.txt <your_username>@192.168.111.165:/home/<your_username>",
+        "explanation: This is called SCP push."
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Verify the Push",
+      "steps": [
+        "Use SSH to check the remote system.",
+        "ssh <your_username>@192.168.111.165 \"ls -l /home/<your_username>/student_notes.txt\" > ~/lab226_remote/task4_push_verification",
+        "Then",
+        "ssh <your_username>@192.168.111.165 \"cat /home/<your_username>/student_notes.txt\" > ~/lab226_remote/task4_content_verification"
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "SCP Push a Directory",
+      "steps": [
+        "Now create a directory on your home directory in your personal VM.",
+        "mkdir -p ~/student_project/config",
+        "Create the following file inside the directory.",
+        "echo \"SERVER=web01\" > ~/student_project/config/server.conf",
+        "Now recursively copy the entire directory to your home directory in 192.168.111.165.",
+        "scp -r ~/student_project <your_username>@192.168.111.165:/home/<your_username>",
+        "The -r option means: Copy directories recursively."
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Verify the Directory on the Remote Server (192.168.111.165)",
+      "steps": [
+        "Run the following command to verify the directory on the remote server.",
+        "ssh <your_username>@192.168.111.165 \"ls -ld /home/<your_username>/student_project\" > ~/lab226_remote/task6_directory_verification",
+        "Then check the contents.",
+        "ssh <your_username>@192.168.111.165 \"cat /home/<your_username>/student_project/config/server.conf\" > ~/lab226_remote/task6_content_verification"
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "SCP Pull: Remote to Local",
+      "steps": [
+        "Now you will perform the opposite operation.",
+        "You will copy a file from the remote server to your personal VM.",
+        "Pull: Remote System to Local System.",
+        "scp <your_username>@192.168.111.165:/tmp/remote_lab/documentation/README.txt ~/lab226_remote/",
+        "Validate",
+        "ls -l ~/lab226_remote/README.txt",
+        "Then",
+        "cat ~/lab226_remote/README.txt",
+        "explanation: This is called SCP pull."
+      ]
+    },
+    {
+      "task_number": 8,
+      "title": "Pull an Entire Directory",
+      "steps": [
+        "Now pull the entire /tmp/remote_lab directory from 192.168.111.165 to your personal VM.",
+        "scp -r <your_username>@192.168.111.165:/tmp/remote_lab ~/lab226_remote/",
+        "Verify you should now have a copy of the complete directory structure in your personal VM.",
+        "ls -ld ~/lab226_remote/remote_lab"
+      ]
+    },
+    {
+      "task_number": 9,
+      "title": "SCP With Different Destination Names",
+      "steps": [
+        "Using SCP copy a remote file /tmp/remote_lab/application/config/application.conf in your personal VM inside ~/lab226_remote/ and give it a different name application_backup.conf",
+        "scp <your_username>@192.168.111.165:/tmp/remote_lab/application/config/application.conf ~/lab226_remote/application_backup.conf",
+        "Validate",
+        "cat ~/lab226_remote/application_backup.conf",
+        "Explanation: The original remote file was application.conf but the local copy is application_backup.conf."
+      ]
+    },
+    {
+      "task_number": 10,
+      "title": "Remote Command and SCP Together",
+      "steps": [
+        "This task combines everything learned so far.",
+        "First, use SSH to create a file remotely on 192.168.111.165",
+        "ssh <your_username>@192.168.111.165 \"echo 'Created remotely using SSH' > /home/<your_username>/ssh_created.txt\"",
+        "Then pull the file.",
+        "scp <your_username>@192.168.111.165:/home/<your_username>/ssh_created.txt ~/lab226_remote/",
+        "Finally verify the file contents.",
+        "cat ~/lab226_remote/ssh_created.txt"
+      ]
+    }
+  ],
+  "completion_message": "Great job! You have completed Lab 226 and practiced SSH remote command execution, passwordless SSH authentication, SCP push, SCP pull, recursive directory transfer, and file verification."
+}

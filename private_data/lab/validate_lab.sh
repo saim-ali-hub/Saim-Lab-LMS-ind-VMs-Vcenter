@@ -53,6 +53,7 @@ ssh \
     -o LogLevel=ERROR \
     "$STUDENT_NAME@$STUDENT_IP" \
     "export STUDENT_NAME='$STUDENT_NAME';
+     export STUDENT_IP='$STUDENT_IP';
      export LAB_NUMBER='$LAB_NUMBER';
 
      trap 'rm -f \"$REMOTE_VALIDATOR\"' EXIT;
@@ -82,6 +83,11 @@ ssh \
         lab220) validate_lab220_advanced_user_management ;;
         lab221) validate_lab221_package_management ;;
         lab222) validate_lab222_advanced_package_management ;;
+        lab223) validate_lab223_apache_configuration ;;
+        lab224) validate_lab224_static_ip_nmtui ;;
+        lab225) validate_lab225_static_ip_nmcli ;;
+        lab226) validate_lab226_ssh_scp ;;
+        lab227) validate_lab227_ssh_scp ;;
 
         *) echo 'Invalid lab'; exit 1 ;;
      esac"

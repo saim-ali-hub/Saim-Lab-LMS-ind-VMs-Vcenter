@@ -9547,3 +9547,2087 @@ $RESULT_ICON $RESULT_TEXT
 HTML
 }
 #=======================================================================
+
+validate_lab223_apache_configuration() {
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "Checking Lab 223 - Apache Web Server Configuration..."
+
+    HOME_DIR="/home/$STUDENT_NAME"
+    BASE="$HOME_DIR/lab223_apache_config"
+
+    LAB_NAME="Lab 223 - Apache Web Server Configuration"
+    DATE=$(date "+%F %T")
+
+    TOTAL_TASKS=19
+    PASSED=0
+
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+
+    # Task 1 - Prepare the Lab Environment
+    if [ -d "$BASE" ]; then
+        pass "Task 1: lab223_apache_config directory exists"
+    else
+        fail "Task 1: lab223_apache_config directory is missing"
+    fi
+
+    # Task 2 - Install the Apache Package
+    if rpm -q httpd >/dev/null 2>&1; then
+        pass "Task 2: httpd package is installed"
+    else
+        fail "Task 2: httpd package is not installed"
+    fi
+
+    # Task 3 - Understand the Apache Service
+    if systemctl list-unit-files httpd.service 2>/dev/null | grep -q '^httpd.service'; then
+        pass "Task 3: httpd service exists"
+    else
+        fail "Task 3: httpd service was not found"
+    fi
+
+    # Task 4 - Enable and Start Apache
+    ENABLED=$(systemctl is-enabled httpd 2>/dev/null)
+    RUNNING=$(systemctl is-active httpd 2>/dev/null)
+
+    if [ "$ENABLED" = "enabled" ] && [ "$RUNNING" = "active" ]; then
+        pass "Task 4: httpd service is enabled and running"
+    else
+        fail "Task 4: httpd service is not enabled and running"
+    fi
+
+    # Task 5 - Identify Apache Document Root
+    if [ -d /var/www/html ]; then
+        pass "Task 5: Apache document root /var/www/html exists"
+    else
+        fail "Task 5: Apache document root /var/www/html is missing"
+    fi
+
+    # Task 6 - Create index.html
+    FILE="/var/www/html/index.html"
+
+    if [ -s "$FILE" ] \
+        && grep -Fxq "LINOOPTEK COACHING" "$FILE" \
+        && grep -Fxq "I am excited to learn Apache web server" "$FILE"
+    then
+        pass "Task 6: index.html exists and contains the required content"
+    else
+        fail "Task 6: index.html is missing or required content is incorrect"
+    fi
+
+    # Task 7 - Identify Apache Configuration
+    FILE="$BASE/ss_task7.txt"
+
+    if [ -s "$FILE" ] \
+        && grep -qi 'LISTEN' "$FILE" \
+        && grep -Eq '(:80[[:space:]]|:80$)' "$FILE"
+    then
+        pass "Task 7: ss_task7.txt contains Apache listening information for port 80"
+    else
+        fail "Task 7: ss_task7.txt is missing, empty, or does not show Apache listening on port 80"
+    fi
+
+    # Task 8 - Manage Firewall Using HTTP Service
+    if [ -s "$BASE/apache_access_task9" ] \
+        && grep -Fxq "LINOOPTEK COACHING" "$BASE/apache_access_task9"
+    then
+        pass "Task 8: firewalld is running and http service is allowed"
+    else
+        fail "Task 8: firewalld is not running or http service is not allowed"
+    fi
+
+    # Task 9 - Access Apache Using Default Port
+    FILE="$BASE/apache_access_task9"
+
+    if [ -s "$FILE" ] \
+        && grep -Fxq "LINOOPTEK COACHING" "$FILE" \
+        && grep -Fxq "I am excited to learn Apache web server" "$FILE"
+    then
+        pass "Task 9: Apache page content is accessible"
+    else
+        fail "Task 9: apache_access_task9 is missing, empty, or does not contain the required page content"
+    fi
+
+    # Task 10 - Stop Apache and Test Accessibility
+    if [ -f "$BASE/apache_access_task11" ]; then
+        pass "Task 10: lab progression reached the Apache accessibility testing stage"
+    else
+        fail "Task 10: expected lab progression evidence is missing"
+    fi
+
+    # Task 11 - Start Apache and Test Accessibility Again
+    FILE="$BASE/apache_access_task11"
+
+    if [ -s "$FILE" ] \
+        && grep -Fxq "LINOOPTEK COACHING" "$FILE" \
+        && grep -Fxq "I am excited to learn Apache web server" "$FILE"
+    then
+        pass "Task 9: Apache page content is accessible"
+    else
+        fail "Task 9: apache_access_task11 is missing, empty, or does not contain the required page content"
+    fi
+
+    # Task 12 - Configure Apache to Use Port 8181
+    if grep -Eq '^[[:space:]]*Listen[[:space:]]+8181([[:space:]]*)$' \
+        /etc/httpd/conf/httpd.conf 2>/dev/null
+    then
+        pass "Task 12: Apache is configured to listen on port 8181"
+    else
+        fail "Task 12: Apache Listen directive is not configured for port 8181"
+    fi
+
+    # Task 13 - Configure SELinux
+    SELINUX_MODE=$(getenforce 2>/dev/null)
+
+    if [ "$SELINUX_MODE" = "Permissive" ]; then
+        pass "Task 13: SELinux is operating in permissive mode"
+    else
+        fail "Task 13: SELinux is not operating in permissive mode"
+    fi
+
+    # Task 14 - Validate Apache Configuration
+    if httpd -t >/dev/null 2>&1; then
+        pass "Task 14: Apache configuration has no syntax errors"
+    else
+        fail "Task 14: Apache configuration contains syntax errors"
+    fi
+
+    # Task 15 - Restart Apache on Port 8181
+    if systemctl is-active --quiet httpd \
+        && ss -lnt 2>/dev/null | awk '$4 ~ /:8181$/ {found=1} END {exit !found}'
+    then
+        pass "Task 15: httpd is running and listening on TCP port 8181"
+    else
+        fail "Task 15: httpd is not running or is not listening on TCP port 8181"
+    fi
+
+    # Task 16 - Allow Port 8181 Through the Firewall
+    if curl -fsS --max-time 5 http://localhost:8181 2>/dev/null \
+        | grep -Fxq "LINOOPTEK COACHING"
+    then
+        pass "Task 16: TCP port 8181 is permanently allowed through the firewall"
+    else
+        fail "Task 16: TCP port 8181 is not permanently allowed through the firewall"
+    fi
+
+    # Task 17 - Access Apache Using Port 8181
+    if curl -fsS --max-time 5 http://localhost:8181 2>/dev/null \
+        | grep -Fxq "LINOOPTEK COACHING"
+    then
+        if curl -fsS --max-time 5 http://localhost:8181 2>/dev/null \
+            | grep -Fxq "I am excited to learn Apache web server"
+        then
+            pass "Task 17: Apache is accessible on port 8181 with the required content"
+        else
+            fail "Task 17: Apache is accessible on port 8181 but required content is incomplete"
+        fi
+    else
+        fail "Task 17: Apache is not accessible on port 8181"
+    fi
+
+    # Task 18 - Stop Apache and Test Port 8181
+    if grep -q '8181' /etc/httpd/conf/httpd.conf 2>/dev/null; then
+        pass "Task 18: Apache custom-port configuration remains in place"
+    else
+        fail "Task 18: Apache custom-port configuration is missing"
+    fi
+
+    # Task 19 - Start Apache and Test Port 8181 Again
+    if systemctl is-active --quiet httpd \
+        && ss -lnt 2>/dev/null | awk '$4 ~ /:8181$/ {found=1} END {exit !found}'
+    then
+        if curl -fsS --max-time 5 http://localhost:8181 2>/dev/null \
+            | grep -Fxq "LINOOPTEK COACHING" \
+            && curl -fsS --max-time 5 http://localhost:8181 2>/dev/null \
+            | grep -Fxq "I am excited to learn Apache web server"
+        then
+            pass "Task 19: Apache is running, listening on port 8181, and page is accessible"
+        else
+            fail "Task 19: Apache is running on port 8181 but required page content is incorrect"
+        fi
+    else
+        fail "Task 19: Apache is not running or is not listening on port 8181"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#================================================================
+
+validate_lab224_static_ip_nmtui() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "Checking Lab 224 - Managing Static IP Address Using NMTUI..."
+
+    LAB_NAME="Lab 224 - Managing Static IP Address Using NMTUI"
+    DATE=$(date "+%F %T")
+
+    TOTAL_TASKS=18
+    PASSED=0
+
+    # EXPECTED NETWORK CONFIGURATION
+    EXPECTED_IP="$STUDENT_IP"
+    EXPECTED_PREFIX="22"
+
+    EXPECTED_GATEWAY="10.90.0.1"
+
+    EXPECTED_DNS1="192.168.111.50"
+    EXPECTED_DNS2="8.8.8.8"
+
+
+    # All students use ens192 except one student using ens224.
+    INTERFACE=""
+
+    if nmcli -t -f DEVICE,TYPE device status 2>/dev/null \
+        | grep -q '^ens192:ethernet$'; then
+
+        INTERFACE="ens192"
+
+    elif nmcli -t -f DEVICE,TYPE device status 2>/dev/null \
+        | grep -q '^ens224:ethernet$'; then
+
+        INTERFACE="ens224"
+
+    fi
+
+    # profile name.
+    PROFILE=""
+
+    if [ -n "$INTERFACE" ]; then
+
+        PROFILE=$(nmcli -g GENERAL.CONNECTION \
+            device show "$INTERFACE" 2>/dev/null)
+
+    fi
+
+
+    # HELPER FUNCTIONS
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # TASK 1 - GET BASIC NETWORK INFORMATION
+    if [ -n "$INTERFACE" ]; then
+
+        pass "Task 1: Network interface $INTERFACE was identified"
+
+    else
+
+        fail "Task 1: Expected Ethernet interface ens192 or ens224 was not found"
+
+    fi
+
+    # TASK 2 - OPEN EDIT A CONNECTION
+    if command -v nmtui >/dev/null 2>&1; then
+
+        pass "Task 2: nmtui is installed and available"
+
+    else
+
+        fail "Task 2: nmtui is not available"
+
+    fi
+
+    # TASK 3 - SELECT THE CORRECT NETWORK CONNECTION
+    if [ -n "$PROFILE" ] &&
+       [ "$PROFILE" != "--" ]; then
+
+        pass "Task 3: Connection profile $PROFILE is associated with $INTERFACE"
+
+    else
+
+        fail "Task 3: No active connection profile was found for $INTERFACE"
+
+    fi
+
+    # TASK 4 - CONFIGURE IPv4 AS MANUAL
+    IPV4_METHOD=""
+
+    if [ -n "$PROFILE" ] &&
+       [ "$PROFILE" != "--" ]; then
+
+        IPV4_METHOD=$(nmcli -g ipv4.method \
+            connection show "$PROFILE" 2>/dev/null)
+
+    fi
+
+    if [ "$IPV4_METHOD" = "manual" ]; then
+
+        pass "Task 4: IPv4 method is configured as manual"
+
+    else
+
+        fail "Task 4: IPv4 method is not configured as manual"
+
+    fi
+
+    # TASK 5 - CONFIGURE THE IP ADDRESS
+    EXPECTED_ADDRESS="${EXPECTED_IP}/${EXPECTED_PREFIX}"
+
+CONFIGURED_ADDRESS=""
+
+if [ -n "$PROFILE" ]; then
+    CONFIGURED_ADDRESS=$(nmcli -g ipv4.addresses \
+        connection show "$PROFILE" 2>/dev/null)
+fi
+
+if echo "$CONFIGURED_ADDRESS" |
+    tr ', ' '\n' |
+    sed '/^$/d' |
+    grep -Fxq "$EXPECTED_ADDRESS"; then
+
+        pass "Task 5: Student IP $EXPECTED_ADDRESS is configured"
+
+    else
+
+        fail "Task 5: Expected IP $EXPECTED_ADDRESS was not found in the connection profile"
+
+    fi
+
+    # TASK 6 - CONFIGURE THE GATEWAY
+    CONFIGURED_GATEWAY=""
+
+    if [ -n "$PROFILE" ]; then
+
+        CONFIGURED_GATEWAY=$(nmcli -g ipv4.gateway \
+            connection show "$PROFILE" 2>/dev/null)
+
+    fi
+
+    if [ "$CONFIGURED_GATEWAY" = "$EXPECTED_GATEWAY" ]; then
+
+        pass "Task 6: Gateway $EXPECTED_GATEWAY is configured"
+
+    else
+
+        fail "Task 6: Expected gateway $EXPECTED_GATEWAY but found $CONFIGURED_GATEWAY"
+
+    fi
+
+    # TASK 7 - CONFIGURE DNS
+    CONFIGURED_DNS=""
+
+    if [ -n "$PROFILE" ]; then
+
+        CONFIGURED_DNS=$(nmcli -g ipv4.dns \
+            connection show "$PROFILE" 2>/dev/null)
+
+    fi
+
+    DNS1_FOUND=0
+    DNS2_FOUND=0
+    
+    NORMALIZED_DNS=$(echo "$CONFIGURED_DNS" |
+       tr ', ' '\n' |
+       sed '/^$/d')
+
+    if echo "$NORMALIZED_DNS" | grep -Fxq "$EXPECTED_DNS1"; then
+        DNS1_FOUND=1
+    fi
+
+    if echo "$NORMALIZED_DNS" | grep -Fxq "$EXPECTED_DNS2"; then
+        DNS2_FOUND=1
+    fi
+
+    if [ "$DNS1_FOUND" -eq 1 ] &&
+       [ "$DNS2_FOUND" -eq 1 ]; then
+
+        pass "Task 7: Both required DNS servers are configured"
+
+    else
+
+        fail "Task 7: Required DNS servers are not correctly configured"
+
+    fi
+
+    # TASK 8 - ENABLE AUTOMATIC CONNECTION
+    AUTOCONNECT=""
+
+    if [ -n "$PROFILE" ]; then
+
+        AUTOCONNECT=$(nmcli -g connection.autoconnect \
+            connection show "$PROFILE" 2>/dev/null)
+
+    fi
+
+    if [ "$AUTOCONNECT" = "yes" ]; then
+
+        pass "Task 8: Automatic connection is enabled"
+
+    else
+
+        fail "Task 8: Automatic connection is not enabled"
+
+    fi
+
+    # TASK 9 - SAVE THE CONFIGURATION
+    if [ -n "$PROFILE" ] &&
+       [ "$PROFILE" != "--" ] &&
+       nmcli connection show "$PROFILE" >/dev/null 2>&1; then
+
+        pass "Task 9: NetworkManager connection profile is available"
+
+    else
+
+        fail "Task 9: NetworkManager connection profile could not be verified"
+
+    fi
+
+    # TASK 10 - ACTIVATE THE CONNECTION
+    ACTIVE_PROFILE=""
+
+    if [ -n "$INTERFACE" ]; then
+
+        ACTIVE_PROFILE=$(nmcli -g GENERAL.CONNECTION \
+            device show "$INTERFACE" 2>/dev/null)
+
+    fi
+
+    if [ -n "$PROFILE" ] &&
+       [ "$ACTIVE_PROFILE" = "$PROFILE" ]; then
+
+        pass "Task 10: Connection $PROFILE is active on $INTERFACE"
+
+    else
+
+        fail "Task 10: Expected connection $PROFILE is not active on $INTERFACE"
+
+    fi
+
+    # TASK 11 - VALIDATE THE IP CONFIGURATION
+    # Task 11a - Actual IP Address
+    ACTUAL_ADDRESS=""
+
+if [ -n "$INTERFACE" ]; then
+
+    ACTUAL_ADDRESS=$(ip -4 -o addr show dev "$INTERFACE" 2>/dev/null |
+        awk '{print $4}' |
+        head -1)
+
+fi
+if [ "$ACTUAL_ADDRESS" = "$EXPECTED_ADDRESS" ]; then
+
+        pass "Task 11a: $INTERFACE has expected IP $EXPECTED_ADDRESS"
+
+    else
+
+        fail "Task 11a: Expected IP $EXPECTED_ADDRESS is not active on $INTERFACE"
+
+    fi
+
+    # Task 11b - Default Route
+    ACTIVE_GATEWAY=$(ip route show default 2>/dev/null \
+        | awk '/default/ {print $3; exit}')
+
+    if [ "$ACTIVE_GATEWAY" = "$EXPECTED_GATEWAY" ]; then
+
+        pass "Task 11b: Default route uses gateway $EXPECTED_GATEWAY"
+
+    else
+
+        fail "Task 11b: Expected gateway $EXPECTED_GATEWAY but found $ACTIVE_GATEWAY"
+
+    fi
+
+    # Task 11c - NetworkManager Device State
+    DEVICE_STATE=""
+
+    if [ -n "$INTERFACE" ]; then
+
+        DEVICE_STATE=$(nmcli -g GENERAL.STATE \
+            device show "$INTERFACE" 2>/dev/null)
+
+    fi
+
+    if echo "$DEVICE_STATE" | grep -q '^100'; then
+
+        pass "Task 11c: $INTERFACE is connected"
+
+    else
+
+        fail "Task 11c: $INTERFACE is not in connected state"
+
+    fi
+
+    # Task 11d - Connection Profile Exists
+    if [ -n "$PROFILE" ] &&
+       [ "$PROFILE" != "--" ] &&
+       nmcli connection show "$PROFILE" >/dev/null 2>&1; then
+
+        pass "Task 11d: Connection profile $PROFILE exists"
+
+    else
+
+        fail "Task 11d: Connection profile could not be verified"
+
+    fi
+
+    # TASK 12 - TEST CONNECTIVITY
+    # Task 12a - Gateway Connectivity
+    if ping -c 2 -W 2 "$EXPECTED_GATEWAY" >/dev/null 2>&1; then
+
+        pass "Task 12a: Gateway $EXPECTED_GATEWAY is reachable"
+
+    else
+
+        fail "Task 12a: Gateway $EXPECTED_GATEWAY is not reachable"
+
+    fi
+
+    # Task 12b - External IP Connectivity
+    if ping -c 2 -W 3 8.8.8.8 >/dev/null 2>&1; then
+
+        pass "Task 12b: External IP 8.8.8.8 is reachable"
+
+    else
+
+        fail "Task 12b: External IP 8.8.8.8 is not reachable"
+
+    fi
+
+    # Task 12c - DNS Resolution Using getent
+    if getent hosts google.com >/dev/null 2>&1; then
+
+        pass "Task 12c: DNS resolution using getent is working"
+
+    else
+
+        fail "Task 12c: DNS resolution using getent failed"
+
+    fi
+
+    # Task 12d - DNS Resolution Using nslookup
+    if command -v nslookup >/dev/null 2>&1; then
+
+        if nslookup google.com >/dev/null 2>&1; then
+
+            pass "Task 12d: DNS resolution using nslookup is working"
+
+        else
+
+            fail "Task 12d: DNS resolution using nslookup failed"
+
+        fi
+
+    else
+
+        fail "Task 12d: nslookup command is not available"
+
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+
+#================================================================
+validate_lab225_static_ip_nmcli() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "Checking Lab 225 - Managing Static IP Address Using NMCLI..."
+
+    LAB_NAME="Lab 225 - Managing Static IP Address Using NMCLI"
+    DATE=$(date "+%F %T")
+
+    TOTAL_TASKS=18
+    PASSED=0
+
+    # EXPECTED NETWORK CONFIGURATION
+    PROFILE="my-static-ens192"
+
+    EXPECTED_IP="$STUDENT_IP"
+    EXPECTED_PREFIX="22"
+    EXPECTED_GATEWAY="10.90.0.1"
+
+    EXPECTED_DNS1="192.168.111.50"
+    EXPECTED_DNS2="8.8.8.8"
+
+    INTERFACE=""
+
+    if nmcli -t -f DEVICE,TYPE device status 2>/dev/null \
+        | grep -q '^ens192:ethernet$'; then
+
+        INTERFACE="ens192"
+
+    elif nmcli -t -f DEVICE,TYPE device status 2>/dev/null \
+        | grep -q '^ens224:ethernet$'; then
+
+        INTERFACE="ens224"
+
+    fi
+
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # TASK 1 - DISCOVER NETWORK DEVICES
+    if [ -n "$INTERFACE" ]; then
+
+        pass "Task 1: Ethernet interface $INTERFACE was found"
+
+    else
+
+        fail "Task 1: Expected Ethernet interface ens192 or ens224 was not found"
+
+    fi
+
+    # TASK 2 - VIEW EXISTING CONNECTION PROFILES
+    if nmcli -t -f NAME connection show 2>/dev/null \
+        | grep -Fxq "$PROFILE"; then
+
+        pass "Task 2: Connection profile $PROFILE exists"
+
+    else
+
+        fail "Task 2: Connection profile $PROFILE does not exist"
+
+    fi
+
+
+    # TASK 3 - VIEW DETAILED CONNECTION INFORMATION
+    if nmcli connection show "$PROFILE" >/dev/null 2>&1; then
+
+        pass "Task 3: Detailed information for $PROFILE is available"
+
+    else
+
+        fail "Task 3: Unable to retrieve connection profile $PROFILE"
+
+    fi
+
+    # TASK 4 - CONFIGURE STATIC IP USING NMCLI
+    IPV4_METHOD=$(nmcli -g ipv4.method \
+        connection show "$PROFILE" 2>/dev/null)
+
+    if [ "$IPV4_METHOD" = "manual" ]; then
+
+        pass "Task 4: IPv4 method is configured as manual"
+
+    else
+
+        fail "Task 4: IPv4 method is not configured as manual"
+
+    fi
+
+    # TASK 5 - CREATE A NEW CONNECTION
+    PROFILE_EXISTS=0
+    PROFILE_INTERFACE=""
+
+    if nmcli -t -f NAME connection show 2>/dev/null \
+        | grep -Fxq "$PROFILE"; then
+
+        PROFILE_EXISTS=1
+        PROFILE_INTERFACE=$(nmcli -g connection.interface-name \
+            connection show "$PROFILE" 2>/dev/null)
+    fi
+
+    if [ "$PROFILE_EXISTS" -eq 1 ] &&
+       [ "$PROFILE_INTERFACE" = "$INTERFACE" ]; then
+
+        pass "Task 5: $PROFILE was created for interface $INTERFACE"
+
+    elif [ "$PROFILE_EXISTS" -eq 1 ]; then
+
+        fail "Task 5: $PROFILE exists but is associated with $PROFILE_INTERFACE instead of $INTERFACE"
+
+    else
+
+        fail "Task 5: Connection profile $PROFILE was not created"
+
+    fi
+
+    # TASK 6 - SET METHOD OF OBTAINING IP TO MANUAL
+    if [ "$IPV4_METHOD" = "manual" ]; then
+
+        pass "Task 6: $PROFILE uses manual IPv4 configuration"
+
+    else
+
+        fail "Task 6: $PROFILE does not use manual IPv4 configuration"
+
+    fi
+
+    # TASK 7 - ASSIGN THE IP ADDRESS
+    CONFIGURED_ADDRESS=$(nmcli -g ipv4.addresses \
+        connection show "$PROFILE" 2>/dev/null)
+
+    EXPECTED_ADDRESS="${EXPECTED_IP}/${EXPECTED_PREFIX}"
+
+    IP_MATCH=0
+
+    # Handle possible comma-separated or multiple addresses.
+    echo "$CONFIGURED_ADDRESS" \
+        | tr ',' '\n' \
+        | tr ' ' '\n' \
+        | grep -Fxq "$EXPECTED_ADDRESS"
+
+    if [ $? -eq 0 ]; then
+        IP_MATCH=1
+    fi
+
+    if [ "$IP_MATCH" -eq 1 ]; then
+
+        pass "Task 7: Student IP $EXPECTED_ADDRESS is configured"
+
+    else
+
+        fail "Task 7: Expected IP $EXPECTED_ADDRESS was not found in $PROFILE"
+
+    fi
+
+    # TASK 8 - CONFIGURE THE GATEWAY
+    CONFIGURED_GATEWAY=$(nmcli -g ipv4.gateway \
+        connection show "$PROFILE" 2>/dev/null)
+
+    if [ "$CONFIGURED_GATEWAY" = "$EXPECTED_GATEWAY" ]; then
+
+        pass "Task 8: Gateway $EXPECTED_GATEWAY is configured"
+
+    else
+
+        fail "Task 8: Expected gateway $EXPECTED_GATEWAY but found $CONFIGURED_GATEWAY"
+
+    fi
+
+    # TASK 9 - CONFIGURE DNS
+    CONFIGURED_DNS=""
+
+if [ -n "$PROFILE" ]; then
+
+    CONFIGURED_DNS=$(nmcli -g ipv4.dns \
+        connection show "$PROFILE" 2>/dev/null)
+
+fi
+
+DNS1_FOUND=0
+DNS2_FOUND=0
+
+# Normalize DNS output.
+# nmcli may return values separated by spaces or commas.
+NORMALIZED_DNS=$(echo "$CONFIGURED_DNS" |
+    tr ', ' '\n' |
+    sed '/^$/d')
+
+if echo "$NORMALIZED_DNS" | grep -Fxq "$EXPECTED_DNS1"; then
+    DNS1_FOUND=1
+fi
+
+if echo "$NORMALIZED_DNS" | grep -Fxq "$EXPECTED_DNS2"; then
+    DNS2_FOUND=1
+fi
+
+if [ "$DNS1_FOUND" -eq 1 ] &&
+   [ "$DNS2_FOUND" -eq 1 ]; then
+
+    pass "Task 9: Both required DNS servers are configured"
+
+elif [ "$DNS1_FOUND" -eq 1 ]; then
+
+    fail "Task 9: $EXPECTED_DNS1 is configured but $EXPECTED_DNS2 is missing"
+
+elif [ "$DNS2_FOUND" -eq 1 ]; then
+        fail "Task 9: $EXPECTED_DNS2 is configured but $EXPECTED_DNS1 is missing"
+
+    else
+
+        fail "Task 9: Required DNS servers are not configured"
+
+    fi
+
+    # TASK 10 - ENABLE AUTOMATIC CONNECTION
+    AUTOCONNECT=$(nmcli -g connection.autoconnect \
+        connection show "$PROFILE" 2>/dev/null)
+
+    if [ "$AUTOCONNECT" = "yes" ]; then
+
+        pass "Task 10: Autoconnect is enabled"
+
+    else
+
+        fail "Task 10: Autoconnect is not enabled"
+
+    fi
+
+    # TASK 11 - APPLY THE CONFIGURATION
+    ACTIVE_PROFILE=""
+
+    if [ -n "$INTERFACE" ]; then
+
+        ACTIVE_PROFILE=$(nmcli -g GENERAL.CONNECTION \
+            device show "$INTERFACE" 2>/dev/null)
+
+    fi
+
+    if [ "$ACTIVE_PROFILE" = "$PROFILE" ]; then
+
+        pass "Task 11: $PROFILE is active on $INTERFACE"
+
+    else
+
+        fail "Task 11: $PROFILE is not active on $INTERFACE"
+
+    fi
+
+    # TASK 12 - VALIDATE CONNECTION PROFILE
+    # Task 12a - Validate Actual IP Address
+    ACTUAL_ADDRESS=""
+
+    if [ -n "$INTERFACE" ]; then
+
+        ACTUAL_ADDRESS=$(ip -4 -o addr show "$INTERFACE" 2>/dev/null \
+            | awk '{print $4}' \
+            | grep -Fx "$EXPECTED_ADDRESS" \
+            | head -1)
+
+    fi
+
+    if [ "$ACTUAL_ADDRESS" = "$EXPECTED_ADDRESS" ]; then
+
+        pass "Task 12a: $INTERFACE has the expected IP $EXPECTED_ADDRESS"
+
+    else
+
+        fail "Task 12a: $INTERFACE does not have expected IP $EXPECTED_ADDRESS"
+
+    fi
+
+    # Task 12b - Validate Default Gateway
+    ACTIVE_GATEWAY=$(ip route show default 2>/dev/null \
+        | awk '/default/ {print $3; exit}')
+
+    if [ "$ACTIVE_GATEWAY" = "$EXPECTED_GATEWAY" ]; then
+
+        pass "Task 12b: Default gateway is $EXPECTED_GATEWAY"
+
+    else
+
+        fail "Task 12b: Expected gateway $EXPECTED_GATEWAY but found $ACTIVE_GATEWAY"
+
+    fi
+
+    # Task 12c - Validate Default Route Interface
+    ROUTE_INTERFACE=$(ip route show default 2>/dev/null \
+        | awk '/default/ {for(i=1;i<=NF;i++) if($i=="dev") print $(i+1); exit}')
+
+    if [ "$ROUTE_INTERFACE" = "$INTERFACE" ]; then
+
+        pass "Task 12c: Default route uses interface $INTERFACE"
+
+    else
+
+        fail "Task 12c: Default route is not using $INTERFACE"
+
+    fi
+
+    # Task 12d - Validate NetworkManager Connection State
+    DEVICE_STATE=$(nmcli -g GENERAL.STATE \
+        device show "$INTERFACE" 2>/dev/null)
+
+    if echo "$DEVICE_STATE" | grep -q '^100'; then
+
+        pass "Task 12d: $INTERFACE is connected"
+
+    else
+
+        fail "Task 12d: $INTERFACE is not in connected state"
+
+    fi
+
+    # Task 12e - Validate Gateway Connectivity
+    if ping -c 2 -W 2 "$EXPECTED_GATEWAY" >/dev/null 2>&1; then
+
+        pass "Task 12e: Gateway $EXPECTED_GATEWAY is reachable"
+
+    else
+
+        fail "Task 12e: Gateway $EXPECTED_GATEWAY is not reachable"
+
+    fi
+
+    # Task 12f - Validate External IP Connectivity
+    if ping -c 2 -W 3 8.8.8.8 >/dev/null 2>&1; then
+
+        pass "Task 12f: External IP connectivity is working"
+
+    else
+
+        fail "Task 12f: Unable to reach external IP 8.8.8.8"
+
+    fi
+
+    # Task 12g - Validate DNS Resolution
+    if getent hosts google.com >/dev/null 2>&1; then
+
+        pass "Task 12g: DNS name resolution is working"
+
+    else
+
+        fail "Task 12g: DNS name resolution failed"
+
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#===============================================================
+
+validate_lab226_ssh_scp() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "Checking Lab 226 - Remote Command Execution and File Transfer Using SSH and SCP..."
+
+    LAB_NAME="Lab 226 - Remote Command Execution and File Transfer Using SSH and SCP"
+    DATE=$(date "+%F %T")
+
+    TOTAL_TASKS=10
+    PASSED=0
+
+    USERNAME="$STUDENT_NAME"
+    HOME_DIR="/home/$USERNAME"
+    LAB_REMOTE="$HOME_DIR/lab226_remote"
+
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+
+    # ==========================================================
+    # TASK 1 - SSH KEY PAIR
+    # ==========================================================
+
+    if {
+        [ -f "$HOME_DIR/.ssh/id_rsa" ] &&
+        [ -f "$HOME_DIR/.ssh/id_rsa.pub" ]
+    } || {
+        [ -f "$HOME_DIR/.ssh/id_ed25519" ] &&
+        [ -f "$HOME_DIR/.ssh/id_ed25519.pub" ]
+    }; then
+
+        pass "Task 1: SSH key pair exists"
+
+    else
+        fail "Task 1: SSH key pair not found"
+    fi
+
+
+    # ==========================================================
+    # TASK 2 - REMOTE SYSTEM INFORMATION
+    # ==========================================================
+
+    TASK2_PASS=1
+
+    [ -d "$LAB_REMOTE" ] || TASK2_PASS=0
+    [ -f "$LAB_REMOTE/remote_ipaddr" ] || TASK2_PASS=0
+    [ -s "$LAB_REMOTE/remote_ipaddr" ] || TASK2_PASS=0
+
+    [ -f "$LAB_REMOTE/lsblk_output" ] || TASK2_PASS=0
+    [ -s "$LAB_REMOTE/lsblk_output" ] || TASK2_PASS=0
+
+    if [ "$TASK2_PASS" -eq 1 ]; then
+        pass "Task 2: Remote system information collected"
+    else
+        fail "Task 2: Required remote information files missing"
+    fi
+
+
+    # ==========================================================
+    # TASK 3 - SCP PUSH FILE
+    # ==========================================================
+
+    if [ -f "$HOME_DIR/student_notes.txt" ] &&
+       grep -Fxq "This file was created on the student VM." \
+       "$HOME_DIR/student_notes.txt"; then
+
+        pass "Task 3: student_notes.txt created correctly"
+
+    else
+        fail "Task 3: student_notes.txt missing or content incorrect"
+    fi
+
+
+    # ==========================================================
+    # TASK 4 - VERIFY PUSH
+    # ==========================================================
+
+    if [ -f "$LAB_REMOTE/task4_push_verification" ] &&
+       grep -q "student_notes.txt" \
+       "$LAB_REMOTE/task4_push_verification" &&
+       [ -f "$LAB_REMOTE/task4_content_verification" ] &&
+       grep -Fxq "This file was created on the student VM." \
+       "$LAB_REMOTE/task4_content_verification"; then
+
+        pass "Task 4: Remote file verified successfully"
+
+    else
+        fail "Task 4: Remote file verification missing or incorrect"
+    fi
+
+
+    # ==========================================================
+    # TASK 5 - SCP PUSH DIRECTORY
+    # ==========================================================
+
+    if [ -d "$HOME_DIR/student_project" ] &&
+       [ -d "$HOME_DIR/student_project/config" ] &&
+       [ -f "$HOME_DIR/student_project/config/server.conf" ] &&
+       grep -Fxq "SERVER=web01" \
+       "$HOME_DIR/student_project/config/server.conf"; then
+
+        pass "Task 5: student_project directory created correctly"
+
+    else
+        fail "Task 5: student_project structure or content incorrect"
+    fi
+
+
+    # ==========================================================
+    # TASK 6 - VERIFY DIRECTORY ON REMOTE SERVER
+    # ==========================================================
+
+    if [ -f "$LAB_REMOTE/task6_directory_verification" ] &&
+       grep -q "student_project" \
+       "$LAB_REMOTE/task6_directory_verification" &&
+       [ -f "$LAB_REMOTE/task6_content_verification" ] &&
+       grep -Fxq "SERVER=web01" \
+       "$LAB_REMOTE/task6_content_verification"; then
+
+        pass "Task 6: Remote directory and file verified"
+
+    else
+        fail "Task 6: Remote directory verification missing or incorrect"
+    fi
+
+
+    # ==========================================================
+    # TASK 7 - SCP PULL README
+    # ==========================================================
+
+    if [ -f "$LAB_REMOTE/README.txt" ] &&
+       [ -s "$LAB_REMOTE/README.txt" ]; then
+
+        pass "Task 7: README.txt pulled successfully"
+
+    else
+        fail "Task 7: README.txt not found or empty"
+    fi
+
+
+    # ==========================================================
+    # TASK 8 - SCP PULL ENTIRE DIRECTORY
+    # ==========================================================
+
+    TASK8_PASS=1
+
+    [ -d "$LAB_REMOTE/remote_lab" ] || TASK8_PASS=0
+
+    [ -d "$LAB_REMOTE/remote_lab/documentation" ] || TASK8_PASS=0
+    [ -f "$LAB_REMOTE/remote_lab/documentation/README.txt" ] || TASK8_PASS=0
+
+    [ -d "$LAB_REMOTE/remote_lab/application" ] || TASK8_PASS=0
+    [ -d "$LAB_REMOTE/remote_lab/application/config" ] || TASK8_PASS=0
+    [ -f "$LAB_REMOTE/remote_lab/application/config/application.conf" ] || TASK8_PASS=0
+
+    if [ "$TASK8_PASS" -eq 1 ]; then
+        pass "Task 8: Complete remote_lab directory structure pulled"
+    else
+        fail "Task 8: remote_lab directory structure incomplete"
+    fi
+
+
+    # ==========================================================
+    # TASK 9 - DIFFERENT DESTINATION NAME
+    # ==========================================================
+
+    if [ -f "$LAB_REMOTE/application_backup.conf" ] &&
+       [ -s "$LAB_REMOTE/application_backup.conf" ]; then
+
+        pass "Task 9: application_backup.conf created successfully"
+
+    else
+        fail "Task 9: application_backup.conf not found or empty"
+    fi
+
+
+    # ==========================================================
+    # TASK 10 - REMOTE COMMAND AND SCP
+    # ==========================================================
+
+    if [ -f "$LAB_REMOTE/ssh_created.txt" ] &&
+       grep -Fxq "Created remotely using SSH" \
+       "$LAB_REMOTE/ssh_created.txt"; then
+
+        pass "Task 10: SSH-created file pulled and verified"
+
+    else
+        fail "Task 10: ssh_created.txt missing or content incorrect"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+
+#================================================================
+
+validate_lab227_ssh_scp() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "Checking Lab 227 - SSH Remote Command Execution and SCP File Transfer..."
+
+    LAB_NAME="Lab 227 - SSH Remote Command Execution and SCP File Transfer"
+    DATE=$(date "+%F %T")
+
+    TOTAL_TASKS=10
+    PASSED=0
+
+    USERNAME="$STUDENT_NAME"
+    HOME_DIR="/home/$USERNAME"
+    LAB_WORKSPACE="$HOME_DIR/lab227_workspace"
+    LAB_REFERENCE="$LAB_WORKSPACE/lab227"
+
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # Task 1 - Prepare the Personal VM Workspace
+    if [ -d "$LAB_WORKSPACE" ]; then
+        pass "Task 1 - lab227_workspace directory exists"
+    else
+        fail "Task 1 - lab227_workspace directory does not exist"
+    fi
+
+    # Task 2 - Connect to the Remote Linux Server
+    LOCAL_FILE="$LAB_WORKSPACE/application.conf"
+    REFERENCE_FILE="$LAB_REFERENCE/application/config/application.conf"
+
+    if [ -f "$LOCAL_FILE" ] && [ -f "$REFERENCE_FILE" ]; then
+
+        if diff -q "$LOCAL_FILE" "$REFERENCE_FILE" >/dev/null 2>&1; then
+
+        pass "Task 2 - SSH remote activity completed"
+    else
+        fail "Task 2 - SSH activity could not be verified"
+    fi
+
+    # Task 3 - Inspect the Prepared Remote Lab Data
+     LOCAL_FILE="$LAB_WORKSPACE/application.conf"
+    REFERENCE_FILE="$LAB_REFERENCE/application/config/application.conf"
+
+    if [ -f "$LOCAL_FILE" ] && [ -f "$REFERENCE_FILE" ]; then
+
+        if diff -q "$LOCAL_FILE" "$REFERENCE_FILE" >/dev/null 2>&1; then
+
+        pass "Task 3 - lab227 reference directory exists"
+    else
+        fail "Task 3 - lab227 reference directory does not exist"
+    fi
+
+    # Task 4 - Transfer application.conf
+    LOCAL_FILE="$LAB_WORKSPACE/application.conf"
+    REFERENCE_FILE="$LAB_REFERENCE/application/config/application.conf"
+
+    if [ -f "$LOCAL_FILE" ] && [ -f "$REFERENCE_FILE" ]; then
+
+        if diff -q "$LOCAL_FILE" "$REFERENCE_FILE" >/dev/null 2>&1; then
+            pass "Task 4 - application.conf transferred correctly"
+        else
+            fail "Task 4 - application.conf contents do not match"
+        fi
+
+    else
+        fail "Task 4 - application.conf is missing"
+    fi
+
+    # Task 5 - Transfer reports directory
+    LOCAL_DIR="$LAB_WORKSPACE/reports"
+    REFERENCE_DIR="$LAB_REFERENCE/reports"
+
+    if [ -d "$LOCAL_DIR" ] && [ -d "$REFERENCE_DIR" ]; then
+
+        if diff -qr "$LOCAL_DIR" "$REFERENCE_DIR" >/dev/null 2>&1; then
+            pass "Task 5 - reports directory transferred correctly"
+        else
+            fail "Task 5 - reports directory contents do not match"
+        fi
+
+    else
+        fail "Task 5 - reports directory is missing"
+    fi
+
+
+    # ============================================================
+    # Task 6 - Retrieve deployment.txt using SSH
+    # ============================================================
+
+    LOCAL_FILE="$LAB_WORKSPACE/deployment.txt"
+    REFERENCE_FILE="$LAB_REFERENCE/application/docs/deployment.txt"
+
+    if [ -f "$LOCAL_FILE" ] && [ -f "$REFERENCE_FILE" ]; then
+
+        if diff -q "$LOCAL_FILE" "$REFERENCE_FILE" >/dev/null 2>&1; then
+            pass "Task 6 - deployment.txt retrieved correctly"
+        else
+            fail "Task 6 - deployment.txt contents do not match"
+        fi
+
+    else
+        fail "Task 6 - deployment.txt is missing"
+    fi
+
+
+    # ============================================================
+    # Task 7 - Retrieve maintenance.txt with new filename
+    # ============================================================
+
+    LOCAL_FILE="$LAB_WORKSPACE/maintenance_backup.txt"
+    REFERENCE_FILE="$LAB_REFERENCE/application/docs/maintenance.txt"
+
+    if [ -f "$LOCAL_FILE" ] && [ -f "$REFERENCE_FILE" ]; then
+
+        if diff -q "$LOCAL_FILE" "$REFERENCE_FILE" >/dev/null 2>&1; then
+            pass "Task 7 - maintenance_backup.txt retrieved correctly"
+        else
+            fail "Task 7 - maintenance_backup.txt contents do not match"
+        fi
+
+    else
+        fail "Task 7 - maintenance_backup.txt is missing"
+    fi
+
+
+    # ============================================================
+    # Task 8 - Create remote_created.txt and pull it
+    # ============================================================
+
+    LOCAL_FILE="$LAB_WORKSPACE/remote_created.txt"
+    REFERENCE_FILE="$LAB_REFERENCE/remote_created.txt"
+
+    if [ -f "$LOCAL_FILE" ] && [ -f "$REFERENCE_FILE" ]; then
+
+        if diff -q "$LOCAL_FILE" "$REFERENCE_FILE" >/dev/null 2>&1; then
+            pass "Task 8 - remote_created.txt exists and contents match"
+        else
+            fail "Task 8 - remote_created.txt contents do not match"
+        fi
+
+    else
+        fail "Task 8 - remote_created.txt is missing"
+    fi
+
+
+    # ============================================================
+    # Task 9 - Transfer transfer_note.txt
+    # ============================================================
+
+    LOCAL_FILE="$LAB_WORKSPACE/transfer_note.txt"
+    REFERENCE_FILE="$LAB_REFERENCE/transfer_note.txt"
+
+    if [ -f "$LOCAL_FILE" ] && [ -f "$REFERENCE_FILE" ]; then
+
+        if diff -q "$LOCAL_FILE" "$REFERENCE_FILE" >/dev/null 2>&1; then
+            pass "Task 9 - transfer_note.txt transferred correctly"
+        else
+            fail "Task 9 - transfer_note.txt contents do not match"
+        fi
+
+    else
+        fail "Task 9 - transfer_note.txt is missing"
+    fi
+
+
+    # ============================================================
+    # Task 10 - Pull Complete lab227 Directory
+    # ============================================================
+
+    if [ -d "$LAB_REFERENCE" ]; then
+
+        FILE_COUNT=$(find "$LAB_REFERENCE" -type f 2>/dev/null | wc -l)
+
+        if [ "$FILE_COUNT" -gt 0 ]; then
+            pass "Task 10 - complete lab227 directory transferred"
+        else
+            fail "Task 10 - lab227 directory is empty"
+        fi
+
+    else
+        fail "Task 10 - lab227 directory is missing"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#======================================================================

@@ -1,0 +1,144 @@
+{
+  "lab_id": "lab227",
+  "title": "SSH Remote Command Execution and SCP File Transfer - Advance",
+  "description": "Practice SSH remote command execution and SCP file transfers between a personal Linux VM and a remote Linux server. The remote server has been preconfigured with a fixed directory structure and files. Students will transfer individual files, directories, and create a remote file using SSH.",
+
+  "lab_objective": {
+    "description": "By completing this lab, students will learn how to:",
+    "objectives": [
+      "Connect to a remote Linux server using SSH.",
+      "Understand the difference between a local system and a remote system during SSH sessions.",
+      "Use SCP to transfer a file from a remote system to a personal VM.",
+      "Use SCP to transfer a directory from a remote system to a personal VM.",
+      "Execute a command remotely using SSH without opening an interactive shell.",
+      "Redirect the output of a remotely executed command into a local file.",
+      "Retrieve the contents of a remote file using SSH remote command execution.",
+      "Store remotely retrieved information in a local workspace.",
+      "Create a file on a remote Linux server using SSH.",
+      "Pull a remotely created file to the personal VM using SCP.",
+      "Pull a complete directory recursively from a remote server.",
+      "Understand the practical difference between SCP push and SCP pull."
+    ],
+  "scenario": [
+    "You are a Linux administrator working from your personal Linux VM.",
+    "A remote Linux server at 192.168.111.165 contains application files and project data prepared by the system administrator.",
+    "You have been asked to retrieve selected files, transfer a complete directory, execute commands remotely, and create a small file on the remote server.",
+    "The remote training data has already been prepared under /tmp/lab227.",
+    "You must create a local workspace named lab227_workspace on your personal VM.",
+    "All evidence required for automated validation must be stored inside ~/lab227_workspace.",
+    "Each task specifies the exact evidence filename that must be created."
+    ]
+  },
+
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Prepare the Personal VM Workspace",
+      "steps": [
+        "Log in to your personal Linux VM.",
+        "Create a directory named lab227_workspace in your home directory.",
+        "Store all files This directory will be used throughout the lab to store transferred files and validation evidence.",
+        "Do not use another directory for the lab evidence."
+      ]
+    },
+
+    {
+      "task_number": 2,
+      "title": "Connect to the Remote Linux Server",
+      "steps": [
+        "From your personal VM, ssh to the Linux server 192.168.111.165 using your own account.",
+        "After connecting, confirm that you are working on the remote Linux server.",
+        "Navigate to your home directory on the remote server.",
+        "The remainder of this task must be performed from your remote SSH session."
+      ]
+    },
+
+    {
+      "task_number": 3,
+      "title": "Inspect the Prepared Remote Lab Data",
+      "steps": [
+        "From the remote server 192.168.111.165, inspect the directory /tmp/lab227.",
+        "Hint: find /tmp/lab227/ -type f -print",
+        "Review the files available inside the prepared directory structure."
+      ]
+    },
+
+    {
+      "task_number": 4,
+      "title": "Transfer One File to the Personal VM",
+      "steps": [
+        "You are currently connected to 192.168.111.165.",
+        "Copy the file /tmp/lab227/application/config/application.conf to the lab227_workspace directory on your personal VM.",
+        "The file must be transferred from the remote server 192.168.111.165 to your personal VM.",
+        "Verify that application.conf is present inside ~/lab227_workspace."
+      ]
+    },
+
+    {
+      "task_number": 5,
+      "title": "Transfer One Directory to the Personal VM",
+      "steps": [
+        "Copy the complete /tmp/lab227/reports directory from 192.168.111.165 to ~/lab227_workspace on your personal VM.",
+        "The reports directory must be transferred together with all files contained inside it.",
+        "Use SSH remote command execution to verif that the reports directory exists inside your local lab227_workspace.",
+        "Use SSH remote command execution to verify that system_report.txt is present in reports directory inside your lab227_workspace.",
+        "Use SSH remote command execution to verify that application_report.txt is present in reports directory inside your lab227_workspace.."
+      ]
+    },
+
+    {
+      "task_number": 6,
+      "title": "Execute a Remote Command and Save the Result Locally",
+      "steps": [
+        "Return to your personal VM.",
+        "Use SSH remote command execution to display the contents of /tmp/lab227/application/docs/deployment.txt on the remote server.",
+        "Do not open an interactive SSH shell for this operation.",
+        "The output of the remote command must be saved directly into ~/lab227_workspace/deployment.txt on your personal VM."
+      ]
+    },
+
+    {
+      "task_number": 7,
+      "title": "Execute Another Remote Command and Change the Local Filename",
+      "steps": [
+        "Use SSH remote command execution to display the contents of /tmp/lab227/application/docs/maintenance.txt on the remote server.",
+        "Save the output locally using the filename ~/lab227_workspace/maintenance_backup.txt.",
+        "Validate ~/lab227_workspace/maintenance_backup.txt file successfully copied"
+      ]
+    },
+
+    {
+      "task_number": 8,
+      "title": "Create a File Remotely and Pull It",
+      "steps": [
+        "From your personal VM, use SSH remote command execution to create the file /home/your_username/remote_created.txt on 192.168.111.165.",
+        "The file must contain exactly the following one-line message:",
+        "SSH remote execution created this file.",
+        "After creating the file, copy /home/your_username/remote_created.txt from the remote server 192.168.111.165 to ~/lab227_workspace on your personal VM.",
+        "Verify that the local copy exists.",
+        "Verify that the local copy contains the required one-line message."
+      ]
+    },
+
+    {
+      "task_number": 9,
+      "title": "Pull Another Individual File",
+      "steps": [
+        "Copy /tmp/lab227/transfer_note.txt from 192.168.111.165 to ~/lab227_workspace on your personal VM.",
+        "Verify that transfer_note.txt exists locally.",
+        "Verify its contents."
+      ]
+    },
+
+    {
+      "task_number": 10,
+      "title": "Pull the Complete Project Directory",
+      "steps": [
+        "Transfer the complete /tmp/lab227/ directory from 192.168.111.165 to ~/lab227_workspace on your personal VM.",
+        "The complete project directory must be transferred recursively.",
+        "Verify that ~/lab227_workspace/lab227 directory exists locally."
+      ]
+    }
+  ],
+  "completion_message": "Excellent work! You have completed Lab 227 and practiced SSH remote command execution, SCP file transfer, individual file retrieval, directory transfer, remote file creation, local output redirection, and recursive directory transfer."
+}

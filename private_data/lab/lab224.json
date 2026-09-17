@@ -1,0 +1,206 @@
+{
+  "lab_id": 224,
+  "title": "Managing Static IP Address - Using NMTUI",
+  "description": "Configure and validate a static IPv4 address on a Linux system using NetworkManager.",
+  "lab_objective": {
+    "description": "In this lab, students will learn how to configure a static IP address using NetworkManager's text-based interface, understand IPv4 addressing concepts such as IP address and prefix, configure a gateway and DNS servers, activate the connection, and validate network connectivity step by step.",
+    "objectives": [
+      "Understand what nmtui is and how it is used to manage NetworkManager connections.",
+      "Identify the current network configuration using nmcli dev show.",
+      "Configure a static IPv4 address using nmtui.",
+      "Understand the difference between an IP address, prefix, gateway, and DNS server.",
+      "Configure a default gateway and DNS servers.",
+      "Enable automatic connection for the network profile.",
+      "Activate the modified NetworkManager connection.",
+      "Validate the IP address, routing table, NetworkManager status, and connection profile.",
+      "Test network connectivity in a layered troubleshooting approach.",
+      "Differentiate between connectivity problems and DNS resolution problems."
+    ],
+    "scenario": ["You are a Linux administrator responsible for configuring networking on a Linux VM. The VM currently has a NetworkManager connection, and you need to configure a static IPv4 address instead of relying on DHCP. You must first identify the current network configuration and then configure the static IP address, prefix, gateway, and DNS servers. After making the changes, activate the connection and validate the configuration. Finally, test connectivity from the local interface to the gateway, then to an external IP address, and finally test DNS name resolution.",
+"Configure Networking Using nmtui (NetworkManager Text User Interface) to configure a static IPv4 address."
+    ]
+  },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Get Basic Network Information",
+      "steps": [
+        "Run:",
+        "nmcli dev show",
+        "Identify and record the following information from the current network configuration:",
+        "Connection Name",
+        "IP Address",
+        "Prefix",
+        "Gateway",
+        "DNS"
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Open Edit a Connection",
+      "steps": [
+        "Run:",
+        "nmtui",
+        "You will see options similar to:",
+        "Edit a connection",
+        "Activate a connection",
+        "Set system hostname",
+        "Select:",
+        "Edit a connection",
+        "Press:",
+        "Enter"
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Select the Correct Network Connection",
+      "steps": [
+        "You should see your connection.",
+        "For example:",
+        "ens192",
+        "Select it and choose:",
+        "Edit"
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Understand the Configuration Screen",
+      "steps": [
+        "You may see fields such as:",
+        "Profile name:",
+        "Device:",
+        "IPv4 CONFIGURATION:",
+        "[Automatic]",
+        "The first important decision is:",
+        "Should IPv4 be automatic or manual?",
+        "If DHCP is being used:",
+        "Automatic",
+        "If we want to manually assign a static IP:",
+        "Manual",
+        "For this lab, select:",
+        "Manual"
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Configure the IP Address",
+      "steps": [
+        "Select:",
+        "Addresses",
+        "Add ip address of your machine for example 192.168.111.101/24",
+        "Replace the example address with the IP assigned to your VM/lab environment.",
+        "Notice that we entered:",
+        "IP/prefix",
+        "means:",
+        "IP = 192.168.111.101",
+        "Prefix = 24"
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Configure the Gateway",
+      "steps": [
+        "Enter the gateway provided for your network.",
+        "Do not randomly choose a gateway.",
+        "The gateway must actually exist on the network."
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "Configure DNS",
+      "steps": [
+        "Enter the DNS server provided by your environment.",
+        "For example:",
+        "192.168.111.1",
+        "8.8.8.8",
+        "You may have more than one DNS server:",
+        "In a corporate environment, however, you would normally use the organization's DNS servers rather than public DNS servers."
+      ]
+    },
+    {
+      "task_number": 8,
+      "title": "Make the Connection Active",
+      "steps": [
+        "Look for:",
+        "Automatically connect",
+        "Enable it.",
+        "Why?",
+        "Because we normally want the connection to come back automatically after reboot.",
+        "Otherwise, you may configure an IP and then discover after reboot that the expected connection is not automatically activated."
+      ]
+    },
+    {
+      "task_number": 9,
+      "title": "Save the Configuration",
+      "steps": [
+        "Select:",
+        "OK",
+        "Then exit nmtui.",
+        "We have modified the NetworkManager connection profile. Now we need to make sure the active network connection is using the updated configuration."
+      ]
+    },
+    {
+      "task_number": 10,
+      "title": "Activate the Connection",
+      "steps": [
+      "Important Warning",
+        "If you are connected to the VM through SSH, bringing the network connection down can immediately disconnect your SSH session.",
+        "You should understand:",
+        "Never casually bring down the interface carrying your current remote SSH session.",
+        "For lab environments accessed through console, this is much safer.",
+        "Choose Activate a connection",
+        "and activate the appropriate connection."
+      ]
+    },
+    {
+      "task_number": 11,
+      "title": "Validate the IP Configuration",
+      "steps": [
+          "Step 1 — Check the IP",
+          "ip addr show",
+          "You should see the same IP address like inet 192.168.111.xxx/24",
+          "Step 2 — Check the Route",
+          "ip route",
+          "expected - Look for something similar to default via 192.168.111.1 dev ens192",
+          "Step 3 — Check NetworkManager",
+          "nmcli device status",
+          "expected",
+            "DEVICE   TYPE      STATE       CONNECTION",
+            "ens192   ethernet  connected   ens192",
+            "The important point is:",
+            "STATE = connected",
+          "Step 4 — Check the Connection",
+          "nmcli connection show",
+          "expected",
+            "The profile should exist."
+      ]
+    },
+    {
+      "task_number": 12,
+      "title": "Test Connectivity",
+      "steps": [
+        "Testing should be done in layers.",
+        "Do not immediately jump to:",
+        "ping google.com",
+        "Instead, troubleshoot from the inside outward.",
+        "Test 1 — Test the Local Interface",
+        "ip addr",
+        "Confirm that the expected IP exists.",
+        "Test 2 — Test the Gateway",
+        "ping -c 4 192.168.111.1",
+        "If successful:",
+        "The VM can reach its gateway.",
+        "If this fails, do not immediately blame DNS. DNS has not even been tested yet. So fix gateway",
+        "Test 3 — Test an External IP",
+        "ping -c 4 8.8.8.8",
+        "If this works but 'ping google.com' fails, the problem may be DNS.",
+        "Test 4 — Test DNS",
+        "ping -c 4 google.com",
+        "getent hosts google.com",
+        "nslookup google.com",
+        "If name resolution works, DNS is probably functioning."
+      ]
+    }
+  ],
+  "completion_message": "You have successfully configured a static IP address using nmtui, activated the NetworkManager connection, validated the IP configuration and routing, and tested connectivity from the local interface through the gateway, external IP, and DNS resolution."
+}
