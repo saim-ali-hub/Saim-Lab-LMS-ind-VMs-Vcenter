@@ -1,0 +1,318 @@
+{
+  "lab_id": "lab229",
+  "title": "Linux NFS Server & Client Configuration",
+  "description": "Configure an NFS server and client to provide, access, test, and persistently mount a shared filesystem. Students will configure NFS exports, firewall services, client discovery, manual and persistent NFS mounts, read/write access, and NFS verification and troubleshooting.",
+
+  "lab_objective": {
+    "description": "By completing this lab, you will learn how to:",
+    "objectives": [
+      "Install NFS server packages.",
+      "Install NFS client packages.",
+      "Manage the nfs-server service.",
+      "Manage the rpcbind service.",
+      "Create and configure an NFS export directory.",
+      "Configure /etc/exports.",
+      "Apply and verify NFS export configuration using exportfs.",
+      "Configure the firewall for NFS access.",
+      "Discover NFS exports from the client.",
+      "Manually mount an NFS filesystem.",
+      "Verify NFS mounts using mount and findmnt.",
+      "Verify NFS filesystem information using df.",
+      "Test NFS read and write access.",
+      "Configure a persistent NFS mount using /etc/fstab.",
+      "Test /etc/fstab configuration without rebooting.",
+      "Mount an NFS filesystem using its /etc/fstab entry.",
+      "Verify persistent NFS mounts.",
+      "Troubleshoot and verify NFS server and client configuration."
+    ],
+
+  "scenario": [
+    "You are working as a Linux Systems Administrator for an organization that needs to provide a centralized shared directory for application and development teams.",
+    "Two Linux servers are available:",
+    "NFS Server: nfs-server",
+    "NFS Client: nfs-client",
+    "The NFS server has been assigned the responsibility of exporting a shared directory to the client.",
+    "The NFS client must discover the exported directory, mount it, verify read/write access, and configure the mount to persist after a system reboot.",
+    "Your task is to configure the NFS server, configure the NFS client, verify connectivity, test read/write access, and ensure that the NFS mount is persistent."
+  ]
+ },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Verify the NFS Server Hostname",
+      "steps": [
+        "On the NFS server, verify the system hostname.",
+        "set hostname to nfs-server",
+        "Hint: hostnamectl set-hostname nfs-server ; bash",
+        "Confirm that the hostname is nfs-server."
+      ]
+    },
+
+    {
+      "task_number": 2,
+      "title": "Install NFS Server Packages",
+      "steps": [
+        "On the NFS server, install the 'nfs-utils' package required to provide NFS server functionality.",
+        "Use the appropriate package manager for your Linux distribution."
+      ]
+    },
+
+    {
+      "task_number": 3,
+      "title": "Enable and Start the NFS Server",
+      "steps": [
+        "Enable and start the NFS server service.",
+        "Verify that the NFS server service is active and running."
+      ]
+    },
+
+    {
+      "task_number": 4,
+      "title": "Enable and Start rpcbind",
+      "steps": [
+        "Make sure the rpcbind service is active and enabled on the NFS server.",
+        "Verify the status of the rpcbind service."
+      ]
+    },
+
+    {
+      "task_number": 5,
+      "title": "Create the NFS Export Directory",
+      "steps": [
+        "Create the NFS export directory.",
+        "The directory must be named /nfs_share."
+      ]
+    },
+
+    {
+      "task_number": 6,
+      "title": "Create the Server Test File",
+      "steps": [
+        "Create the file /nfs_share/server_test.txt.",
+        "Add the following content to the file:",
+        "This is my first NFS share, and I’m excited to learn how to configure and manage an NFS server."
+      ]
+    },
+
+    {
+      "task_number": 7,
+      "title": "Configure the NFS Export",
+      "steps": [
+        "Add an entry to /etc/exports so that /nfs_share is exported to the NFS client only.",
+        "Use the NFS client's IP address rather than allowing unrestricted access from the entire network.",
+        "Configure the export options with read/write access, synchronous writes and root on the client retains root privileges over the NFS export.",
+        "Hint:",
+        "/nfs_share <NFS_CLIENT_IP>(rw,sync,no_root_squash)"
+      ]
+    },
+
+    {
+      "task_number": 8,
+      "title": "Apply the NFS Export Configuration",
+      "steps": [
+        "Apply the NFS export configuration.",
+        "Reload or export the configured NFS share without requiring a server reboot.",
+        "Hint: exportfs -avr"
+      ]
+    },
+
+    {
+      "task_number": 9,
+      "title": "Verify Active NFS Exports",
+      "steps": [
+        "Display the currently exported filesystems on the NFS server.",
+        "Verify that /nfs_share is exported to the correct NFS client.",
+        "Confirm that the export configuration is active.",
+        "Hint: exportfs -v"
+      ]
+    },
+
+    {
+      "task_number": 10,
+      "title": "Configure the NFS Server Firewall",
+      "steps": [
+        "Configure the NFS server firewall so that NFS clients can access the exported filesystem.",
+        "Allow the NFS service through the firewall.",
+        "Allow the mountd service through the firewall.",
+        "Allow the rpc-bind service through the firewall.",
+        "Reload the firewall configuration.",
+        "Verify that the required firewall services are allowed.",
+        "Hint:",
+        "firewall-cmd --add-service=nfs --permanent",
+        "firewall-cmd --add-service=mountd --permanent",
+        "firewall-cmd --add-service=rpc-bind --permanent",
+        "firewall-cmd --reload",
+        "firewall-cmd --list-services",
+        "You should see nfs mountd rpc-bind."
+      ]
+    },
+
+    {
+      "task_number": 11,
+      "title": "Set SELinux to Permissive Mode",
+      "steps": [
+        "Set SELinux to permissive mode on the NFS server.",
+        "Verify the current SELinux mode."
+      ]
+    },
+
+    {
+      "task_number": 12,
+      "title": "Verify the NFS Client Hostname",
+      "steps": [
+        "On the NFS client, verify the system hostname.",
+        "set hostname to nfs-client",
+        "Hint: hostnamectl set-hostname nfs-client ; bash",
+        "Confirm that the hostname is nfs-client."
+      ]
+    },
+
+    {
+      "task_number": 13,
+      "title": "Install NFS Client Packages",
+      "steps": [
+        "On the NFS client, install the nfs-utils package required to mount NFS filesystems.",
+        "Use the appropriate package manager for your Linux distribution."
+      ]
+    },
+
+    {
+      "task_number": 14,
+      "title": "Enable and Start rpcbind on the Client",
+      "steps": [
+        "Make sure the rpcbind service is active and enabled on the NFS client.",
+        "Verify the status of the rpcbind service."
+      ]
+    },
+
+    {
+      "task_number": 15,
+      "title": "Verify Connectivity to the NFS Server",
+      "steps": [
+        "From the NFS client, verify network connectivity to the NFS server by successfully pinging the NFS server's IP address."
+      ]
+    },
+
+    {
+      "task_number": 16,
+      "title": "Discover the NFS Export",
+      "steps": [
+        "From the NFS client, query the NFS server and verify that the /nfs_share export is available to the client.",
+        "Confirm that /nfs_share is exported by the NFS server.",
+        "Hint: showmount -e <nfs_server_IP>"
+      ]
+    },
+
+    {
+      "task_number": 17,
+      "title": "Create the Local Mount Point",
+      "steps": [
+        "On the NFS client, create the /mnt/nfs_share directory to serve as the local mount point for the NFS share."
+      ]
+    },
+
+    {
+      "task_number": 18,
+      "title": "Mount the NFS Share Manually",
+      "steps": [
+        "On the NFS client, manually mount the NFS server's /nfs_share export on the local mount point /mnt/nfs_share.",
+        "Hint:",
+        "mount <NFS_SERVER_IP>:/nfs_share /mnt/nfs_share"
+      ]
+    },
+
+    {
+      "task_number": 19,
+      "title": "Verify the NFS Mount",
+      "steps": [
+        "Use an appropriate command to confirm that /mnt/nfs_share is mounted successfully.",
+        "Verify that the mounted filesystem type is NFS.",
+        "Hint: You can use 'df -h' or findmnt /mnt/nfs_share"
+      ]
+    },
+
+    {
+      "task_number": 20,
+      "title": "Verify the Server Test File from the Client",
+      "steps": [
+        "From the NFS client, verify that /mnt/nfs_share/server_test.txt exists and is accessible.",
+        "Verify that the file contains the expected content.",
+        "Hint:",
+        " cd /mnt/nfs_share/",
+        "ls -l server_test.txt",
+        "cat server_test.txt",
+        "cd"
+      ]
+    },
+
+    {
+      "task_number": 21,
+      "title": "Configure a Persistent NFS Mount",
+      "steps": [
+        "Add an entry to /etc/fstab so that the NFS server's /nfs_share export is automatically mounted at /mnt/nfs_share after a system reboot.",
+        "Hint:",
+        "<NFS_SERVER>:/nfs_share <mount_point> nfs defaults 0 0"
+      ]
+    },
+
+    {
+      "task_number": 22,
+      "title": "Test the /etc/fstab Configuration",
+      "steps": [
+        "Unmount the NFS share.",
+        "Use an appropriate command to test the /etc/fstab entry.",
+        "Verify that the NFS share mounts successfully without rebooting the system.",
+        "Hint:",
+        "mount -a"
+      ]
+    },
+
+    {
+      "task_number": 23,
+      "title": "Mount the NFS Filesystem Using /etc/fstab",
+      "steps": [
+        "Unmount the NFS share again.",
+        "Use the configuration defined in /etc/fstab to mount the NFS filesystem.",
+        "Do not specify the NFS server or export manually on the command line.",
+        "Hint:",
+        "mount /mnt/nfs_share"
+      ]
+    },
+
+    {
+      "task_number": 24,
+      "title": "Verify the Persistent NFS Mount",
+      "steps": [
+        "Confirm that /mnt/nfs_share is mounted.",
+        "Verify that the source of the mount is nfs-server:/nfs_share.",
+        "Verify that the filesystem type is NFS.",
+        "Hint:",
+        "findmnt /mnt/nfs_share"
+      ]
+    },
+
+    {
+      "task_number": 25,
+      "title": "Create and Verify Client Write Access",
+      "steps": [
+        "From the NFS client, create /mnt/nfs_share/client_test.txt to verify that the client has write access to the NFS share.",
+        "Add the following content to /mnt/nfs_share/client_test.txt:",
+        "This file was created from the NFS client to verify write access to the NFS shared filesystem.",
+        "On the NFS server, verify that /nfs_share/client_test.txt exists.",
+        "Verify that the file contains the expected content written from the NFS client."
+      ]
+    },
+
+    {
+      "task_number": 26,
+      "title": "Modify and Verify a File Across the NFS Share",
+      "steps": [
+        "From the NFS client, modify /mnt/nfs_share/server_test.txt by adding the following line:",
+        "This file was modified from the NFS client to verify shared filesystem access.",
+        "Then, on the NFS server, verify that the changes are visible in /nfs_share/server_test.txt."
+      ]
+    }
+  ],
+
+  "completion_message": "Excellent work! You have completed Lab 229 and practiced NFS server and client configuration, NFS exports, exportfs, firewall configuration, client discovery, manual NFS mounting, read/write testing, /etc/fstab configuration, persistent NFS mounts, and NFS verification from both the server and client."
+}

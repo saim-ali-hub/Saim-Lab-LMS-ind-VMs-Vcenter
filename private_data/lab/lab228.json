@@ -1,0 +1,153 @@
+{
+  "lab_number": 228,
+  "title": "Linux Disk Partitioning - Using gdisk",
+ "lab_objective": {
+   "description": "By completing this lab, you will learn how to:",
+  "objectives": [
+    "Identifying disks with lsblk",
+    "Working with GPT partition tables",
+    "Using gdisk",
+    "Creating GPT partitions",
+    "Setting partition types",
+    "Writing partition changes",
+    "Verifying partitions with lsblk",
+    "Inspecting partition information with blkid",
+    "Confirming GPT with fdisk -l"
+   ],
+  "scenario": [
+    "You are working as a Linux system administrator for a company that needs to prepare a new disk for application data. A new 2 GB disk has been attached to the server as /dev/sdb. Your task is to use gdisk to create a GPT partition table and configure multiple partitions according to the application's requirements. The partitions must be created without modifying the existing operating-system disk."
+   ]
+  },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Identify the available disks on the system",
+      "steps": [
+        "Use an appropriate command to display disk names.",
+        "Hint: lsblk",
+        "Identify the newly attached 2 GB disk that will be used for this lab.",
+        "Do not modify /dev/sda or any disk containing the operating system.",
+        "Work only with the newly attached disk /dev/sdb."
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Verify that /dev/sdb is the disk intended for this lab",
+      "steps": [
+        "List the partition table and table information for /dev/sdb.",
+        "Do not enter the interactive partitioning interface.",
+        "Hint: fdisk -l /dev/sdb"
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Create GPT Partition Table",
+      "steps": [
+        "Start gdisk on /dev/sdb.",
+        "Display the current partition table using gdisk.",
+        "Create a new GPT partition table on /dev/sdb.",
+        "Display the partition table again and verify that it is using GPT.",
+        "Warning: Creating a new partition table can destroy existing partition information. Make sure you are working on /dev/sdb."
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Create Partitions",
+      "steps": [
+        "Create the following partitions on /dev/sdb:",
+        "Create /dev/sdb1 with a size of 512 MB for swap.",
+        "Create /dev/sdb2 with a size of 512 MB Application data.",
+        "Create /dev/sdb3 with a size of 400 MB for Application logs.",
+        "Create /dev/sdb4 using the remaining available space for Backup."
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Set Partition Type",
+      "steps": [
+        "Set appropriate GPT partition type information for the partitions.",
+        "important_note: gdisk does not create a filesystem. The t command changes the GPT partition type.",
+        "Set /dev/sdb1 as a Linux swap partition. Use GPT partition type 8200.",
+        "Set /dev/sdb2 as a Linux filesystem partition. Use GPT partition type 8300.",
+        "Set /dev/sdb3 as a Linux filesystem partition. Use GPT partition type 8300.",
+        "Set /dev/sdb4 as a Linux filesystem partition. Use GPT partition type 8300."
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Verify and Save",
+      "steps": [
+        "Display the partition table.",
+        "Verify that all four partitions have the correct sizes.",
+        "Verify that all four partitions have the correct GPT partition types.",
+        "Write the partition table to the disk.",
+        "Exit gdisk."
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "Verify From Linux",
+      "steps": [
+        "Verify the newly created partitions using lsblk.",
+        "Inspect the partitions using blkid.",
+        "Use fdisk -l to display information about /dev/sdb.",
+        "Verify that /dev/sdb is using a GPT partition table."
+      ]
+    },
+    {
+      "task_number": 8,
+      "title": "Create Filesystems",
+      "steps": [
+        "Create the appropriate filesystem or storage type on the partitions.",
+        "Initialize /dev/sdb1 as swap space",
+        "Create an XFS filesystem on /dev/sdb2",
+        "Create an ext4 filesystem on /dev/sdb3",
+        "Create an XFS filesystem on /dev/sdb4",
+        "Verify that the appropriate filesystem or storage type has been created on each partition."
+      ]
+    },
+    {
+      "task_number": 9,
+      "title": "Create Mount Points",
+      "steps": [
+        "Create the /appdata directory for Application data.",
+        "Create the /applogs directory for Application logs.",
+        "Create the /backup directory for Application backup.",
+        "Verify that all the required mount-point directories exist."
+      ]
+    },
+    {
+      "task_number": 10,
+      "title": "Initialize swap space and Mount the Filesystems",
+      "steps": [
+        "Mount the filesystems to their appropriate mount points.",
+        "Enable /dev/sdb1 as active swap space",
+        "Mount /dev/sdb2 on /appdata",
+        "Mount /dev/sdb3 on /applogs",
+        "Mount /dev/sdb4 on /backup",
+        "Verify that /dev/sdb1 is active as swap space.",
+        "Verify that /dev/sdb2 is mounted on /appdata.",
+        "Verify that /dev/sdb3 is mounted on /applogs.",
+        "Verify that /dev/sdb4 is mounted on /backup."
+      ]
+    },
+    {
+      "task_number": 11,
+      "title": "Configure Persistent Mounting",
+      "steps": [
+        "Configure the filesystems and swap so that they are automatically available after a system reboot.",
+        "Configure /dev/sdb1 to be automatically enabled as swap at boot.",
+        "Configure /dev/sdb2 to be automatically mounted on /appdata at boot.",
+        "Configure /dev/sdb3 to be automatically mounted on /applogs at boot.",
+        "Configure /dev/sdb4 to be automatically mounted on /backup at boot.",
+        "Verify the persistent storage configuration without rebooting the system.",
+        "Reboot the system",
+        "After the reboot, verify that /dev/sdb1 is active as swap.",
+        "After the reboot, verify that /appdata is mounted automatically.",
+        "After the reboot, verify that /applogs is mounted automatically.",
+        "After the reboot, verify that /backup is mounted automatically."
+      ]
+    }
+  ],
+  "completion_message": "Great job! Lab 228 completed successfully. You practiced GPT disk partitioning, partition types, filesystems, mounting, and persistent storage configuration."
+}

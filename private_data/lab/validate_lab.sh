@@ -88,6 +88,9 @@ ssh \
         lab225) validate_lab225_static_ip_nmcli ;;
         lab226) validate_lab226_ssh_scp ;;
         lab227) validate_lab227_ssh_scp ;;
+        lab228) validate_lab228_gdisk ;;
+        lab229) validate_lab229_nfs ;;
+        lab230) validate_lab230 ;;
 
         *) echo 'Invalid lab'; exit 1 ;;
      esac"

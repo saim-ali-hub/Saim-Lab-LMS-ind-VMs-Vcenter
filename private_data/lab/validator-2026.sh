@@ -11318,23 +11318,23 @@ validate_lab227_ssh_scp() {
 
     # Task 1 - Prepare the Personal VM Workspace
     if [ -d "$LAB_WORKSPACE" ]; then
-        pass "Task 1 - lab227_workspace directory exists"
+        pass "Task 1: lab227_workspace directory exists"
     else
-        fail "Task 1 - lab227_workspace directory does not exist"
+        fail "Task 1: lab227_workspace directory does not exist"
     fi
 
     # Task 2 - Connect to the Remote Linux Server
     if [ -d "$LAB_WORKSPACE" ]; then
-        pass "Task 2 - SSH/SCP working environment established"
+        pass "Task 2: SSH/SCP working environment established"
     else
-        fail "Task 2 - SSH/SCP working environment could not be established"
+        fail "Task 2: SSH/SCP working environment could not be established"
     fi
 
     # Task 3 - Inspect the Prepared Remote Lab Data
     if [ -d "$LAB_REFERENCE" ]; then
-        pass "Task 3 - lab227 reference directory is available"
+        pass "Task 3: lab227 reference directory is available"
     else
-        fail "Task 3 - lab227 reference directory is missing"
+        fail "Task 3: lab227 reference directory is missing"
     fi
 
     # Task 4 - Transfer application.conf
@@ -11344,13 +11344,13 @@ validate_lab227_ssh_scp() {
     if [ -f "$LOCAL_FILE" ] && [ -f "$REFERENCE_FILE" ]; then
 
         if diff -q "$LOCAL_FILE" "$REFERENCE_FILE" >/dev/null 2>&1; then
-            pass "Task 4 - application.conf transferred correctly"
+            pass "Task 4: application.conf transferred correctly"
         else
-            fail "Task 4 - application.conf contents do not match"
+            fail "Task 4: application.conf contents do not match"
         fi
 
     else
-        fail "Task 4 - application.conf is missing"
+        fail "Task 4: application.conf is missing"
     fi
 
     # Task 5 - Transfer reports directory
@@ -11360,13 +11360,13 @@ validate_lab227_ssh_scp() {
     if [ -d "$LOCAL_DIR" ] && [ -d "$REFERENCE_DIR" ]; then
 
         if diff -qr "$LOCAL_DIR" "$REFERENCE_DIR" >/dev/null 2>&1; then
-            pass "Task 5 - reports directory transferred correctly"
+            pass "Task 5: reports directory transferred correctly"
         else
-            fail "Task 5 - reports directory contents do not match"
+            fail "Task 5: reports directory contents do not match"
         fi
 
     else
-        fail "Task 5 - reports directory is missing"
+        fail "Task 5: reports directory is missing"
     fi
 
     # Task 6 - Retrieve deployment.txt using SSH
@@ -11376,13 +11376,13 @@ validate_lab227_ssh_scp() {
     if [ -f "$LOCAL_FILE" ] && [ -f "$REFERENCE_FILE" ]; then
 
         if diff -q "$LOCAL_FILE" "$REFERENCE_FILE" >/dev/null 2>&1; then
-            pass "Task 6 - deployment.txt retrieved correctly"
+            pass "Task 6: deployment.txt retrieved correctly"
         else
-            fail "Task 6 - deployment.txt contents do not match"
+            fail "Task 6: deployment.txt contents do not match"
         fi
 
     else
-        fail "Task 6 - deployment.txt is missing"
+        fail "Task 6: deployment.txt is missing"
     fi
 
     # Task 7 - Retrieve maintenance.txt with new filename
@@ -11392,13 +11392,13 @@ validate_lab227_ssh_scp() {
     if [ -f "$LOCAL_FILE" ] && [ -f "$REFERENCE_FILE" ]; then
 
         if diff -q "$LOCAL_FILE" "$REFERENCE_FILE" >/dev/null 2>&1; then
-            pass "Task 7 - maintenance_backup.txt retrieved correctly"
+            pass "Task 7: maintenance_backup.txt retrieved correctly"
         else
-            fail "Task 7 - maintenance_backup.txt contents do not match"
+            fail "Task 7: maintenance_backup.txt contents do not match"
         fi
 
     else
-        fail "Task 7 - maintenance_backup.txt is missing"
+        fail "Task 7: maintenance_backup.txt is missing"
     fi
 
     # Task 8 - Create remote_created.txt and pull it
@@ -11406,9 +11406,9 @@ validate_lab227_ssh_scp() {
     if [ -f "$LOCAL_FILE" ] &&
        grep -Fxq "SSH remote execution created this file." "$LOCAL_FILE"; then
 
-        pass "Task 8 - remote_created.txt exists with correct content"
+        pass "Task 8: remote_created.txt exists with correct content"
     else
-        fail "Task 8 - remote_created.txt is missing or contents are incorrect"
+        fail "Task 8: remote_created.txt is missing or contents are incorrect"
     fi
 
     # Task 9 - Transfer transfer_note.txt
@@ -11418,13 +11418,13 @@ validate_lab227_ssh_scp() {
     if [ -f "$LOCAL_FILE" ] && [ -f "$REFERENCE_FILE" ]; then
 
         if diff -q "$LOCAL_FILE" "$REFERENCE_FILE" >/dev/null 2>&1; then
-            pass "Task 9 - transfer_note.txt transferred correctly"
+            pass "Task 9: transfer_note.txt transferred correctly"
         else
-            fail "Task 9 - transfer_note.txt contents do not match"
+            fail "Task 9: transfer_note.txt contents do not match"
         fi
 
     else
-        fail "Task 9 - transfer_note.txt is missing"
+        fail "Task 9: transfer_note.txt is missing"
     fi
 
     # Task 10 - Pull Complete lab227 Directory
@@ -11433,13 +11433,13 @@ validate_lab227_ssh_scp() {
         FILE_COUNT=$(find "$LAB_REFERENCE" -type f 2>/dev/null | wc -l)
 
         if [ "$FILE_COUNT" -eq 10 ]; then
-            pass "Task 10 - complete lab227 directory transferred"
+            pass "Task 10: complete lab227 directory transferred"
         else
-            fail "Task 10 - lab227 directory is empty"
+            fail "Task 10: lab227 directory is empty"
         fi
 
     else
-        fail "Task 10 - lab227 directory is missing"
+        fail "Task 10: lab227 directory is missing"
     fi
 
     # ============================================================
@@ -11594,3 +11594,1635 @@ HTML
 }
 
 #======================================================================
+validate_lab228_gdisk() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "<h2 style='color:#white;'>Checking Lab 228 - Linux Disk Partitioning - Using gdisk.</h2>"
+
+    TOTAL_TASKS=11
+    PASSED=0
+
+    LAB_NAME="Lab 228 - Linux Disk Partitioning - Using gdisk"
+    DATE=$(date "+%F %T")
+
+    DISK="/dev/sdb"
+
+    # HELPERS
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # TASK 1 - IDENTIFY AVAILABLE DISKS
+    if [ -b "$DISK" ]; then
+        DISK_SIZE=$(lsblk -bndo SIZE "$DISK" 2>/dev/null)
+
+        if [ -n "$DISK_SIZE" ] && [ "$DISK_SIZE" -gt 0 ]; then
+            pass "Task 1: /dev/sdb is available and identified"
+        else
+            fail "Task 1: /dev/sdb size could not be verified"
+        fi
+    else
+        fail "Task 1: /dev/sdb is not available"
+    fi
+
+    # TASK 2 - VERIFY /dev/sdb
+    if [ -b "$DISK" ] && fdisk -l "$DISK" >/dev/null 2>&1; then
+
+        DISK_SIZE=$(lsblk -bndo SIZE "$DISK" 2>/dev/null)
+
+        if [ -n "$DISK_SIZE" ] && [ "$DISK_SIZE" -gt 0 ]; then
+            pass "Task 2: /dev/sdb disk information verified"
+        else
+            fail "Task 2: /dev/sdb disk information could not be verified"
+        fi
+
+    else
+        fail "Task 2: /dev/sdb could not be inspected"
+    fi
+
+    # TASK 3 - CREATE GPT PARTITION TABLE
+    PARTITION_TABLE=$(fdisk -l "$DISK" 2>/dev/null)
+
+    if echo "$PARTITION_TABLE" | grep -qi "Disklabel type: gpt"; then
+        pass "Task 3: /dev/sdb is using a GPT partition table"
+    else
+        fail "Task 3: /dev/sdb is not using a GPT partition table"
+    fi
+
+    # TASK 4 - CREATE PARTITIONS
+    TASK4_OK=1
+
+    for PART in \
+        "/dev/sdb1" \
+        "/dev/sdb2" \
+        "/dev/sdb3" \
+        "/dev/sdb4"
+    do
+        [ -b "$PART" ] || TASK4_OK=0
+    done
+
+    if [ "$TASK4_OK" -eq 1 ]; then
+
+        # Get partition sizes in bytes
+        SDB1_SIZE=$(lsblk -bndo SIZE /dev/sdb1 2>/dev/null)
+        SDB2_SIZE=$(lsblk -bndo SIZE /dev/sdb2 2>/dev/null)
+        SDB3_SIZE=$(lsblk -bndo SIZE /dev/sdb3 2>/dev/null)
+        SDB4_SIZE=$(lsblk -bndo SIZE /dev/sdb4 2>/dev/null)
+
+        # Expected sizes
+        EXPECTED_512=$((512 * 1024 * 1024))
+        EXPECTED_400=$((400 * 1024 * 1024))
+
+        # Allow 32 MB tolerance for partition alignment
+        TOLERANCE=$((32 * 1024 * 1024))
+
+        SDB1_DIFF=$((SDB1_SIZE - EXPECTED_512))
+        SDB2_DIFF=$((SDB2_SIZE - EXPECTED_512))
+        SDB3_DIFF=$((SDB3_SIZE - EXPECTED_400))
+
+        [ "$SDB1_DIFF" -lt 0 ] && SDB1_DIFF=$((SDB1_DIFF * -1))
+        [ "$SDB2_DIFF" -lt 0 ] && SDB2_DIFF=$((SDB2_DIFF * -1))
+        [ "$SDB3_DIFF" -lt 0 ] && SDB3_DIFF=$((SDB3_DIFF * -1))
+
+        if [ "$SDB1_DIFF" -le "$TOLERANCE" ] &&
+           [ "$SDB2_DIFF" -le "$TOLERANCE" ] &&
+           [ "$SDB3_DIFF" -le "$TOLERANCE" ] &&
+           [ "$SDB4_SIZE" -gt "$EXPECTED_400" ]; then
+
+            pass "Task 4: Four required partitions created with expected sizes"
+        else
+            fail "Task 4: Partition sizes do not match the required configuration"
+        fi
+
+    else
+        fail "Task 4: One or more required partitions are missing"
+    fi
+
+    # TASK 5 - SET PARTITION TYPES
+    TASK5_OK=1
+
+    TYPE1=$(sgdisk -i 1 "$DISK" 2>/dev/null | awk -F': ' '/Partition GUID code/ {print $2}' | awk '{print $1}')
+    TYPE2=$(sgdisk -i 2 "$DISK" 2>/dev/null | awk -F': ' '/Partition GUID code/ {print $2}' | awk '{print $1}')
+    TYPE3=$(sgdisk -i 3 "$DISK" 2>/dev/null | awk -F': ' '/Partition GUID code/ {print $2}' | awk '{print $1}')
+    TYPE4=$(sgdisk -i 4 "$DISK" 2>/dev/null | awk -F': ' '/Partition GUID code/ {print $2}' | awk '{print $1}')
+
+    [ "$TYPE1" = "8200" ] || TASK5_OK=0
+    [ "$TYPE2" = "8300" ] || TASK5_OK=0
+    [ "$TYPE3" = "8300" ] || TASK5_OK=0
+    [ "$TYPE4" = "8300" ] || TASK5_OK=0
+
+    if [ "$TASK5_OK" -eq 1 ]; then
+        pass "Task 5: GPT partition types are correctly configured"
+    else
+        fail "Task 5: One or more GPT partition types are incorrect"
+    fi
+
+    # TASK 6 - VERIFY AND SAVE
+    PARTITION_COUNT=$(lsblk -ln "$DISK" 2>/dev/null | \
+        awk '$6 == "part" {count++} END {print count+0}')
+
+    if [ "$PARTITION_COUNT" -eq 4 ]; then
+
+        if sgdisk -v "$DISK" >/dev/null 2>&1; then
+            pass "Task 6: Partition table verified and saved successfully"
+        else
+            fail "Task 6: Partition table verification failed"
+        fi
+
+    else
+        fail "Task 6: Four partitions were not found after saving"
+    fi
+
+    # TASK 7 - VERIFY FROM LINUX
+    TASK7_OK=1
+
+    [ -b "/dev/sdb1" ] || TASK7_OK=0
+    [ -b "/dev/sdb2" ] || TASK7_OK=0
+    [ -b "/dev/sdb3" ] || TASK7_OK=0
+    [ -b "/dev/sdb4" ] || TASK7_OK=0
+
+    if [ "$TASK7_OK" -eq 1 ]; then
+
+        if blkid /dev/sdb1 >/dev/null 2>&1 &&
+           blkid /dev/sdb2 >/dev/null 2>&1 &&
+           blkid /dev/sdb3 >/dev/null 2>&1 &&
+           blkid /dev/sdb4 >/dev/null 2>&1 &&
+           fdisk -l "$DISK" 2>/dev/null | grep -qi "Disklabel type: gpt"; then
+
+            pass "Task 7: Partitions verified successfully from Linux"
+        else
+            fail "Task 7: Linux verification of partitions failed"
+        fi
+
+    else
+        fail "Task 7: One or more partitions are missing"
+    fi
+
+    # TASK 8 - CREATE FILESYSTEMS
+    TASK8_OK=1
+
+    FS1=$(blkid -o value -s TYPE /dev/sdb1 2>/dev/null)
+    FS2=$(blkid -o value -s TYPE /dev/sdb2 2>/dev/null)
+    FS3=$(blkid -o value -s TYPE /dev/sdb3 2>/dev/null)
+    FS4=$(blkid -o value -s TYPE /dev/sdb4 2>/dev/null)
+
+    [ "$FS1" = "swap" ] || TASK8_OK=0
+    [ "$FS2" = "xfs" ] || TASK8_OK=0
+    [ "$FS3" = "ext4" ] || TASK8_OK=0
+    [ "$FS4" = "xfs" ] || TASK8_OK=0
+
+    if [ "$TASK8_OK" -eq 1 ]; then
+        pass "Task 8: Swap, XFS, ext4, and XFS filesystems created correctly"
+    else
+        fail "Task 8: One or more required filesystem types are incorrect"
+    fi
+
+    # TASK 9 - CREATE MOUNT POINTS
+    TASK9_OK=1
+
+    [ -d "/appdata" ] || TASK9_OK=0
+    [ -d "/applogs" ] || TASK9_OK=0
+    [ -d "/backup" ] || TASK9_OK=0
+
+    if [ "$TASK9_OK" -eq 1 ]; then
+        pass "Task 9: Required mount-point directories exist"
+    else
+        fail "Task 9: One or more required mount-point directories are missing"
+    fi
+
+    # TASK 10 - INITIALIZE SWAP AND MOUNT FILESYSTEMS
+    TASK10_OK=1
+
+    # Check active swap
+    if ! swapon --show=NAME --noheadings 2>/dev/null | grep -Fxq "/dev/sdb1"; then
+        TASK10_OK=0
+    fi
+
+    # Check mounts
+    MOUNT_APPDATA=$(findmnt -n -o SOURCE,TARGET /appdata 2>/dev/null)
+    MOUNT_APPLOGS=$(findmnt -n -o SOURCE,TARGET /applogs 2>/dev/null)
+    MOUNT_BACKUP=$(findmnt -n -o SOURCE,TARGET /backup 2>/dev/null)
+
+    echo "$MOUNT_APPDATA" | grep -q "/dev/sdb2 /appdata" || TASK10_OK=0
+    echo "$MOUNT_APPLOGS" | grep -q "/dev/sdb3 /applogs" || TASK10_OK=0
+    echo "$MOUNT_BACKUP" | grep -q "/dev/sdb4 /backup" || TASK10_OK=0
+
+    if [ "$TASK10_OK" -eq 1 ]; then
+        pass "Task 10: Swap is active and all filesystems are mounted correctly"
+    else
+        fail "Task 10: Swap or one or more filesystem mounts are incorrect"
+    fi
+
+    # TASK 11 - CONFIGURE PERSISTENT MOUNTING
+    TASK11_OK=1
+    
+    FSTAB="/etc/fstab"
+    
+    # Verify /dev/sdb1 persistent swap entry
+    grep -Eq '^[[:space:]]*/dev/sdb1[[:space:]]+none[[:space:]]+swap[[:space:]]+defaults[[:space:]]+0[[:space:]]+0[[:space:]]*$' "$FSTAB" \
+        || TASK11_OK=0
+    
+    # Verify /dev/sdb2 persistent mount
+    grep -Eq '^[[:space:]]*/dev/sdb2[[:space:]]+/appdata[[:space:]]+xfs[[:space:]]+defaults[[:space:]]+0[[:space:]]+0[[:space:]]*$' "$FSTAB" \
+        || TASK11_OK=0
+    
+    # Verify /dev/sdb3 persistent mount
+    grep -Eq '^[[:space:]]*/dev/sdb3[[:space:]]+/applogs[[:space:]]+ext4[[:space:]]+defaults[[:space:]]+0[[:space:]]+0[[:space:]]*$' "$FSTAB" \
+        || TASK11_OK=0
+        
+    # Verify /dev/sdb4 persistent mount
+    grep -Eq '^[[:space:]]*/dev/sdb4[[:space:]]+/backup[[:space:]]+xfs[[:space:]]+defaults[[:space:]]+0[[:space:]]+0[[:space:]]*$' "$FSTAB" \
+        || TASK11_OK=0
+    
+    # Verify fstab configuration
+    if [ "$TASK11_OK" -eq 1 ]; then
+    
+        if mount -a >/dev/null 2>&1; then
+            pass "Task 11: Persistent swap and filesystem configuration verified"
+        else
+            fail "Task 11: /etc/fstab configuration contains errors"
+        fi
+
+    else
+
+    fail "Task 11: Required /etc/fstab entries are missing or incorrect"
+
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#===============================================================
+validate_lab229_nfs() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "<h2 style='color:#white;'>Checking Lab 229 - Linux NFS Server & Client Configuration.</h2>"
+
+    TOTAL_TASKS=26
+    PASSED=0
+
+    LAB_NAME="Lab 229 - Linux NFS Server & Client Configuration"
+    DATE=$(date "+%F %T")
+
+    NFS_SERVER="nfs-server"
+    NFS_CLIENT="nfs-client"
+
+    EXPORT_DIR="/nfs_share"
+    MOUNT_POINT="/mnt/nfs_share"
+
+    SERVER_TEST_FILE="/nfs_share/server_test.txt"
+    CLIENT_TEST_FILE="/nfs_share/client_test.txt"
+
+    SERVER_TEST_CONTENT="This is my first NFS share, and I’m excited to learn how to configure and manage an NFS server."
+    CLIENT_TEST_CONTENT="This file was created from the NFS client to verify write access to the NFS shared filesystem."
+    CLIENT_MODIFIED_CONTENT="This file was modified from the NFS client to verify shared filesystem access."
+
+    # ------------------------------------------------------------
+    # DISCOVER CLIENT IP
+    # ------------------------------------------------------------
+
+    NFS_CLIENT_IP=$(getent hosts "$NFS_CLIENT" 2>/dev/null | awk 'NR==1 {print $1}')
+
+    # ------------------------------------------------------------
+    # HELPERS
+    # ------------------------------------------------------------
+
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # Execute command on NFS client
+    client_cmd() {
+        ssh -o BatchMode=yes \
+            -o ConnectTimeout=5 \
+            -o StrictHostKeyChecking=no \
+            "$NFS_CLIENT" "$@" 2>/dev/null
+    }
+
+
+    # ============================================================
+    # TASK 1 - VERIFY NFS SERVER HOSTNAME
+    # ============================================================
+
+    HOSTNAME_VALUE=$(hostname 2>/dev/null)
+
+    if [ "$HOSTNAME_VALUE" = "$NFS_SERVER" ]; then
+        pass "Task 1: NFS server hostname is nfs-server"
+    else
+        fail "Task 1: NFS server hostname is not nfs-server"
+    fi
+
+
+    # ============================================================
+    # TASK 2 - INSTALL NFS SERVER PACKAGES
+    # ============================================================
+
+    if rpm -q nfs-utils >/dev/null 2>&1; then
+        pass "Task 2: nfs-utils package is installed on the NFS server"
+    else
+        fail "Task 2: nfs-utils package is not installed on the NFS server"
+    fi
+
+
+    # ============================================================
+    # TASK 3 - ENABLE AND START NFS SERVER
+    # ============================================================
+
+    NFS_SERVICE_OK=1
+
+    systemctl is-active --quiet nfs-server || NFS_SERVICE_OK=0
+    systemctl is-enabled --quiet nfs-server || NFS_SERVICE_OK=0
+
+    if [ "$NFS_SERVICE_OK" -eq 1 ]; then
+        pass "Task 3: nfs-server service is active and enabled"
+    else
+        fail "Task 3: nfs-server service is not active and enabled"
+    fi
+
+
+    # ============================================================
+    # TASK 4 - ENABLE AND START RPCBIND
+    # ============================================================
+
+    RPCBIND_OK=1
+
+    systemctl is-active --quiet rpcbind || RPCBIND_OK=0
+    systemctl is-enabled --quiet rpcbind || RPCBIND_OK=0
+
+    if [ "$RPCBIND_OK" -eq 1 ]; then
+        pass "Task 4: rpcbind service is active and enabled on the NFS server"
+    else
+        fail "Task 4: rpcbind service is not active and enabled on the NFS server"
+    fi
+
+
+    # ============================================================
+    # TASK 5 - CREATE NFS EXPORT DIRECTORY
+    # ============================================================
+
+    if [ -d "$EXPORT_DIR" ]; then
+        pass "Task 5: /nfs_share directory exists"
+    else
+        fail "Task 5: /nfs_share directory is missing"
+    fi
+
+
+    # ============================================================
+    # TASK 6 - CREATE SERVER TEST FILE
+    # ============================================================
+
+    if [ -f "$SERVER_TEST_FILE" ]; then
+
+        FILE_CONTENT=$(cat "$SERVER_TEST_FILE" 2>/dev/null)
+
+        if [ "$FILE_CONTENT" = "$SERVER_TEST_CONTENT" ]; then
+            pass "Task 6: server_test.txt exists with the expected content"
+        else
+            fail "Task 6: server_test.txt content does not match the required content"
+        fi
+
+    else
+        fail "Task 6: /nfs_share/server_test.txt is missing"
+    fi
+
+
+    # ============================================================
+    # TASK 7 - CONFIGURE NFS EXPORT
+    # ============================================================
+
+    TASK7_OK=1
+
+    if [ -z "$NFS_CLIENT_IP" ]; then
+        TASK7_OK=0
+    fi
+
+    EXPORT_LINE=$(grep -E "^[[:space:]]*/nfs_share[[:space:]]" /etc/exports 2>/dev/null)
+
+    if [ -z "$EXPORT_LINE" ]; then
+        TASK7_OK=0
+    fi
+
+    if ! echo "$EXPORT_LINE" | grep -Fq "$NFS_CLIENT_IP"; then
+        TASK7_OK=0
+    fi
+
+    if ! echo "$EXPORT_LINE" | grep -Fq "rw"; then
+        TASK7_OK=0
+    fi
+
+    if ! echo "$EXPORT_LINE" | grep -Fq "sync"; then
+        TASK7_OK=0
+    fi
+
+    if ! echo "$EXPORT_LINE" | grep -Fq "no_root_squash"; then
+        TASK7_OK=0
+    fi
+
+    if [ "$TASK7_OK" -eq 1 ]; then
+        pass "Task 7: /nfs_share is exported to the NFS client with required options"
+    else
+        fail "Task 7: /nfs_share export configuration is incorrect"
+    fi
+
+
+    # ============================================================
+    # TASK 8 - APPLY NFS EXPORT CONFIGURATION
+    # ============================================================
+
+    if exportfs -avr >/dev/null 2>&1; then
+
+        if exportfs -s 2>/dev/null | grep -Fq "/nfs_share"; then
+            pass "Task 8: NFS export configuration applied successfully"
+        else
+            fail "Task 8: /nfs_share is not present in active exports"
+        fi
+
+    else
+        fail "Task 8: exportfs -avr failed"
+    fi
+
+
+    # ============================================================
+    # TASK 9 - VERIFY ACTIVE NFS EXPORTS
+    # ============================================================
+
+    ACTIVE_EXPORT=$(exportfs -v 2>/dev/null | grep -A2 -E "^/nfs_share[[:space:]]")
+
+    TASK9_OK=1
+
+    if [ -z "$ACTIVE_EXPORT" ]; then
+        TASK9_OK=0
+    fi
+
+    if ! echo "$ACTIVE_EXPORT" | grep -Fq "$NFS_CLIENT_IP"; then
+        TASK9_OK=0
+    fi
+
+    if [ "$TASK9_OK" -eq 1 ]; then
+        pass "Task 9: /nfs_share is actively exported to the correct NFS client"
+    else
+        fail "Task 9: active NFS export could not be verified"
+    fi
+
+
+    # ============================================================
+    # TASK 10 - CONFIGURE NFS SERVER FIREWALL
+    # ============================================================
+
+    FIREWALL_OK=1
+
+    firewall-cmd --state >/dev/null 2>&1 || FIREWALL_OK=0
+
+    firewall-cmd --query-service=nfs >/dev/null 2>&1 || FIREWALL_OK=0
+    firewall-cmd --query-service=mountd >/dev/null 2>&1 || FIREWALL_OK=0
+    firewall-cmd --query-service=rpc-bind >/dev/null 2>&1 || FIREWALL_OK=0
+
+    if [ "$FIREWALL_OK" -eq 1 ]; then
+        pass "Task 10: NFS, mountd, and rpc-bind firewall services are allowed"
+    else
+        fail "Task 10: required NFS firewall services are not configured"
+    fi
+
+
+    # ============================================================
+    # TASK 11 - SET SELINUX TO PERMISSIVE
+    # ============================================================
+
+    SELINUX_MODE=$(getenforce 2>/dev/null)
+
+    if [ "$SELINUX_MODE" = "Permissive" ]; then
+        pass "Task 11: SELinux is set to permissive mode"
+    else
+        fail "Task 11: SELinux is not set to permissive mode"
+    fi
+
+
+    # ============================================================
+    # TASK 12 - VERIFY NFS CLIENT HOSTNAME
+    # ============================================================
+
+    CLIENT_HOSTNAME=$(client_cmd hostname)
+
+    if [ "$CLIENT_HOSTNAME" = "$NFS_CLIENT" ]; then
+        pass "Task 12: NFS client hostname is nfs-client"
+    else
+        fail "Task 12: NFS client hostname is not nfs-client"
+    fi
+
+
+    # ============================================================
+    # TASK 13 - INSTALL NFS CLIENT PACKAGE
+    # ============================================================
+
+    if client_cmd rpm -q nfs-utils >/dev/null 2>&1; then
+        pass "Task 13: nfs-utils package is installed on the NFS client"
+    else
+        fail "Task 13: nfs-utils package is not installed on the NFS client"
+    fi
+
+
+    # ============================================================
+    # TASK 14 - ENABLE AND START RPCBIND ON CLIENT
+    # ============================================================
+
+    CLIENT_RPCBIND_OK=1
+
+    client_cmd systemctl is-active --quiet rpcbind || CLIENT_RPCBIND_OK=0
+    client_cmd systemctl is-enabled --quiet rpcbind || CLIENT_RPCBIND_OK=0
+
+    if [ "$CLIENT_RPCBIND_OK" -eq 1 ]; then
+        pass "Task 14: rpcbind service is active and enabled on the NFS client"
+    else
+        fail "Task 14: rpcbind service is not active and enabled on the NFS client"
+    fi
+
+
+    # ============================================================
+    # TASK 15 - VERIFY CONNECTIVITY TO NFS SERVER
+    # ============================================================
+
+    SERVER_IP=$(getent hosts "$NFS_SERVER" 2>/dev/null | awk 'NR==1 {print $1}')
+
+    if [ -n "$SERVER_IP" ] &&
+       client_cmd ping -c 2 -W 2 "$SERVER_IP" >/dev/null 2>&1; then
+
+        pass "Task 15: NFS client can successfully ping the NFS server"
+
+    else
+        fail "Task 15: NFS client cannot ping the NFS server"
+    fi
+
+
+    # ============================================================
+    # TASK 16 - DISCOVER NFS EXPORT
+    # ============================================================
+
+    SHOWMOUNT_OUTPUT=$(client_cmd showmount -e "$SERVER_IP")
+
+    if echo "$SHOWMOUNT_OUTPUT" | grep -Fq "/nfs_share"; then
+        pass "Task 16: NFS client discovered the /nfs_share export"
+    else
+        fail "Task 16: /nfs_share export could not be discovered from the NFS client"
+    fi
+
+
+    # ============================================================
+    # TASK 17 - CREATE LOCAL MOUNT POINT
+    # ============================================================
+
+    if client_cmd test -d "$MOUNT_POINT"; then
+        pass "Task 17: /mnt/nfs_share mount point exists on the NFS client"
+    else
+        fail "Task 17: /mnt/nfs_share mount point is missing"
+    fi
+
+
+    # ============================================================
+    # TASK 18 - MANUAL NFS MOUNT
+    # ============================================================
+
+    if client_cmd mountpoint -q "$MOUNT_POINT"; then
+
+        MOUNT_SOURCE=$(client_cmd findmnt -n -o SOURCE "$MOUNT_POINT")
+
+        if echo "$MOUNT_SOURCE" | grep -Fq "$NFS_SERVER:/nfs_share"; then
+            pass "Task 18: NFS share is manually mounted at /mnt/nfs_share"
+        else
+            fail "Task 18: /mnt/nfs_share is mounted from an incorrect source"
+        fi
+
+    else
+        fail "Task 18: /mnt/nfs_share is not mounted"
+    fi
+
+
+    # ============================================================
+    # TASK 19 - VERIFY NFS MOUNT
+    # ============================================================
+
+    MOUNT_TYPE=$(client_cmd findmnt -n -o FSTYPE "$MOUNT_POINT")
+
+    if [ "$MOUNT_TYPE" = "nfs" ] || [ "$MOUNT_TYPE" = "nfs4" ]; then
+        pass "Task 19: /mnt/nfs_share is mounted with an NFS filesystem"
+    else
+        fail "Task 19: /mnt/nfs_share is not mounted as NFS"
+    fi
+
+
+    # ============================================================
+    # TASK 20 - VERIFY SERVER TEST FILE FROM CLIENT
+    # ============================================================
+
+    CLIENT_SERVER_FILE="$MOUNT_POINT/server_test.txt"
+
+    if client_cmd test -f "$CLIENT_SERVER_FILE"; then
+
+        CLIENT_FILE_CONTENT=$(client_cmd cat "$CLIENT_SERVER_FILE")
+
+        if [ "$CLIENT_FILE_CONTENT" = "$SERVER_TEST_CONTENT" ]; then
+            pass "Task 20: server_test.txt is accessible from the NFS client with expected content"
+        else
+            fail "Task 20: server_test.txt content is incorrect on the NFS client"
+        fi
+
+    else
+        fail "Task 20: server_test.txt is not accessible from the NFS client"
+    fi
+
+
+    # ============================================================
+    # TASK 21 - CONFIGURE PERSISTENT NFS MOUNT
+    # ============================================================
+
+    FSTAB_LINE=$(client_cmd grep -E "^[^#]*[[:space:]]/mnt/nfs_share[[:space:]]+nfs" /etc/fstab)
+
+    TASK21_OK=1
+
+    if [ -z "$FSTAB_LINE" ]; then
+        TASK21_OK=0
+    fi
+
+    if ! echo "$FSTAB_LINE" | grep -Fq "$NFS_SERVER:/nfs_share"; then
+        TASK21_OK=0
+    fi
+
+    if ! echo "$FSTAB_LINE" | grep -Fq "defaults"; then
+        TASK21_OK=0
+    fi
+
+    if [ "$TASK21_OK" -eq 1 ]; then
+        pass "Task 21: persistent NFS mount is configured in /etc/fstab"
+    else
+        fail "Task 21: required NFS entry is missing or incorrect in /etc/fstab"
+    fi
+
+
+    # ============================================================
+    # TASK 22 - TEST FSTAB CONFIGURATION
+    # ============================================================
+
+    # We do not unmount here because doing so could interfere with
+    # subsequent validation tasks. Test the fstab configuration
+    # using mount -a in a controlled way.
+
+    if client_cmd mount -a >/dev/null 2>&1; then
+
+        if client_cmd mountpoint -q "$MOUNT_POINT"; then
+            pass "Task 22: /etc/fstab configuration successfully mounts the NFS share"
+        else
+            fail "Task 22: mount -a completed but NFS share is not mounted"
+        fi
+
+    else
+        fail "Task 22: mount -a failed"
+    fi
+
+
+    # ============================================================
+    # TASK 23 - MOUNT USING /etc/FSTAB
+    # ============================================================
+
+    # Verify that the mount source comes from the fstab configuration.
+    # mount /mnt/nfs_share must be valid without specifying server/export.
+
+    if client_cmd mount "$MOUNT_POINT" >/dev/null 2>&1; then
+
+        CURRENT_SOURCE=$(client_cmd findmnt -n -o SOURCE "$MOUNT_POINT")
+
+        if echo "$CURRENT_SOURCE" | grep -Fq "$NFS_SERVER:/nfs_share"; then
+            pass "Task 23: NFS filesystem can be mounted using the /etc/fstab entry"
+        else
+            fail "Task 23: NFS filesystem source does not match the /etc/fstab configuration"
+        fi
+
+    else
+
+        # mount may return non-zero when the filesystem is already mounted.
+        # Verify whether it is nevertheless mounted correctly.
+        CURRENT_SOURCE=$(client_cmd findmnt -n -o SOURCE "$MOUNT_POINT")
+
+        if echo "$CURRENT_SOURCE" | grep -Fq "$NFS_SERVER:/nfs_share"; then
+            pass "Task 23: NFS filesystem is mounted using the /etc/fstab configuration"
+        else
+            fail "Task 23: NFS filesystem could not be mounted using /etc/fstab"
+        fi
+
+    fi
+
+
+    # ============================================================
+    # TASK 24 - VERIFY PERSISTENT NFS MOUNT
+    # ============================================================
+
+    TASK24_OK=1
+
+    CURRENT_SOURCE=$(client_cmd findmnt -n -o SOURCE "$MOUNT_POINT")
+    CURRENT_TYPE=$(client_cmd findmnt -n -o FSTYPE "$MOUNT_POINT")
+
+    if ! echo "$CURRENT_SOURCE" | grep -Fq "$NFS_SERVER:/nfs_share"; then
+        TASK24_OK=0
+    fi
+
+    if [ "$CURRENT_TYPE" != "nfs" ] &&
+       [ "$CURRENT_TYPE" != "nfs4" ]; then
+        TASK24_OK=0
+    fi
+
+    if [ "$TASK24_OK" -eq 1 ]; then
+        pass "Task 24: persistent NFS mount is correctly configured and verified"
+    else
+        fail "Task 24: persistent NFS mount verification failed"
+    fi
+
+
+    # ============================================================
+    # TASK 25 - CREATE AND VERIFY CLIENT WRITE ACCESS
+    # ============================================================
+
+    CLIENT_TEST_FILE="$MOUNT_POINT/client_test.txt"
+
+    if client_cmd test -f "$CLIENT_TEST_FILE"; then
+
+        CLIENT_CONTENT=$(client_cmd cat "$CLIENT_TEST_FILE")
+
+        if [ "$CLIENT_CONTENT" = "$CLIENT_TEST_CONTENT" ]; then
+
+            SERVER_CONTENT=$(cat "$CLIENT_TEST_FILE" 2>/dev/null)
+
+            if [ "$SERVER_CONTENT" = "$CLIENT_TEST_CONTENT" ]; then
+                pass "Task 25: client_test.txt was created by the client and verified on the NFS server"
+            else
+                fail "Task 25: client_test.txt exists on the client but could not be verified correctly on the server"
+            fi
+
+        else
+            fail "Task 25: client_test.txt content does not match the required content"
+        fi
+
+    else
+        fail "Task 25: client_test.txt was not created on the NFS share"
+    fi
+
+
+    # ============================================================
+    # TASK 26 - MODIFY AND VERIFY FILE ACROSS NFS SHARE
+    # ============================================================
+
+    ORIGINAL_CONTENT=$(cat "$SERVER_TEST_FILE" 2>/dev/null)
+
+    if client_cmd grep -Fq "$CLIENT_MODIFIED_CONTENT" "$CLIENT_SERVER_FILE"; then
+
+        if grep -Fq "$CLIENT_MODIFIED_CONTENT" "$SERVER_TEST_FILE" 2>/dev/null; then
+            pass "Task 26: server_test.txt modification from the NFS client was verified on the NFS server"
+        else
+            fail "Task 26: modification exists on client but was not verified on NFS server"
+        fi
+
+    else
+        fail "Task 26: required modification was not found in server_test.txt"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#=================================================================
+validate_lab230() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "<h2 style='color:#white;'>Checking Lab 230 - Technical Screening Round 3 (TSR3).</h2>"
+
+    TOTAL_TASKS=12
+    PASSED=0
+
+    LAB_NAME="Lab 230 - Technical Screening Round 3 (TSR3)"
+    DATE=$(date "+%F %T")
+
+    # HELPERS
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # Task 1 - Create User
+    TASK_PASS=1
+
+    if id robert >/dev/null 2>&1; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if id robert >/dev/null 2>&1; then
+
+        PASSWORD_STATUS=$(sudo -n passwd -S robert 2>/dev/null | awk '{print $2}')
+
+        if [[ "$PASSWORD_STATUS" == P* ]]; then
+            :
+        else
+            TASK_PASS=0
+        fi
+
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task1: User robert exists and has a password assigned"
+    else
+        fail "Task1: User robert and password assignment could not be verified"
+    fi
+
+    # Task 2 - Create Group
+    if getent group devops >/dev/null 2>&1; then
+        pass "Task2: Group devops exists"
+    else
+        fail "Task2: Group devops does not exist"
+    fi
+
+    # Task 3 - Add User to Group
+    TASK_PASS=1
+
+    if id robert >/dev/null 2>&1; then
+
+        if id -nG robert 2>/dev/null \
+            | tr ' ' '\n' \
+            | grep -Fxq "devops"; then
+            :
+        else
+            TASK_PASS=0
+        fi
+
+    else
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task3: User robert is a member of the devops group"
+    else
+        fail "Task3: User robert is not a member of the devops group"
+    fi
+
+    # Task 4 - Configure Sudo Privileges
+    TASK_PASS=0
+
+    if sudo -l -U robert 2>/dev/null \
+        | grep -q "NOPASSWD:"; then
+
+        TASK_PASS=1
+
+    elif grep -RhsE \
+        '^[[:space:]]*robert[[:space:]].*NOPASSWD:' \
+        /etc/sudoers /etc/sudoers.d 2>/dev/null \
+        | grep -q "NOPASSWD:"; then
+
+        TASK_PASS=1
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task4: User robert has passwordless sudo privileges"
+    else
+        fail "Task4: Passwordless sudo privileges for robert were not verified"
+    fi
+
+    # Task 5 - Configure SSH Key-Based Authentication
+    TASK_PASS=1
+
+    ROBERT_HOME=$(getent passwd robert 2>/dev/null | cut -d: -f6)
+
+    if [ -z "$ROBERT_HOME" ]; then
+        TASK_PASS=0
+    fi
+
+    AUTHORIZED_KEYS="$ROBERT_HOME/.ssh/authorized_keys"
+
+    if ! sudo -n test -f "$AUTHORIZED_KEYS" 2>/dev/null; then
+        TASK_PASS=0
+    fi
+ 
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task5: SSH key-based authentication for robert from 192.168.111.165 is configured"
+    else
+        fail "Task5: SSH key-based authentication from 192.168.111.165 to robert could not be verified"
+    fi
+
+    # Task 6 - Install Apache
+    if rpm -q httpd >/dev/null 2>&1; then
+        pass "Task6: httpd package is installed"
+    else
+        fail "Task6: httpd package is not installed"
+    fi
+
+    # Task 7 - Start and Enable Apache
+    TASK_PASS=1
+
+    if systemctl is-active --quiet httpd; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if systemctl is-enabled --quiet httpd 2>/dev/null; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task7: httpd service is running and enabled"
+    else
+        fail "Task7: httpd service is not both running and enabled"
+    fi
+
+    # Task 8 - Configure Apache Port
+    TASK_PASS=1
+
+    APACHE_CONF="/etc/httpd/conf/httpd.conf"
+
+    if [ ! -f "$APACHE_CONF" ]; then
+        TASK_PASS=0
+    fi
+
+    if [ -f "$APACHE_CONF" ]; then
+
+        if grep -Eq \
+            '^[[:space:]]*Listen[[:space:]]+8080[[:space:]]*$' \
+            "$APACHE_CONF"; then
+            :
+        else
+            TASK_PASS=0
+        fi
+
+    fi
+
+    if systemctl is-active --quiet httpd; then
+
+        if ss -lnt 2>/dev/null \
+            | awk '$4 ~ /:8080$/ {found=1} END {exit !found}'; then
+            :
+        else
+            TASK_PASS=0
+        fi
+
+    else
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task8: Apache is configured and listening on port 8080"
+    else
+        fail "Task8: Apache is not correctly configured or listening on port 8080"
+    fi
+
+    # Task 9 - Configure Web Page
+    EXPECTED_CONTENT="I am configuring apache server in my TSR3"
+    INDEX_FILE="/var/www/html/index.html"
+
+    if [ -f "$INDEX_FILE" ] && \
+       grep -Fq "$EXPECTED_CONTENT" "$INDEX_FILE"; then
+
+        pass "Task9: index.html contains the required content"
+
+    else
+
+        fail "Task9: index.html does not contain the required content"
+
+    fi
+
+    # Task 10 - Configure Firewall
+    TASK_PASS=1
+    
+    if ! sudo -n systemctl is-active --quiet firewalld; then
+        TASK_PASS=0
+    fi
+    
+    RUNTIME_PORTS=$(sudo -n firewall-cmd --list-ports 2>/dev/null)
+    
+    if echo "$RUNTIME_PORTS" | tr ' ' '\n' | grep -Fxq "8080/tcp"; then
+        :
+    else
+        TASK_PASS=0
+    fi
+    
+    PERMANENT_PORTS=$(sudo -n firewall-cmd --permanent --list-ports 2>/dev/null)
+    
+    if echo "$PERMANENT_PORTS" | tr ' ' '\n' | grep -Fxq "8080/tcp"; then
+        :
+    else
+        TASK_PASS=0
+    fi
+    
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task10: TCP port 8080 is allowed through the firewall"
+    else
+        fail "Task10: TCP port 8080 is not allowed through the firewall"
+    fi
+    
+    # Task 11 - Test Apache
+    TASK_PASS=1
+
+    if curl -s --max-time 5 \
+        "http://127.0.0.1:8080/" 2>/dev/null \
+        | grep -Fq "$EXPECTED_CONTENT"; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if [ -n "$STUDENT_IP" ]; then
+
+        if curl -s --max-time 5 \
+            "http://${STUDENT_IP}:8080/" 2>/dev/null \
+            | grep -Fq "$EXPECTED_CONTENT"; then
+            :
+        else
+            TASK_PASS=0
+        fi
+
+    else
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task11: Apache web page is accessible on port 8080 and displays the required content"
+    else
+        fail "Task11: Apache web page could not be verified on port 8080"
+    fi
+    
+    # Task 12 - Configure Static IP
+    TASK_PASS=1
+    
+    EXPECTED_IP="$STUDENT_IP"
+    EXPECTED_GATEWAY="10.90.0.1"
+    EXPECTED_DNS1="192.168.111.50"
+    EXPECTED_DNS2="8.8.8.8"
+    
+    ACTIVE_PROFILE=""
+    
+    while IFS=: read -r PROFILE DEVICE; do
+    
+        [ -z "$PROFILE" ] && continue
+        [ -z "$DEVICE" ] && continue
+    
+        CONFIGURED_ADDRESSES=$(nmcli -g ipv4.addresses connection show "$PROFILE" 2>/dev/null)
+    
+        while IFS= read -r ADDRESS; do
+    
+            ADDRESS_IP="${ADDRESS%%/*}"
+    
+            if [ "$ADDRESS_IP" = "$EXPECTED_IP" ]; then
+                ACTIVE_PROFILE="$PROFILE"
+                break
+            fi
+    
+        done < <(echo "$CONFIGURED_ADDRESSES" | tr ',' '\n')
+    
+        [ -n "$ACTIVE_PROFILE" ] && break
+    
+    done < <(
+        nmcli -t -f NAME,DEVICE connection show --active 2>/dev/null
+    )
+    
+    if [ -z "$ACTIVE_PROFILE" ]; then
+    
+        TASK_PASS=0
+    
+    else
+    
+        IPV4_METHOD=$(nmcli -g ipv4.method connection show "$ACTIVE_PROFILE" 2>/dev/null)
+    
+        if [ "$IPV4_METHOD" != "manual" ]; then
+            TASK_PASS=0
+        fi
+    
+        CONFIGURED_ADDRESSES=$(nmcli -g ipv4.addresses connection show "$ACTIVE_PROFILE" 2>/dev/null)
+    
+        IP_FOUND=0
+    
+        while IFS= read -r ADDRESS; do
+
+            ADDRESS_IP="${ADDRESS%%/*}"
+    
+            if [ "$ADDRESS_IP" = "$EXPECTED_IP" ]; then
+                IP_FOUND=1
+                break
+            fi
+    
+        done < <(echo "$CONFIGURED_ADDRESSES" | tr ',' '\n')
+    
+        if [ "$IP_FOUND" -ne 1 ]; then
+            TASK_PASS=0
+        fi
+    
+        CONFIGURED_GATEWAY=$(nmcli -g ipv4.gateway connection show "$ACTIVE_PROFILE" 2>/dev/null)
+    
+        if [ "$CONFIGURED_GATEWAY" != "$EXPECTED_GATEWAY" ]; then
+            TASK_PASS=0
+        fi
+    
+        CONFIGURED_DNS=$(nmcli -g ipv4.dns connection show "$ACTIVE_PROFILE" 2>/dev/null)
+
+        DNS1_FOUND=0
+        DNS2_FOUND=0
+    
+        while IFS= read -r DNS; do
+    
+            if [ "$DNS" = "$EXPECTED_DNS1" ]; then
+                DNS1_FOUND=1
+            fi
+    
+            if [ "$DNS" = "$EXPECTED_DNS2" ]; then
+                DNS2_FOUND=1
+            fi
+    
+        done < <(echo "$CONFIGURED_DNS" | tr ',' '\n')
+    
+        if [ "$DNS1_FOUND" -ne 1 ]; then
+            TASK_PASS=0
+        fi
+    
+        if [ "$DNS2_FOUND" -ne 1 ]; then
+            TASK_PASS=0
+        fi
+    
+        if ! ping -c 2 -W 2 "$EXPECTED_GATEWAY" >/dev/null 2>&1; then
+            TASK_PASS=0
+        fi
+    
+        if ! ping -c 2 -W 3 google.com >/dev/null 2>&1; then
+            TASK_PASS=0
+        fi
+    
+    fi
+    
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task12: Static IP configuration, gateway, DNS, and network connectivity verified"
+    else
+        fail "Task12: Static IP configuration or network connectivity could not be verified"
+    fi    
+    
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#================================================================

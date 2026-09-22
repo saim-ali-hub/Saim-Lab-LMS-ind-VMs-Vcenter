@@ -1,0 +1,118 @@
+{
+  "lab_number": 230,
+  "title": "Technical Screening Round 3 (TSR3)",
+  "objectives": {
+    "description": "By completing this technical screening, you will demonstrate your ability to perform basic Linux system administration tasks, including user and group management, sudo configuration, SSH key-based authentication, package installation, service management, Apache web server configuration, firewall configuration, and static network configuration. Complete the following tasks on your Linux machine. Follow the instructions carefully and verify each task after completing it."
+  },
+  "tasks": [
+    {
+      "task_number": 1,
+      "task_title": "Create User",
+      "steps": [
+        "Create a user named robert.",
+        "Assign password to robert."
+      ]
+    },
+    {
+      "task_number": 2,
+      "task_title": "Create Group",
+      "steps": [
+        "Create a group named devops."
+      ]
+    },
+    {
+      "task_number": 3,
+      "task_title": "Add User to Group",
+      "steps": [
+        "Add user robert to the devops group."
+      ]
+    },
+    {
+      "task_number": 4,
+      "task_title": "Configure Sudo Privileges",
+      "steps": [
+        "Give user robert sudo privileges without requiring a password.",
+        "Do not add user to wheel group."
+      ]
+    },
+    {
+      "task_number": 5,
+      "task_title": "Configure SSH Key-Based Authentication",
+      "steps": [
+        "Open a new session to server 192.168.111.165 with your_VPN_username.",
+        "Generate SSH key  pair for your_user on 192.168.111.165.",
+        "Configure SSH key-based authentication from your_user on 192.168.111.165 to the user robert on your personal VM.",
+        "Verify that your_user can connect to robert on 192.168.111.165 using SSH key-based authentication without entering a password."
+      ]
+    },
+    {
+      "task_number": 6,
+      "task_title": "Install Apache",
+      "steps": [
+        "Make sure you are on your personal VM",
+        "Switch to the user root.",
+        "As user root, install the httpd package on your personal VM."
+      ]
+    },
+    {
+      "task_number": 7,
+      "task_title": "Start and Enable Apache",
+      "steps": [
+        "Start and enable the httpd service so that it starts automatically after a reboot."
+      ]
+    },
+    {
+      "task_number": 8,
+      "task_title": "Configure Apache Port",
+      "steps": [
+        "Configure Apache to listen on port 8080 instead of the default HTTP port.",
+        "Apache configuration file: /etc/httpd/conf/httpd.conf",
+        "Set SELinux to permissive mode.",
+        "Restart the httpd service and verify that it is listening on port 8080."
+      ]
+    },
+    {
+      "task_number": 9,
+      "task_title": "Configure Web Page",
+      "steps": [
+        "Create or update /var/www/html/index.html.",
+        "Add the following content exactly:",
+        "<h1>I am configuring apache server in my TSR3</h1>"
+      ]
+    },
+    {
+      "task_number": 10,
+      "task_title": "Configure Firewall",
+      "steps": [
+        "Allow TCP port 8080 through the firewall.",
+        "Verify that the firewall rule is active."
+      ]
+    },
+    {
+      "task_number": 11,
+      "task_title": "Test Apache",
+      "steps": [
+        "Access your Apache web server from a browser using port 8080.",
+        "Verify that the following message is displayed:",
+        "I am configuring apache server in my TSR3"
+      ]
+    },
+    {
+      "task_number": 12,
+      "task_title": "Configure Static IP",
+      "steps": [
+        "Configure a static IP address on your machine using your existing IP address.",
+        "Use the following network configuration:",
+        "IP Address: <Your machine's existing IP>",
+        "Prefix: 22",
+        "Gateway: 10.90.0.1",
+        "DNS1: 192.168.111.50",
+        "DNS2: 8.8.8.8",
+        "Using the nmcli command, verify that ipv4.method is set to manual.",
+        "Ping gateway.",
+        "Ping google.com."
+      ]
+    }
+  ],
+  "completion_message": "Great Job! You have successfully completed Lab 230 — Technical Screening Round 3 (TSR3). All assigned tasks have been completed."
+}
