@@ -95,7 +95,7 @@ exit 0
 SUDO Privilege:
 ==============
 visudo -f /etc/sudoers.d/linoop-validator
-apache ALL=(validator) NOPASSWD: /var/www/private_data/lab/validate_lab.sh
+linoop ALL=(ALL) NOPASSWD: /usr/local/bin/key-exchange.sh
 
 chmod 440 /etc/sudoers.d/linoop-validator
 chown root:root /etc/sudoers.d/linoop-validator
