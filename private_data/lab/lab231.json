@@ -1,0 +1,191 @@
+{
+"lab_id": "lab231",
+"title": "Lab 231 - NIC Teaming Using Active-Backup",
+"lab_objective": {
+   "description": "By completing this lab, you will learn:",
+   "objectives": [
+        "You will configure two network interfaces as a single logical team interface using Active-Backup mode. Active-Backup provides network redundancy, not increased bandwidth.",
+        "You will configure ens192 as the initial active interface and ens224 as the backup interface.",
+        "The IP configuration must be applied to team0, not directly to the individual physical interfaces.",
+        "You will also test failover by simulating failure of the active interface and verifying that the backup interface automatically takes over network traffic."
+      ]
+      },
+"tasks": [
+{
+"task_number": 1,
+"task_title": "Verify Network Interfaces and Current IP Configuration",
+"steps": [
+"Identify the available network interfaces on your Linux server.",
+"Use the command nmcli device status to view the available network devices and their current state.",
+"Verify the current IP configuration using the ip addr command.",
+"Identify ens192 and ens224. These interfaces will be used as the team ports."
+]
+},
+{
+"task_number": 2,
+"task_title": "Install and Verify NIC Teaming Support",
+"steps": [
+"Verify whether the teamd package is installed.",
+"Verify whether the NetworkManager-team package is installed.",
+"If either package is missing, install the required packages using: yum install -y teamd NetworkManager-team",
+"Verify that the NetworkManager service is active.",
+"Use the following commands to verify the required packages and service: rpm -q teamd, rpm -q NetworkManager-team, and systemctl is-active NetworkManager."
+]
+},
+{
+"task_number": 3,
+"task_title": "Create the team0 Connection",
+"steps": [
+"Create a logical team connection named team0.",
+"Configure the team runner to use Active-Backup mode.",
+"Use the following command as a guide:",
+"nmcli connection add con-name team0 ifname team0 type team team.runner activebackup"
+]
+},
+{
+"task_number": 4,
+"task_title": "Configure Team Ports",
+"steps": [
+"Add ens192 to team0 as team0-port1.",
+"Configure ens192 as the preferred initial active interface.",
+"Add ens224 to team0 as team0-port2.",
+"Configure ens224 as the backup interface.",
+"Use the following commands as a guide:",
+"nmcli connection add con-name team0-port1 ifname ens192 type ethernet slave-type team master team0",
+"nmcli connection add con-name team0-port2 ifname ens224 type ethernet slave-type team master team0",
+"Verify that both port connections have been created successfully."
+]
+},
+{
+"task_number": 5,
+"task_title": "Configure IP Address and Network Settings on team0",
+"steps": [
+"Configure the required static IP address on team0.",
+"Use your assigned or existing IP address in place of <YOUR_IP>.",
+"Configure the IP address with a /22 prefix.",
+"Configure the default gateway as 10.90.0.1.",
+"Configure the DNS servers as 192.168.111.50 and 8.8.8.8.",
+"Set the IPv4 method to manual.",
+"Configure team0 to automatically connect during system boot.",
+"Do not configure the IP address directly on ens192 or ens224.",
+"Use the following commands as a guide:",
+"nmcli connection modify team0 ipv4.addresses <YOUR_IP>/22",
+"nmcli connection modify team0 ipv4.gateway 10.90.0.1",
+"nmcli connection modify team0 ipv4.dns \"192.168.111.50 8.8.8.8\"",
+"nmcli connection modify team0 ipv4.method manual",
+"nmcli connection modify team0 connection.autoconnect yes"
+]
+},
+{
+"task_number": 6,
+"task_title": "Bring the Team Connection Online",
+"steps": [
+"Bring the team0 connection online.",
+"Bring team0-port1 online.",
+"Bring team0-port2 online.",
+"Use the following commands as a guide:",
+"nmcli connection up team0",
+"nmcli connection up team0-port1",
+"nmcli connection up team0-port2"
+]
+},
+{
+"task_number": 7,
+"task_title": "Verify team0 Is UP and Operational",
+"steps": [
+"Verify that the team0 interface is UP.",
+"Verify that the IP address is assigned to team0.",
+"Verify the state of team0, ens192, and ens224 using NetworkManager.",
+"Use the following commands:",
+"ip link show team0",
+"ip addr show team0",
+"nmcli device status"
+]
+},
+{
+"task_number": 8,
+"task_title": "Verify Team Membership and Active Port",
+"steps": [
+"Verify that ens192 and ens224 are members of team0.",
+"Verify which interface is currently active.",
+"Verify the Active-Backup runner configuration.",
+"Use the following commands:",
+"teamdctl team0 state",
+"teamdctl team0 state view",
+"Verify that ens192 is initially the active port and ens224 is available as the backup port."
+]
+},
+{
+"task_number": 9,
+"task_title": "Test Network Connectivity Through team0",
+"steps": [
+"Verify that the IP address is configured on team0.",
+"Test connectivity to the default gateway.",
+"Test connectivity to the Internet using the IP address 8.8.8.8.",
+"Test DNS name resolution by pinging google.com.",
+"Use the following commands:",
+"ip addr show team0",
+"ping -c 4 10.90.0.1",
+"ping -c 4 8.8.8.8",
+"ping -c 4 google.com"
+]
+},
+{
+"task_number": 10,
+"task_title": "Simulate Failure of the Active Interface",
+"steps": [
+"Use teamdctl to determine which port is currently active.",
+"Confirm that ens192 is the active port before continuing.",
+"Simulate failure of the active interface by bringing down team0-port1.",
+"Use the following commands:",
+"teamdctl team0 state",
+"nmcli connection down team0-port1",
+"Do not bring down team0 itself. Only bring down the active team port."
+]
+},
+{
+"task_number": 11,
+"task_title": "Verify Automatic Failover to ens224",
+"steps": [
+"Verify the team state after ens192 has been taken offline.",
+"Confirm that ens224 has automatically become the active port.",
+"Verify that team0 remains UP.",
+"Test connectivity to the default gateway.",
+"Verify that network connectivity continues after the failure of ens192.",
+"Use the following commands:",
+"teamdctl team0 state",
+"ip addr show team0",
+"ping -c 4 10.90.0.1",
+"Verify that the active port is ens224."
+]
+},
+{
+"task_number": 12,
+"task_title": "Restore the Failed Interface",
+"steps": [
+"Restore ens192 by bringing its team connection back online.",
+"Use the following command:",
+"nmcli connection up team0-port1",
+"Verify that ens192 has returned to the team."
+]
+},
+{
+"task_number": 13,
+"task_title": "Verify Team Recovery",
+"steps": [
+"Verify that both ens192 and ens224 are available again.",
+"Verify the state of the network devices using nmcli device status.",
+"Use teamdctl to verify that both interfaces remain members of team0.",
+"Verify which interface is currently active.",
+"Remember that restoring ens192 does not necessarily make it active again immediately. The team may continue using ens224 as the active port until the runner selects or is configured to prefer ens192.",
+"Verify that network connectivity continues to work through team0.",
+"Use the following commands:",
+"nmcli device status",
+"teamdctl team0 state",
+"ping -c 4 10.90.0.1"
+]
+}
+],
+"completion_message": "Great Job! You have successfully completed Lab 231 — NIC Teaming Using Active-Backup. You configured team0 with ens192 and ens224, verified Active-Backup operation, tested network connectivity, simulated an interface failure, and verified automatic failover to the backup interface."
+}
+

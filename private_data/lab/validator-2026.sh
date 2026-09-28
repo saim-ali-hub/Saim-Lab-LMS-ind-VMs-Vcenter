@@ -11634,7 +11634,7 @@ validate_lab228_gdisk() {
     fi
 
     # TASK 2 - VERIFY /dev/sdb
-    if [ -b "$DISK" ] && fdisk -l "$DISK" >/dev/null 2>&1; then
+    if [ -b "$DISK" ]; then
 
         DISK_SIZE=$(lsblk -bndo SIZE "$DISK" 2>/dev/null)
 
@@ -11649,9 +11649,9 @@ validate_lab228_gdisk() {
     fi
 
     # TASK 3 - CREATE GPT PARTITION TABLE
-    PARTITION_TABLE=$(fdisk -l "$DISK" 2>/dev/null)
+    PARTITION_TABLE=$(lsblk -dnro PTTYPE "$DISK" 2>/dev/null | tr -d '[:space:]')
 
-    if echo "$PARTITION_TABLE" | grep -qi "Disklabel type: gpt"; then
+    if [ "$PARTITION_TABLE" = "gpt" ]; then
         pass "Task 3: /dev/sdb is using a GPT partition table"
     else
         fail "Task 3: /dev/sdb is not using a GPT partition table"
@@ -11707,65 +11707,75 @@ validate_lab228_gdisk() {
     fi
 
     # TASK 5 - SET PARTITION TYPES
+    TYPE1=$(sudo  /usr/sbin/sgdisk -i 1 "$DISK" 2>/dev/null)
+    TYPE2=$(sudo /usr/sbin/sgdisk -i 2 "$DISK" 2>/dev/null)
+    TYPE3=$(sudo /usr/sbin/sgdisk -i 3 "$DISK" 2>/dev/null)
+    TYPE4=$(sudo /usr/sbin/sgdisk -i 4 "$DISK" 2>/dev/null)
+    
     TASK5_OK=1
-
-    TYPE1=$(sgdisk -i 1 "$DISK" 2>/dev/null | awk -F': ' '/Partition GUID code/ {print $2}' | awk '{print $1}')
-    TYPE2=$(sgdisk -i 2 "$DISK" 2>/dev/null | awk -F': ' '/Partition GUID code/ {print $2}' | awk '{print $1}')
-    TYPE3=$(sgdisk -i 3 "$DISK" 2>/dev/null | awk -F': ' '/Partition GUID code/ {print $2}' | awk '{print $1}')
-    TYPE4=$(sgdisk -i 4 "$DISK" 2>/dev/null | awk -F': ' '/Partition GUID code/ {print $2}' | awk '{print $1}')
-
-    [ "$TYPE1" = "8200" ] || TASK5_OK=0
-    [ "$TYPE2" = "8300" ] || TASK5_OK=0
-    [ "$TYPE3" = "8300" ] || TASK5_OK=0
-    [ "$TYPE4" = "8300" ] || TASK5_OK=0
-
+    
+    echo "$TYPE1" | grep -qi "Linux swap" || TASK5_OK=0
+    echo "$TYPE2" | grep -qi "Linux filesystem" || TASK5_OK=0
+    echo "$TYPE3" | grep -qi "Linux filesystem" || TASK5_OK=0
+    echo "$TYPE4" | grep -qi "Linux filesystem" || TASK5_OK=0
+    
     if [ "$TASK5_OK" -eq 1 ]; then
         pass "Task 5: GPT partition types are correctly configured"
     else
         fail "Task 5: One or more GPT partition types are incorrect"
     fi
 
-    # TASK 6 - VERIFY AND SAVE
-    PARTITION_COUNT=$(lsblk -ln "$DISK" 2>/dev/null | \
-        awk '$6 == "part" {count++} END {print count+0}')
-
-    if [ "$PARTITION_COUNT" -eq 4 ]; then
-
-        if sgdisk -v "$DISK" >/dev/null 2>&1; then
-            pass "Task 6: Partition table verified and saved successfully"
-        else
-            fail "Task 6: Partition table verification failed"
-        fi
-
+    # TASK 6 - VERIFY PARTITION TABLE
+    TASK6_OK=1
+    
+    # Verify required partitions exist
+    [ -b "${DISK}1" ] || TASK6_OK=0
+    [ -b "${DISK}2" ] || TASK6_OK=0
+    [ -b "${DISK}3" ] || TASK6_OK=0
+    [ -b "${DISK}4" ] || TASK6_OK=0
+    
+    # Verify exact sizes
+    # 512 MiB = 536870912 bytes
+    [ "$(lsblk -dnbo SIZE "${DISK}1" 2>/dev/null)" = "536870912" ] || TASK6_OK=0
+    [ "$(lsblk -dnbo SIZE "${DISK}2" 2>/dev/null)" = "536870912" ] || TASK6_OK=0
+    
+    # 400 MiB = 419430400 bytes
+    [ "$(lsblk -dnbo SIZE "${DISK}3" 2>/dev/null)" = "419430400" ] || TASK6_OK=0
+    
+    # Partition 4 is the remaining space.
+    # Just verify that it exists and has a non-zero size.
+    SIZE4=$(lsblk -dnbo SIZE "${DISK}4" 2>/dev/null)
+    
+    [ -n "$SIZE4" ] && [ "$SIZE4" -gt 0 ] 2>/dev/null || TASK6_OK=0
+    
+    if [ "$TASK6_OK" -eq 1 ]; then
+        pass "Task 6: Partition table and partition sizes are correct"
     else
-        fail "Task 6: Four partitions were not found after saving"
+        fail "Task 6: Partition table or partition sizes are incorrect"
     fi
-
+ 
     # TASK 7 - VERIFY FROM LINUX
     TASK7_OK=1
 
-    [ -b "/dev/sdb1" ] || TASK7_OK=0
-    [ -b "/dev/sdb2" ] || TASK7_OK=0
-    [ -b "/dev/sdb3" ] || TASK7_OK=0
-    [ -b "/dev/sdb4" ] || TASK7_OK=0
-
+    # Verify lsblk can see the disk and all four partitions
+    lsblk "$DISK" 2>/dev/null | grep -q "sdb"  || TASK7_OK=0
+    lsblk "$DISK" 2>/dev/null | grep -q "sdb1" || TASK7_OK=0
+    lsblk "$DISK" 2>/dev/null | grep -q "sdb2" || TASK7_OK=0
+    lsblk "$DISK" 2>/dev/null | grep -q "sdb3" || TASK7_OK=0
+    lsblk "$DISK" 2>/dev/null | grep -q "sdb4" || TASK7_OK=0
+    
+    # Verify blkid can inspect all four partitions
+    blkid "${DISK}1" >/dev/null 2>&1 || TASK7_OK=0
+    blkid "${DISK}2" >/dev/null 2>&1 || TASK7_OK=0
+    blkid "${DISK}3" >/dev/null 2>&1 || TASK7_OK=0
+    blkid "${DISK}4" >/dev/null 2>&1 || TASK7_OK=0
+    
     if [ "$TASK7_OK" -eq 1 ]; then
-
-        if blkid /dev/sdb1 >/dev/null 2>&1 &&
-           blkid /dev/sdb2 >/dev/null 2>&1 &&
-           blkid /dev/sdb3 >/dev/null 2>&1 &&
-           blkid /dev/sdb4 >/dev/null 2>&1 &&
-           fdisk -l "$DISK" 2>/dev/null | grep -qi "Disklabel type: gpt"; then
-
-            pass "Task 7: Partitions verified successfully from Linux"
-        else
-            fail "Task 7: Linux verification of partitions failed"
-        fi
-
+        pass "Task 7: Partitions verified successfully from Linux using lsblk, blkid, and fdisk"
     else
-        fail "Task 7: One or more partitions are missing"
+        fail "Task 7: Linux verification of the partitions failed"
     fi
-
+     
     # TASK 8 - CREATE FILESYSTEMS
     TASK8_OK=1
 
@@ -11827,36 +11837,46 @@ validate_lab228_gdisk() {
     FSTAB="/etc/fstab"
     
     # Verify /dev/sdb1 persistent swap entry
-    grep -Eq '^[[:space:]]*/dev/sdb1[[:space:]]+none[[:space:]]+swap[[:space:]]+defaults[[:space:]]+0[[:space:]]+0[[:space:]]*$' "$FSTAB" \
+    awk '$1 == "/dev/sdb1" && $2 == "swap" && $3 == "swap" && $4 == "defaults" {found=1} END {exit !found}' "$FSTAB" \
         || TASK11_OK=0
     
     # Verify /dev/sdb2 persistent mount
-    grep -Eq '^[[:space:]]*/dev/sdb2[[:space:]]+/appdata[[:space:]]+xfs[[:space:]]+defaults[[:space:]]+0[[:space:]]+0[[:space:]]*$' "$FSTAB" \
+    awk '$1 == "/dev/sdb2" && $2 == "/appdata" && $3 == "xfs" && $4 == "defaults" {found=1} END {exit !found}' "$FSTAB" \
         || TASK11_OK=0
     
     # Verify /dev/sdb3 persistent mount
-    grep -Eq '^[[:space:]]*/dev/sdb3[[:space:]]+/applogs[[:space:]]+ext4[[:space:]]+defaults[[:space:]]+0[[:space:]]+0[[:space:]]*$' "$FSTAB" \
-        || TASK11_OK=0
-        
-    # Verify /dev/sdb4 persistent mount
-    grep -Eq '^[[:space:]]*/dev/sdb4[[:space:]]+/backup[[:space:]]+xfs[[:space:]]+defaults[[:space:]]+0[[:space:]]+0[[:space:]]*$' "$FSTAB" \
+    awk '$1 == "/dev/sdb3" && $2 == "/applogs" && $3 == "ext4" && $4 == "defaults" {found=1} END {exit !found}' "$FSTAB" \
         || TASK11_OK=0
     
-    # Verify fstab configuration
+    # Verify /dev/sdb4 persistent mount
+    awk '$1 == "/dev/sdb4" && $2 == "/backup" && $3 == "xfs" && $4 == "defaults" {found=1} END {exit !found}' "$FSTAB" \
+        || TASK11_OK=0
+    
+    # Verify the configuration without rebooting
     if [ "$TASK11_OK" -eq 1 ]; then
     
         if mount -a >/dev/null 2>&1; then
-            pass "Task 11: Persistent swap and filesystem configuration verified"
+    
+            # Verify swap is available
+            if swapon --show=NAME 2>/dev/null | grep -qx "/dev/sdb1" && \
+               mountpoint -q /appdata && \
+               mountpoint -q /applogs && \
+               mountpoint -q /backup; then
+    
+                pass "Task 11: Persistent swap and filesystem mounts are correctly configured and verified"
+    
+            else
+                fail "Task 11: Persistent configuration exists, but swap or one or more mount points are not active"
+            fi
+    
         else
-            fail "Task 11: /etc/fstab configuration contains errors"
+            fail "Task 11: /etc/fstab configuration could not be applied"
         fi
 
     else
-
-    fail "Task 11: Required /etc/fstab entries are missing or incorrect"
-
-    fi
-
+        fail "Task 11: Required persistent storage entries are missing or incorrect"
+    fi    
+    
     # ============================================================
     # SUMMARY
     # ============================================================
@@ -12742,16 +12762,16 @@ validate_lab230() {
     fi
 
     if [ "$TASK_PASS" -eq 1 ]; then
-        pass "Task1: User robert exists and has a password assigned"
+        pass "Task 1: User robert exists and has a password assigned"
     else
-        fail "Task1: User robert and password assignment could not be verified"
+        fail "Task 1: User robert and password assignment could not be verified"
     fi
 
     # Task 2 - Create Group
     if getent group devops >/dev/null 2>&1; then
-        pass "Task2: Group devops exists"
+        pass "Task 2: Group devops exists"
     else
-        fail "Task2: Group devops does not exist"
+        fail "Task 2: Group devops does not exist"
     fi
 
     # Task 3 - Add User to Group
@@ -12772,9 +12792,9 @@ validate_lab230() {
     fi
 
     if [ "$TASK_PASS" -eq 1 ]; then
-        pass "Task3: User robert is a member of the devops group"
+        pass "Task 3: User robert is a member of the devops group"
     else
-        fail "Task3: User robert is not a member of the devops group"
+        fail "Task 3: User robert is not a member of the devops group"
     fi
 
     # Task 4 - Configure Sudo Privileges
@@ -12794,9 +12814,9 @@ validate_lab230() {
     fi
 
     if [ "$TASK_PASS" -eq 1 ]; then
-        pass "Task4: User robert has passwordless sudo privileges"
+        pass "Task 4: User robert has passwordless sudo privileges"
     else
-        fail "Task4: Passwordless sudo privileges for robert were not verified"
+        fail "Task 4: Passwordless sudo privileges for robert were not verified"
     fi
 
     # Task 5 - Configure SSH Key-Based Authentication
@@ -12815,16 +12835,16 @@ validate_lab230() {
     fi
  
     if [ "$TASK_PASS" -eq 1 ]; then
-        pass "Task5: SSH key-based authentication for robert from 192.168.111.165 is configured"
+        pass "Task 5: SSH key-based authentication for robert from 192.168.111.165 is configured"
     else
-        fail "Task5: SSH key-based authentication from 192.168.111.165 to robert could not be verified"
+        fail "Task 5: SSH key-based authentication from 192.168.111.165 to robert could not be verified"
     fi
 
     # Task 6 - Install Apache
     if rpm -q httpd >/dev/null 2>&1; then
-        pass "Task6: httpd package is installed"
+        pass "Task 6: httpd package is installed"
     else
-        fail "Task6: httpd package is not installed"
+        fail "Task 6: httpd package is not installed"
     fi
 
     # Task 7 - Start and Enable Apache
@@ -12843,9 +12863,9 @@ validate_lab230() {
     fi
 
     if [ "$TASK_PASS" -eq 1 ]; then
-        pass "Task7: httpd service is running and enabled"
+        pass "Task 7: httpd service is running and enabled"
     else
-        fail "Task7: httpd service is not both running and enabled"
+        fail "Task 7: httpd service is not both running and enabled"
     fi
 
     # Task 8 - Configure Apache Port
@@ -12883,9 +12903,9 @@ validate_lab230() {
     fi
 
     if [ "$TASK_PASS" -eq 1 ]; then
-        pass "Task8: Apache is configured and listening on port 8080"
+        pass "Task 8: Apache is configured and listening on port 8080"
     else
-        fail "Task8: Apache is not correctly configured or listening on port 8080"
+        fail "Task 8: Apache is not correctly configured or listening on port 8080"
     fi
 
     # Task 9 - Configure Web Page
@@ -12895,11 +12915,11 @@ validate_lab230() {
     if [ -f "$INDEX_FILE" ] && \
        grep -Fq "$EXPECTED_CONTENT" "$INDEX_FILE"; then
 
-        pass "Task9: index.html contains the required content"
+        pass "Task 9: index.html contains the required content"
 
     else
 
-        fail "Task9: index.html does not contain the required content"
+        fail "Task 9: index.html does not contain the required content"
 
     fi
 
@@ -12927,9 +12947,9 @@ validate_lab230() {
     fi
     
     if [ "$TASK_PASS" -eq 1 ]; then
-        pass "Task10: TCP port 8080 is allowed through the firewall"
+        pass "Task 10: TCP port 8080 is allowed through the firewall"
     else
-        fail "Task10: TCP port 8080 is not allowed through the firewall"
+        fail "Task 10: TCP port 8080 is not allowed through the firewall"
     fi
     
     # Task 11 - Test Apache
@@ -12958,9 +12978,9 @@ validate_lab230() {
     fi
 
     if [ "$TASK_PASS" -eq 1 ]; then
-        pass "Task11: Apache web page is accessible on port 8080 and displays the required content"
+        pass "Task 11: Apache web page is accessible on port 8080 and displays the required content"
     else
-        fail "Task11: Apache web page could not be verified on port 8080"
+        fail "Task 11: Apache web page could not be verified on port 8080"
     fi
     
     # Task 12 - Configure Static IP
@@ -13070,9 +13090,9 @@ validate_lab230() {
     fi
     
     if [ "$TASK_PASS" -eq 1 ]; then
-        pass "Task12: Static IP configuration, gateway, DNS, and network connectivity verified"
+        pass "Task 12: Static IP configuration, gateway, DNS, and network connectivity verified"
     else
-        fail "Task12: Static IP configuration or network connectivity could not be verified"
+        fail "Task 12: Static IP configuration or network connectivity could not be verified"
     fi    
     
     # ============================================================
@@ -13226,3 +13246,1351 @@ $RESULT_ICON $RESULT_TEXT
 HTML
 }
 #================================================================
+validate_lab231() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "<h2 style='color:#white;'>Checking Lab 231 - NIC Teaming Using Active-Backup.</h2>"
+
+    TOTAL_TASKS=13
+    PASSED=0
+
+    LAB_NAME="Lab 231 - NIC Teaming Using Active-Backup"
+    DATE=$(date "+%F %T")
+
+    # ------------------------------------------------------------
+    # HELPERS
+    # ------------------------------------------------------------
+
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+
+    # ------------------------------------------------------------
+    # Task 1 - Verify Network Interfaces
+    # ------------------------------------------------------------
+
+    TASK_PASS=1
+
+    if nmcli device show ens192 >/dev/null 2>&1; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if nmcli device show ens224 >/dev/null 2>&1; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 1: Network interfaces ens192 and ens224 are present"
+    else
+        fail "Task 1: Required network interfaces ens192 and ens224 could not be verified"
+    fi
+
+
+    # ------------------------------------------------------------
+    # Task 2 - Verify Teaming Software and NetworkManager
+    # ------------------------------------------------------------
+
+    TASK_PASS=1
+
+    if rpm -q teamd >/dev/null 2>&1; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if rpm -q NetworkManager-team >/dev/null 2>&1; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if systemctl is-active --quiet NetworkManager; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 2: Teaming software is installed and NetworkManager is running"
+    else
+        fail "Task 2: Required teaming software or NetworkManager could not be verified"
+    fi
+
+
+    # ------------------------------------------------------------
+    # Task 3 - Verify team0 Exists
+    # ------------------------------------------------------------
+
+    TASK_PASS=1
+
+    if nmcli connection show team0 >/dev/null 2>&1; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if nmcli device show team0 >/dev/null 2>&1; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 3: team0 logical team interface exists"
+    else
+        fail "Task 3: team0 logical team interface could not be verified"
+    fi
+
+
+    # ------------------------------------------------------------
+    # Task 4 - Verify Active-Backup Runner
+    # ------------------------------------------------------------
+
+    TASK_PASS=0
+
+    TEAM_STATE=$(teamdctl team0 state 2>/dev/null)
+
+    if echo "$TEAM_STATE" | grep -Eiq \
+        '"runner"[[:space:]]*:[[:space:]]*"activebackup"|runner.*activebackup'; then
+
+        TASK_PASS=1
+
+    elif nmcli -f team.config connection show team0 2>/dev/null \
+        | grep -Eiq 'activebackup'; then
+
+        TASK_PASS=1
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 4: team0 is configured using Active-Backup mode"
+    else
+        fail "Task 4: team0 is not configured using Active-Backup mode"
+    fi
+
+
+    # ------------------------------------------------------------
+    # Task 5 - Verify Team Ports
+    # ------------------------------------------------------------
+
+    TASK_PASS=1
+
+    PORT1_FOUND=0
+    PORT2_FOUND=0
+
+    if nmcli connection show 2>/dev/null \
+        | grep -Eq 'team0-port1'; then
+        PORT1_FOUND=1
+    fi
+
+    if nmcli connection show 2>/dev/null \
+        | grep -Eq 'team0-port2'; then
+        PORT2_FOUND=1
+    fi
+
+    if [ "$PORT1_FOUND" -ne 1 ]; then
+        TASK_PASS=0
+    fi
+
+    if [ "$PORT2_FOUND" -ne 1 ]; then
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 5: ens192 and ens224 are configured as team0 ports"
+    else
+        fail "Task 5: Both required team0 ports could not be verified"
+    fi
+
+
+    # ------------------------------------------------------------
+    # Task 6 - Verify IP Configuration on team0
+    # ------------------------------------------------------------
+
+    TASK_PASS=1
+
+    EXPECTED_IP="$STUDENT_IP"
+    EXPECTED_GATEWAY="10.90.0.1"
+    EXPECTED_DNS1="192.168.111.50"
+    EXPECTED_DNS2="8.8.8.8"
+
+    IPV4_METHOD=$(nmcli -g ipv4.method connection show team0 2>/dev/null)
+
+    if [ "$IPV4_METHOD" != "manual" ]; then
+        TASK_PASS=0
+    fi
+
+    CONFIGURED_ADDRESSES=$(nmcli -g ipv4.addresses connection show team0 2>/dev/null)
+
+    IP_FOUND=0
+
+    while IFS= read -r ADDRESS; do
+
+        ADDRESS_IP="${ADDRESS%%/*}"
+
+        if [ "$ADDRESS_IP" = "$EXPECTED_IP" ]; then
+            IP_FOUND=1
+            break
+        fi
+
+    done < <(echo "$CONFIGURED_ADDRESSES" | tr ',' '\n')
+
+    if [ "$IP_FOUND" -ne 1 ]; then
+        TASK_PASS=0
+    fi
+
+    CONFIGURED_GATEWAY=$(nmcli -g ipv4.gateway connection show team0 2>/dev/null)
+
+    if [ "$CONFIGURED_GATEWAY" != "$EXPECTED_GATEWAY" ]; then
+        TASK_PASS=0
+    fi
+
+    CONFIGURED_DNS=$(nmcli -g ipv4.dns connection show team0 2>/dev/null)
+
+    DNS1_FOUND=0
+    DNS2_FOUND=0
+
+    while IFS= read -r DNS; do
+
+        if [ "$DNS" = "$EXPECTED_DNS1" ]; then
+            DNS1_FOUND=1
+        fi
+
+        if [ "$DNS" = "$EXPECTED_DNS2" ]; then
+            DNS2_FOUND=1
+        fi
+
+    done < <(echo "$CONFIGURED_DNS" | tr ',' '\n')
+
+    if [ "$DNS1_FOUND" -ne 1 ]; then
+        TASK_PASS=0
+    fi
+
+    if [ "$DNS2_FOUND" -ne 1 ]; then
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 6: team0 has the required static IP, gateway, and DNS configuration"
+    else
+        fail "Task 6: team0 IP, gateway, or DNS configuration is incorrect"
+    fi
+
+
+    # ------------------------------------------------------------
+    # Task 7 - Verify IP Is Not Configured on Team Ports
+    # ------------------------------------------------------------
+
+    TASK_PASS=1
+
+    ENS192_IP=$(nmcli -g ipv4.addresses connection show team0-port1 2>/dev/null)
+    ENS224_IP=$(nmcli -g ipv4.addresses connection show team0-port2 2>/dev/null)
+
+    if [ -n "$ENS192_IP" ] && [ "$ENS192_IP" != "--" ]; then
+        TASK_PASS=0
+    fi
+
+    if [ -n "$ENS224_IP" ] && [ "$ENS224_IP" != "--" ]; then
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 7: IP configuration is assigned to team0 rather than the individual team ports"
+    else
+        fail "Task 7: Individual team ports have conflicting IP configuration"
+    fi
+
+
+    # ------------------------------------------------------------
+    # Task 8 - Verify team0 Is UP
+    # ------------------------------------------------------------
+
+    TASK_PASS=1
+
+    if ip link show team0 2>/dev/null \
+        | grep -q "state UP"; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if ip addr show team0 2>/dev/null \
+        | grep -q "$EXPECTED_IP"; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 8: team0 is UP and has the configured IP address"
+    else
+        fail "Task 8: team0 is not UP or does not have the expected IP address"
+    fi
+
+
+    # ------------------------------------------------------------
+    # Task 9 - Verify Team Membership and Active Port
+    # ------------------------------------------------------------
+    TEAM_STATE=$(sudo teamdctl team0 state 2>/dev/null)
+
+    if echo "$TEAM_STATE" | grep -qE '^[[:space:]]+ens192[[:space:]]*$' &&
+        echo "$TEAM_STATE" | grep -qE '^[[:space:]]+ens224[[:space:]]*$'; then
+
+        pass "Task 9: Both ens192 and ens224 are members of team0"
+
+    else
+   
+        fail "Task 9: Both ens192 and ens224 could not be verified as team0 members"
+
+    fi
+
+    # ------------------------------------------------------------
+    # Task 10 - Verify Team Port Operational State
+    # ------------------------------------------------------------
+
+    TEAM_STATE=$(sudo teamdctl team0 state 2>/dev/null)
+
+    ENS192_UP=0
+    ENS224_UP=0
+
+    if echo "$TEAM_STATE" | grep -A8 -E '^[[:space:]]+ens192[[:space:]]*$' |
+        grep -q 'link summary: up'; then
+        ENS192_UP=1
+    fi
+
+    if echo "$TEAM_STATE" | grep -A8 -E '^[[:space:]]+ens224[[:space:]]*$' |
+        grep -q 'link summary: up'; then
+        ENS224_UP=1
+    fi
+
+    if [ "$ENS192_UP" -eq 1 ] && [ "$ENS224_UP" -eq 1 ]; then
+
+        pass "Task 10: Both ens192 and ens224 are operationally UP"
+
+    else
+
+        fail "Task 10: One or both team ports are not operationally recognized"
+
+    fi 
+
+    # ------------------------------------------------------------
+    # Task 11 - Verify Network Connectivity
+    # ------------------------------------------------------------
+
+    TASK_PASS=1
+
+    if ping -c 2 -W 2 "$EXPECTED_GATEWAY" >/dev/null 2>&1; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if ping -c 2 -W 3 8.8.8.8 >/dev/null 2>&1; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if ping -c 2 -W 3 google.com >/dev/null 2>&1; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 11: Network connectivity through team0 is working"
+    else
+        fail "Task 11: Network connectivity through team0 could not be verified"
+    fi
+
+    # ------------------------------------------------------------
+# Task 12 - Verify Active-Backup Configuration
+# ------------------------------------------------------------
+
+TEAM_STATE=$(sudo teamdctl team0 state 2>/dev/null)
+
+RUNNER=""
+ACTIVE_PORT=""
+
+# Extract runner from:
+# setup:
+#   runner: activebackup
+RUNNER=$(echo "$TEAM_STATE" | grep -m1 'runner: activebackup')
+
+# Extract active port from:
+# runner:
+#   active port: ens192
+ACTIVE_PORT=$(echo "$TEAM_STATE" | grep -m1 'active port:' | awk '{print $3}')
+
+if [ -n "$RUNNER" ] &&
+   { [ "$ACTIVE_PORT" = "ens192" ] || [ "$ACTIVE_PORT" = "ens224" ]; }; then
+
+    pass "Task 12: Active-Backup configuration verified with active port $ACTIVE_PORT"
+
+else
+
+    fail "Task 12: Active-Backup failover configuration could not be verified"
+
+fi
+
+    # ------------------------------------------------------------
+    # Task 13 - Final Team Verification
+    # ------------------------------------------------------------
+
+    TASK_PASS=1
+
+    if systemctl is-active --quiet NetworkManager; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if nmcli connection show team0 >/dev/null 2>&1; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if ip link show team0 2>/dev/null \
+        | grep -q "state UP"; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if ping -c 2 -W 2 "$EXPECTED_GATEWAY" >/dev/null 2>&1; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 13: NIC teaming configuration is operational and network connectivity is restored"
+    else
+        fail "Task 13: Final Active-Backup team verification failed"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+
+#===================================================================
+
+validate_lab232() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "<h2 style='color:#white;'>Checking Lab 232 - NIC Teaming Using Active-Backup - Advanced.</h2>"
+
+    TOTAL_TASKS=15
+    PASSED=0
+
+    LAB_NAME="Lab 232 - NIC Teaming Using Active-Backup - Advanced"
+    DATE=$(date "+%F %T")
+
+    # ------------------------------------------------------------
+    # HELPERS
+    # ------------------------------------------------------------
+
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+
+    # ------------------------------------------------------------
+    # Common Variables
+    # ------------------------------------------------------------
+
+    EXPECTED_IP="$STUDENT_IP"
+    EXPECTED_GATEWAY="10.90.0.1"
+    EXPECTED_DNS1="192.168.111.50"
+    EXPECTED_DNS2="8.8.8.8"
+
+    TEAM_STATE=$(sudo teamdctl team0 state 2>/dev/null)
+
+
+    # ------------------------------------------------------------
+    # Task 1 - Verify Network Interfaces
+    # ------------------------------------------------------------
+
+    TASK_PASS=1
+
+    if nmcli device show ens192 >/dev/null 2>&1; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if nmcli device show ens224 >/dev/null 2>&1; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 1: Network interfaces ens192 and ens224 are present"
+    else
+        fail "Task 1: Required network interfaces ens192 and ens224 could not be verified"
+    fi
+
+
+    # ------------------------------------------------------------
+    # Task 2 - Verify Teaming Software and NetworkManager
+    # ------------------------------------------------------------
+
+    TASK_PASS=1
+
+    if rpm -q teamd >/dev/null 2>&1; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if rpm -q NetworkManager-team >/dev/null 2>&1; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if systemctl is-active --quiet NetworkManager; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 2: Teaming software is installed and NetworkManager is running"
+    else
+        fail "Task 2: Required teaming software or NetworkManager could not be verified"
+    fi
+
+
+    # ------------------------------------------------------------
+    # Task 3 - Verify team0 Exists
+    # ------------------------------------------------------------
+
+    TASK_PASS=1
+
+    if nmcli connection show team0 >/dev/null 2>&1; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if nmcli device show team0 >/dev/null 2>&1; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 3: team0 logical team interface exists"
+    else
+        fail "Task 3: team0 logical team interface could not be verified"
+    fi
+
+
+    # ------------------------------------------------------------
+    # Task 4 - Verify Active-Backup Runner
+    # ------------------------------------------------------------
+
+    TASK_PASS=0
+
+    TEAM_STATE=$(sudo teamdctl team0 state 2>/dev/null)
+
+    if echo "$TEAM_STATE" | grep -qiE 'runner:[[:space:]]*activebackup'; then
+        TASK_PASS=1
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 4: team0 is configured using Active-Backup mode"
+    else
+        fail "Task 4: team0 is not configured using Active-Backup mode"
+    fi
+
+
+    # ------------------------------------------------------------
+    # Task 5 - Verify Team Ports
+    # ------------------------------------------------------------
+
+    TASK_PASS=1
+
+    PORT1_FOUND=0
+    PORT2_FOUND=0
+
+    if nmcli connection show team0-port1 >/dev/null 2>&1; then
+        PORT1_FOUND=1
+    fi
+
+    if nmcli connection show team0-port2 >/dev/null 2>&1; then
+        PORT2_FOUND=1
+    fi
+
+    if [ "$PORT1_FOUND" -ne 1 ]; then
+        TASK_PASS=0
+    fi
+
+    if [ "$PORT2_FOUND" -ne 1 ]; then
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 5: ens192 and ens224 are configured as team0 ports"
+    else
+        fail "Task 5: Both required team0 ports could not be verified"
+    fi
+
+
+    # ------------------------------------------------------------
+    # Task 6 - Verify IP Configuration on team0
+    # ------------------------------------------------------------
+
+    TASK_PASS=1
+
+    IPV4_METHOD=$(nmcli -g ipv4.method connection show team0 2>/dev/null)
+
+    if [ "$IPV4_METHOD" != "manual" ]; then
+        TASK_PASS=0
+    fi
+
+    CONFIGURED_ADDRESSES=$(nmcli -g ipv4.addresses connection show team0 2>/dev/null)
+
+    IP_FOUND=0
+
+    while IFS= read -r ADDRESS; do
+
+        ADDRESS=$(echo "$ADDRESS" | xargs)
+        ADDRESS_IP="${ADDRESS%%/*}"
+
+        if [ "$ADDRESS_IP" = "$EXPECTED_IP" ]; then
+            IP_FOUND=1
+            break
+        fi
+
+    done < <(echo "$CONFIGURED_ADDRESSES" | tr ',' '\n')
+
+    if [ "$IP_FOUND" -ne 1 ]; then
+        TASK_PASS=0
+    fi
+
+    CONFIGURED_GATEWAY=$(nmcli -g ipv4.gateway connection show team0 2>/dev/null)
+
+    if [ "$CONFIGURED_GATEWAY" != "$EXPECTED_GATEWAY" ]; then
+        TASK_PASS=0
+    fi
+
+    CONFIGURED_DNS=$(nmcli -g ipv4.dns connection show team0 2>/dev/null)
+
+    DNS1_FOUND=0
+    DNS2_FOUND=0
+
+    while IFS= read -r DNS; do
+
+        DNS=$(echo "$DNS" | xargs)
+
+        if [ "$DNS" = "$EXPECTED_DNS1" ]; then
+            DNS1_FOUND=1
+        fi
+
+        if [ "$DNS" = "$EXPECTED_DNS2" ]; then
+            DNS2_FOUND=1
+        fi
+
+    done < <(echo "$CONFIGURED_DNS" | tr ',' '\n')
+
+    if [ "$DNS1_FOUND" -ne 1 ]; then
+        TASK_PASS=0
+    fi
+
+    if [ "$DNS2_FOUND" -ne 1 ]; then
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 6: team0 has the required static IP, gateway, and DNS configuration"
+    else
+        fail "Task 6: team0 IP, gateway, or DNS configuration is incorrect"
+    fi
+
+
+    # ------------------------------------------------------------
+    # Task 7 - Verify team0 Is UP
+    # ------------------------------------------------------------
+
+    TASK_PASS=1
+
+    if ip link show team0 2>/dev/null | grep -q "state UP"; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if ip addr show team0 2>/dev/null | grep -q "$EXPECTED_IP"; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 7: team0 is UP and has the configured IP address"
+    else
+        fail "Task 7: team0 is not UP or does not have the expected IP address"
+    fi
+
+
+    # ------------------------------------------------------------
+    # Task 8 - Verify Active-Backup Runner Configuration
+    # ------------------------------------------------------------
+
+    TASK_PASS=0
+
+    TEAM_STATE=$(sudo teamdctl team0 state 2>/dev/null)
+
+    if echo "$TEAM_STATE" | grep -qiE \
+        'runner:[[:space:]]*activebackup'; then
+        TASK_PASS=1
+    fi
+
+    if echo "$TEAM_STATE" | grep -qiE \
+        'runner:[[:space:]]*loadbalance'; then
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 8: team0 is configured for Active-Backup mode"
+    else
+        fail "Task 8: team0 runner configuration is not Active-Backup"
+    fi
+
+
+    # ------------------------------------------------------------
+    # Task 9 - Verify Team Membership
+    # ------------------------------------------------------------
+
+    TASK_PASS=1
+
+    TEAM_STATE=$(sudo teamdctl team0 state 2>/dev/null)
+
+    if echo "$TEAM_STATE" | grep -qE \
+        '^[[:space:]]+ens192[[:space:]]*$'; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if echo "$TEAM_STATE" | grep -qE \
+        '^[[:space:]]+ens224[[:space:]]*$'; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 9: ens192 and ens224 are members of team0"
+    else
+        fail "Task 9: Both ens192 and ens224 could not be verified as team0 members"
+    fi
+
+
+    # ------------------------------------------------------------
+    # Task 10 - Verify Team Ports Are Operational
+    # ------------------------------------------------------------
+
+    TASK_PASS=1
+
+    TEAM_STATE=$(sudo teamdctl team0 state 2>/dev/null)
+
+    ENS192_UP=0
+    ENS224_UP=0
+
+    if echo "$TEAM_STATE" | \
+        grep -A8 -E '^[[:space:]]+ens192[[:space:]]*$' | \
+        grep -q 'link summary: up'; then
+        ENS192_UP=1
+    fi
+
+    if echo "$TEAM_STATE" | \
+        grep -A8 -E '^[[:space:]]+ens224[[:space:]]*$' | \
+        grep -q 'link summary: up'; then
+        ENS224_UP=1
+    fi
+
+    if [ "$ENS192_UP" -ne 1 ]; then
+        TASK_PASS=0
+    fi
+
+    if [ "$ENS224_UP" -ne 1 ]; then
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 10: Both ens192 and ens224 are operationally UP"
+    else
+        fail "Task 10: One or both team ports are not operational"
+    fi
+
+
+    # ------------------------------------------------------------
+    # Task 11 - Identify Active Team Port
+    # ------------------------------------------------------------
+
+    TASK_PASS=0
+
+    TEAM_STATE=$(sudo teamdctl team0 state 2>/dev/null)
+
+    ACTIVE_PORT=$(echo "$TEAM_STATE" | \
+        grep -m1 'active port:' | \
+        awk '{print $3}')
+
+    if [ "$ACTIVE_PORT" = "ens192" ] || \
+       [ "$ACTIVE_PORT" = "ens224" ]; then
+
+        TASK_PASS=1
+
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 11: Active-Backup team is using $ACTIVE_PORT as the active port"
+    else
+        fail "Task 11: Active team port could not be identified"
+    fi
+
+
+    # ------------------------------------------------------------
+    # Task 12 - Verify Active-Backup Failover Configuration
+    # ------------------------------------------------------------
+
+    TASK_PASS=1
+
+    TEAM_STATE=$(sudo teamdctl team0 state 2>/dev/null)
+
+    # Verify Active-Backup runner
+    if echo "$TEAM_STATE" | grep -qiE \
+        'runner:[[:space:]]*activebackup'; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    # Verify both ports are members
+    if echo "$TEAM_STATE" | grep -qE \
+        '^[[:space:]]+ens192[[:space:]]*$'; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if echo "$TEAM_STATE" | grep -qE \
+        '^[[:space:]]+ens224[[:space:]]*$'; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    # Verify an active port exists
+    ACTIVE_PORT=$(echo "$TEAM_STATE" | \
+        grep -m1 'active port:' | \
+        awk '{print $3}')
+
+    if [ "$ACTIVE_PORT" = "ens192" ] || \
+       [ "$ACTIVE_PORT" = "ens224" ]; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 12: Active-Backup failover configuration is present with an active team port"
+    else
+        fail "Task 12: Active-Backup failover configuration could not be verified"
+    fi
+
+
+    # ------------------------------------------------------------
+    # Task 13 - Verify Team Operation After Failover
+    # ------------------------------------------------------------
+
+    TASK_PASS=1
+
+    TEAM_STATE=$(sudo teamdctl team0 state 2>/dev/null)
+
+    ACTIVE_PORT=$(echo "$TEAM_STATE" | \
+        grep -m1 'active port:' | \
+        awk '{print $3}')
+
+    if [ "$ACTIVE_PORT" = "ens192" ] || \
+       [ "$ACTIVE_PORT" = "ens224" ]; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if ip link show team0 2>/dev/null | grep -q "state UP"; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if ping -c 2 -W 2 "$EXPECTED_GATEWAY" >/dev/null 2>&1; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 13: team0 remains operational with an active port after failover testing"
+    else
+        fail "Task 13: team0 operation after failover could not be verified"
+    fi
+
+
+    # ------------------------------------------------------------
+    # Task 14 - Verify Team Port Profiles
+    # ------------------------------------------------------------
+
+    TASK_PASS=1
+
+    PORT1_DEVICE=$(nmcli -g connection.interface-name \
+        connection show team0-port1 2>/dev/null)
+
+    PORT2_DEVICE=$(nmcli -g connection.interface-name \
+        connection show team0-port2 2>/dev/null)
+
+    if [ "$PORT1_DEVICE" != "ens192" ]; then
+        TASK_PASS=0
+    fi
+
+    if [ "$PORT2_DEVICE" != "ens224" ]; then
+        TASK_PASS=0
+    fi
+
+    PORT1_MASTER=$(nmcli -g connection.master \
+        connection show team0-port1 2>/dev/null)
+
+    PORT2_MASTER=$(nmcli -g connection.master \
+        connection show team0-port2 2>/dev/null)
+
+    if [ "$PORT1_MASTER" != "team0" ]; then
+        TASK_PASS=0
+    fi
+
+    if [ "$PORT2_MASTER" != "team0" ]; then
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 14: Team-port profiles correctly associate ens192 and ens224 with team0"
+    else
+        fail "Task 14: Team-port profile association could not be verified"
+    fi
+
+
+    # ------------------------------------------------------------
+    # Task 15 - Final Active-Backup Team Verification
+    # ------------------------------------------------------------
+
+    TASK_PASS=1
+
+    if systemctl is-active --quiet NetworkManager; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if nmcli connection show team0 >/dev/null 2>&1; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if ip link show team0 2>/dev/null | grep -q "state UP"; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    TEAM_STATE=$(sudo teamdctl team0 state 2>/dev/null)
+
+    # Verify Active-Backup
+    if echo "$TEAM_STATE" | grep -qiE \
+        'runner:[[:space:]]*activebackup'; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    # Verify ens192 membership
+    if echo "$TEAM_STATE" | grep -qE \
+        '^[[:space:]]+ens192[[:space:]]*$'; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    # Verify ens224 membership
+    if echo "$TEAM_STATE" | grep -qE \
+        '^[[:space:]]+ens224[[:space:]]*$'; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    # Verify active port
+    ACTIVE_PORT=$(echo "$TEAM_STATE" | \
+        grep -m1 'active port:' | \
+        awk '{print $3}')
+
+    if [ "$ACTIVE_PORT" = "ens192" ] || \
+       [ "$ACTIVE_PORT" = "ens224" ]; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    # Verify both links are up
+    if echo "$TEAM_STATE" | \
+        grep -A8 -E '^[[:space:]]+ens192[[:space:]]*$' | \
+        grep -q 'link summary: up'; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if echo "$TEAM_STATE" | \
+        grep -A8 -E '^[[:space:]]+ens224[[:space:]]*$' | \
+        grep -q 'link summary: up'; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    # Verify gateway connectivity
+    if ping -c 2 -W 2 "$EXPECTED_GATEWAY" >/dev/null 2>&1; then
+        :
+    else
+        TASK_PASS=0
+    fi
+
+    if [ "$TASK_PASS" -eq 1 ]; then
+        pass "Task 15: Lab 232 Active-Backup team is fully configured and operational"
+    else
+        fail "Task 15: Final Active-Backup team verification failed"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#==================================================================

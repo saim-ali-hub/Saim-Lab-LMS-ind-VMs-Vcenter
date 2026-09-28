@@ -1,6 +1,6 @@
 {
   "lab_number": 230,
-  "title": "Technical Screening Round 3 (TSR3)",
+  "title": "Lab230 - Technical Screening Round 3 (TSR3)",
   "objectives": {
     "description": "By completing this technical screening, you will demonstrate your ability to perform basic Linux system administration tasks, including user and group management, sudo configuration, SSH key-based authentication, package installation, service management, Apache web server configuration, firewall configuration, and static network configuration. Complete the following tasks on your Linux machine. Follow the instructions carefully and verify each task after completing it."
   },

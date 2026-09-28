@@ -1,6 +1,6 @@
 {
-  "lab_number": 228,
-  "title": "Linux Disk Partitioning - Using gdisk",
+  "lab_number": "lab228",
+  "title": "Lab 228 - Linux Disk Partitioning - Using gdisk",
  "lab_objective": {
    "description": "By completing this lab, you will learn how to:",
   "objectives": [
@@ -29,8 +29,8 @@
         "Do not modify /dev/sda or any disk containing the operating system.",
         "Work only with the newly attached disk /dev/sdb."
       ]
-    },
-    {
+     },
+     {
       "task_number": 2,
       "title": "Verify that /dev/sdb is the disk intended for this lab",
       "steps": [
@@ -44,9 +44,9 @@
       "title": "Create GPT Partition Table",
       "steps": [
         "Start gdisk on /dev/sdb.",
-        "Display the current partition table using gdisk.",
-        "Create a new GPT partition table on /dev/sdb.",
-        "Display the partition table again and verify that it is using GPT.",
+        "For commands use help by using ?",
+        "Use appropriate option to display the current partition table using gdisk.",
+        "Create a new GPT partition table on /dev/sdb. Follow the instructions given in task 4 and task 5",
         "Warning: Creating a new partition table can destroy existing partition information. Make sure you are working on /dev/sdb."
       ]
     },
@@ -54,7 +54,7 @@
       "task_number": 4,
       "title": "Create Partitions",
       "steps": [
-        "Create the following partitions on /dev/sdb:",
+        "Create the following partitions on /dev/sdb. For convenience GPT Partition Type is mentioned in Task 5 separately.",
         "Create /dev/sdb1 with a size of 512 MB for swap.",
         "Create /dev/sdb2 with a size of 512 MB Application data.",
         "Create /dev/sdb3 with a size of 400 MB for Application logs.",
@@ -66,7 +66,7 @@
       "title": "Set Partition Type",
       "steps": [
         "Set appropriate GPT partition type information for the partitions.",
-        "important_note: gdisk does not create a filesystem. The t command changes the GPT partition type.",
+        "important_note: gdisk does not create a filesystem. The Hex Code changes the GPT partition type.",
         "Set /dev/sdb1 as a Linux swap partition. Use GPT partition type 8200.",
         "Set /dev/sdb2 as a Linux filesystem partition. Use GPT partition type 8300.",
         "Set /dev/sdb3 as a Linux filesystem partition. Use GPT partition type 8300.",
@@ -81,7 +81,8 @@
         "Verify that all four partitions have the correct sizes.",
         "Verify that all four partitions have the correct GPT partition types.",
         "Write the partition table to the disk.",
-        "Exit gdisk."
+        "Exit gdisk.",
+        "Execute 'partprobe' so the kernel detects the updated partition table without rebooting the system."
       ]
     },
     {

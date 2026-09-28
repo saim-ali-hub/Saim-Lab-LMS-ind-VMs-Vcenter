@@ -91,6 +91,8 @@ ssh \
         lab228) validate_lab228_gdisk ;;
         lab229) validate_lab229_nfs ;;
         lab230) validate_lab230 ;;
+        lab231) validate_lab231 ;;
+        lab232) validate_lab232 ;;
 
         *) echo 'Invalid lab'; exit 1 ;;
      esac"
