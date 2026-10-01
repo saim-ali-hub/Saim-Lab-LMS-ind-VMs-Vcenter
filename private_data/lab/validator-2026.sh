@@ -11778,17 +11778,25 @@ validate_lab228_gdisk() {
      
     # TASK 8 - CREATE FILESYSTEMS
     TASK8_OK=1
-
-    FS1=$(blkid -o value -s TYPE /dev/sdb1 2>/dev/null)
-    FS2=$(blkid -o value -s TYPE /dev/sdb2 2>/dev/null)
-    FS3=$(blkid -o value -s TYPE /dev/sdb3 2>/dev/null)
-    FS4=$(blkid -o value -s TYPE /dev/sdb4 2>/dev/null)
-
+    
+    # Get filesystem types using lsblk
+    FS1=$(lsblk -no FSTYPE /dev/sdb1 2>/dev/null | tr -d '[:space:]')
+    FS2=$(lsblk -no FSTYPE /dev/sdb2 2>/dev/null | tr -d '[:space:]')
+    FS3=$(lsblk -no FSTYPE /dev/sdb3 2>/dev/null | tr -d '[:space:]')
+    FS4=$(lsblk -no FSTYPE /dev/sdb4 2>/dev/null | tr -d '[:space:]')
+    
+    # Fallback to blkid if lsblk did not detect the filesystem
+    [ -n "$FS1" ] || FS1=$(blkid -o value -s TYPE /dev/sdb1 2>/dev/null)
+    [ -n "$FS2" ] || FS2=$(blkid -o value -s TYPE /dev/sdb2 2>/dev/null)
+    [ -n "$FS3" ] || FS3=$(blkid -o value -s TYPE /dev/sdb3 2>/dev/null)
+    [ -n "$FS4" ] || FS4=$(blkid -o value -s TYPE /dev/sdb4 2>/dev/null)
+    
+    # Validate required filesystem types
     [ "$FS1" = "swap" ] || TASK8_OK=0
-    [ "$FS2" = "xfs" ] || TASK8_OK=0
+    [ "$FS2" = "xfs" ]  || TASK8_OK=0
     [ "$FS3" = "ext4" ] || TASK8_OK=0
-    [ "$FS4" = "xfs" ] || TASK8_OK=0
-
+    [ "$FS4" = "xfs" ]  || TASK8_OK=0
+    
     if [ "$TASK8_OK" -eq 1 ]; then
         pass "Task 8: Swap, XFS, ext4, and XFS filesystems created correctly"
     else
@@ -12028,43 +12036,29 @@ $RESULT_ICON $RESULT_TEXT
 HTML
 }
 #===============================================================
-validate_lab229_nfs() {
+
+validate_lab229_lvm() {
 
     set +e
     set +u
     set +o pipefail
 
-    echo "<h2 style='color:#white;'>Checking Lab 229 - Linux NFS Server & Client Configuration.</h2>"
+    echo "<h2 style='color:#white;'>Checking Lab 229 - Linux Logical Volume Management - LVM.</h2>"
 
-    TOTAL_TASKS=26
+    TOTAL_TASKS=11
     PASSED=0
 
-    LAB_NAME="Lab 229 - Linux NFS Server & Client Configuration"
+    LAB_NAME="Lab 229 - Linux Logical Volume Management - LVM"
     DATE=$(date "+%F %T")
 
-    NFS_SERVER="nfs-server"
-    NFS_CLIENT="nfs-client"
+    DISK="/dev/sdb"
+    VG_NAME="vg_db"
+    LV_NAME="lv_db"
+    LV_PATH="/dev/vg_db/lv_db"
+    MOUNT_POINT="/data"
+    FSTAB="/etc/fstab"
 
-    EXPORT_DIR="/nfs_share"
-    MOUNT_POINT="/mnt/nfs_share"
-
-    SERVER_TEST_FILE="/nfs_share/server_test.txt"
-    CLIENT_TEST_FILE="/nfs_share/client_test.txt"
-
-    SERVER_TEST_CONTENT="This is my first NFS share, and I’m excited to learn how to configure and manage an NFS server."
-    CLIENT_TEST_CONTENT="This file was created from the NFS client to verify write access to the NFS shared filesystem."
-    CLIENT_MODIFIED_CONTENT="This file was modified from the NFS client to verify shared filesystem access."
-
-    # ------------------------------------------------------------
-    # DISCOVER CLIENT IP
-    # ------------------------------------------------------------
-
-    NFS_CLIENT_IP=$(getent hosts "$NFS_CLIENT" 2>/dev/null | awk 'NR==1 {print $1}')
-
-    # ------------------------------------------------------------
     # HELPERS
-    # ------------------------------------------------------------
-
     pass() {
         echo "<div class='validation-pass'>✓ $1 – Pass</div>"
         ((PASSED++))
@@ -12074,497 +12068,314 @@ validate_lab229_nfs() {
         echo "<div class='validation-fail'>✗ $1 – Fail</div>"
     }
 
-    # Execute command on NFS client
-    client_cmd() {
-        ssh -o BatchMode=yes \
-            -o ConnectTimeout=5 \
-            -o StrictHostKeyChecking=no \
-            "$NFS_CLIENT" "$@" 2>/dev/null
-    }
+    # TASK 1 - IDENTIFY THE NEW DISK
+    TASK1_OK=1
 
+    if [ -b "$DISK" ]; then
 
-    # ============================================================
-    # TASK 1 - VERIFY NFS SERVER HOSTNAME
-    # ============================================================
+        DISK_SIZE=$(lsblk -bndo SIZE "$DISK" 2>/dev/null)
 
-    HOSTNAME_VALUE=$(hostname 2>/dev/null)
+        if [ -z "$DISK_SIZE" ] || [ "$DISK_SIZE" -le 0 ] 2>/dev/null; then
+            TASK1_OK=0
+        fi
 
-    if [ "$HOSTNAME_VALUE" = "$NFS_SERVER" ]; then
-        pass "Task 1: NFS server hostname is nfs-server"
-    else
-        fail "Task 1: NFS server hostname is not nfs-server"
-    fi
+        # Verify disk is approximately 2 GiB or larger than 1.8 GiB.
+        MIN_DISK_SIZE=$((1800 * 1000 * 1000))
 
-
-    # ============================================================
-    # TASK 2 - INSTALL NFS SERVER PACKAGES
-    # ============================================================
-
-    if rpm -q nfs-utils >/dev/null 2>&1; then
-        pass "Task 2: nfs-utils package is installed on the NFS server"
-    else
-        fail "Task 2: nfs-utils package is not installed on the NFS server"
-    fi
-
-
-    # ============================================================
-    # TASK 3 - ENABLE AND START NFS SERVER
-    # ============================================================
-
-    NFS_SERVICE_OK=1
-
-    systemctl is-active --quiet nfs-server || NFS_SERVICE_OK=0
-    systemctl is-enabled --quiet nfs-server || NFS_SERVICE_OK=0
-
-    if [ "$NFS_SERVICE_OK" -eq 1 ]; then
-        pass "Task 3: nfs-server service is active and enabled"
-    else
-        fail "Task 3: nfs-server service is not active and enabled"
-    fi
-
-
-    # ============================================================
-    # TASK 4 - ENABLE AND START RPCBIND
-    # ============================================================
-
-    RPCBIND_OK=1
-
-    systemctl is-active --quiet rpcbind || RPCBIND_OK=0
-    systemctl is-enabled --quiet rpcbind || RPCBIND_OK=0
-
-    if [ "$RPCBIND_OK" -eq 1 ]; then
-        pass "Task 4: rpcbind service is active and enabled on the NFS server"
-    else
-        fail "Task 4: rpcbind service is not active and enabled on the NFS server"
-    fi
-
-
-    # ============================================================
-    # TASK 5 - CREATE NFS EXPORT DIRECTORY
-    # ============================================================
-
-    if [ -d "$EXPORT_DIR" ]; then
-        pass "Task 5: /nfs_share directory exists"
-    else
-        fail "Task 5: /nfs_share directory is missing"
-    fi
-
-
-    # ============================================================
-    # TASK 6 - CREATE SERVER TEST FILE
-    # ============================================================
-
-    if [ -f "$SERVER_TEST_FILE" ]; then
-
-        FILE_CONTENT=$(cat "$SERVER_TEST_FILE" 2>/dev/null)
-
-        if [ "$FILE_CONTENT" = "$SERVER_TEST_CONTENT" ]; then
-            pass "Task 6: server_test.txt exists with the expected content"
-        else
-            fail "Task 6: server_test.txt content does not match the required content"
+        if [ -n "$DISK_SIZE" ] && [ "$DISK_SIZE" -lt "$MIN_DISK_SIZE" ] 2>/dev/null; then
+            TASK1_OK=0
         fi
 
     else
-        fail "Task 6: /nfs_share/server_test.txt is missing"
+        TASK1_OK=0
     fi
 
+    if [ "$TASK1_OK" -eq 1 ]; then
+        pass "Task 1: /dev/sdb is available and its disk size was verified"
+    else
+        fail "Task 1: /dev/sdb is missing or its disk size could not be verified"
+    fi
 
-    # ============================================================
-    # TASK 7 - CONFIGURE NFS EXPORT
-    # ============================================================
+    # TASK 2 - GPT PARTITION TABLE AND FOUR LVM PARTITIONS
+    TASK2_OK=1
 
+    # Verify GPT
+    PARTITION_TABLE=$(lsblk -dnro PTTYPE "$DISK" 2>/dev/null | tr -d '[:space:]')
+
+    [ "$PARTITION_TABLE" = "gpt" ] || TASK2_OK=0
+
+    # Verify all four partitions exist
+    for PART in \
+        "/dev/sdb1" \
+        "/dev/sdb2" \
+        "/dev/sdb3" \
+        "/dev/sdb4"
+    do
+        [ -b "$PART" ] || TASK2_OK=0
+    done
+
+    if [ "$TASK2_OK" -eq 1 ]; then
+
+        # Partition sizes
+        SDB1_SIZE=$(lsblk -bndo SIZE /dev/sdb1 2>/dev/null)
+        SDB2_SIZE=$(lsblk -bndo SIZE /dev/sdb2 2>/dev/null)
+        SDB3_SIZE=$(lsblk -bndo SIZE /dev/sdb3 2>/dev/null)
+        SDB4_SIZE=$(lsblk -bndo SIZE /dev/sdb4 2>/dev/null)
+
+        EXPECTED_512=$((512 * 1024 * 1024))
+        MIN_SDB4=$((400 * 1024 * 1024))
+
+        # Allow 64 MiB tolerance for partition alignment.
+        TOLERANCE=$((64 * 1024 * 1024))
+
+        SDB1_DIFF=$((SDB1_SIZE - EXPECTED_512))
+        SDB2_DIFF=$((SDB2_SIZE - EXPECTED_512))
+        SDB3_DIFF=$((SDB3_SIZE - EXPECTED_512))
+
+        [ "$SDB1_DIFF" -lt 0 ] && SDB1_DIFF=$((SDB1_DIFF * -1))
+        [ "$SDB2_DIFF" -lt 0 ] && SDB2_DIFF=$((SDB2_DIFF * -1))
+        [ "$SDB3_DIFF" -lt 0 ] && SDB3_DIFF=$((SDB3_DIFF * -1))
+
+        if [ "$SDB1_DIFF" -gt "$TOLERANCE" ] ||
+           [ "$SDB2_DIFF" -gt "$TOLERANCE" ] ||
+           [ "$SDB3_DIFF" -gt "$TOLERANCE" ] ||
+           [ -z "$SDB4_SIZE" ] ||
+           [ "$SDB4_SIZE" -lt "$MIN_SDB4" ]; then
+
+            TASK2_OK=0
+        fi
+    fi
+
+    # Verify GPT partition type 8E00 - Linux LVM
+    for NUM in 1 2 3 4
+    do
+        TYPE_INFO=$(sudo /usr/sbin/sgdisk -i "$NUM" "$DISK" 2>/dev/null)
+
+        echo "$TYPE_INFO" | grep -Eqi "8E00|Linux LVM" || TASK2_OK=0
+    done
+
+    if [ "$TASK2_OK" -eq 1 ]; then
+        pass "Task 2: GPT partition table and four Linux LVM partitions are correctly configured"
+    else
+        fail "Task 2: GPT partition table, partition sizes, or LVM partition types are incorrect"
+    fi
+
+    # TASK 3 - PHYSICAL VOLUMES
+    TASK3_OK=1
+    
+    PV_LIST=$(sudo /usr/sbin/pvs --noheadings --separator='|' \
+        -o pv_name 2>/dev/null |
+        awk -F'|' '
+        {
+            gsub(/^[ \t]+|[ \t]+$/, "", $1)
+            if ($1 ~ /^\/dev\/sdb[1-4]$/)
+                print $1
+        }')
+    
+    for PV in /dev/sdb1 /dev/sdb2 /dev/sdb3 /dev/sdb4
+    do
+        echo "$PV_LIST" | grep -qx "$PV" || TASK3_OK=0
+    done
+    
+    if [ "$TASK3_OK" -eq 1 ]; then
+        pass "Task 3: All four partitions are configured as LVM Physical Volumes"
+    else
+        fail "Task 3: Required LVM Physical Volumes are not configured correctly"
+    fi
+    
+    # TASK 4 - VOLUME GROUP
+    TASK4_OK=1
+    
+    # Verify vg_db exists
+    VG_EXISTS=$(sudo /usr/sbin/vgs --noheadings \
+        -o vg_name "$VG_NAME" 2>/dev/null | xargs)
+    
+    [ "$VG_EXISTS" = "$VG_NAME" ] || TASK4_OK=0
+    
+    # Verify the required PVs are members of vg_db
+    for PV in /dev/sdb1 /dev/sdb2 /dev/sdb3 /dev/sdb4
+    do
+        PV_VG=$(sudo /usr/sbin/pvs --noheadings \
+            -o vg_name "$PV" 2>/dev/null | xargs)
+
+        [ "$PV_VG" = "$VG_NAME" ] || TASK4_OK=0
+    done
+    
+    if [ "$TASK4_OK" -eq 1 ]; then
+        pass "Task 4: Volume Group vg_db contains the required LVM Physical Volumes"
+    else
+        fail "Task 4: Volume Group vg_db is missing or has incorrect Physical Volumes"
+    fi
+
+    # TASK 5 - LOGICAL VOLUME
+    TASK5_OK=1
+    
+    # Verify lv_db exists
+    if [ ! -b "$LV_PATH" ]; then
+        TASK5_OK=0
+    fi
+    
+    # Verify lv_db belongs to vg_db
+    LV_VG=$(sudo /usr/sbin/lvs --noheadings -o vg_name "$LV_PATH" 2>/dev/null | xargs)
+    
+    [ "$LV_VG" = "$VG_NAME" ] || TASK5_OK=0
+    
+    # Verify LV size is greater than 1 GB
+    LV_SIZE=$(sudo /usr/sbin/lvs --noheadings --units g --nosuffix \
+        -o lv_size "$LV_PATH" 2>/dev/null | xargs)
+    
+    if [ -z "$LV_SIZE" ]; then
+        TASK5_OK=0
+    elif ! awk -v size="$LV_SIZE" 'BEGIN { exit !(size >= 1.0) }'; then
+        TASK5_OK=0
+    fi
+
+    if [ "$TASK5_OK" -eq 1 ]; then
+        pass "Task 5: lv_db exists in vg_db and is at least 1 GB"
+    else
+        fail "Task 5: lv_db is missing, is not in vg_db, or has insufficient size"
+    fi
+    
+    # TASK 6
+    TASK6_OK=1
+    
+    DF_OUTPUT=$(df -hT /data 2>/dev/null)
+    
+    echo "$DF_OUTPUT" | grep -qi "xfs" || TASK6_OK=0
+    echo "$DF_OUTPUT" | grep -q "/data" || TASK6_OK=0
+    
+    [ -f "/home/$STUDENT_NAME/lv_db_mount" ] || TASK6_OK=0
+    
+    if [ "$TASK6_OK" -eq 1 ]; then
+        pass "Task 6: lv_db is formatted with XFS and mounted on /data"
+    else
+        fail "Task 6: XFS filesystem, /data mount, or df output is incorrect"
+    fi
+
+    # TASK 7 - /etc/fstab
     TASK7_OK=1
 
-    if [ -z "$NFS_CLIENT_IP" ]; then
+    if [ ! -f "$FSTAB" ]; then
         TASK7_OK=0
+    else
+
+        # Expected:
+        # /dev/vg_db/lv_db  /data  xfs  defaults  0 0
+
+        awk '
+        $1 == "/dev/vg_db/lv_db" &&
+        $2 == "/data" &&
+        $3 == "xfs" &&
+        $4 == "defaults" &&
+        $5 == "0" &&
+        $6 == "0" {
+            found=1
+        }
+        END {
+            exit !found
+        }' "$FSTAB" || TASK7_OK=0
     fi
 
-    EXPORT_LINE=$(grep -E "^[[:space:]]*/nfs_share[[:space:]]" /etc/exports 2>/dev/null)
+    # Test fstab without rebooting.
+    if [ "$TASK7_OK" -eq 1 ]; then
 
-    if [ -z "$EXPORT_LINE" ]; then
-        TASK7_OK=0
-    fi
+        if ! mount -a >/dev/null 2>&1; then
+            TASK7_OK=0
+        fi
 
-    if ! echo "$EXPORT_LINE" | grep -Fq "$NFS_CLIENT_IP"; then
-        TASK7_OK=0
-    fi
-
-    if ! echo "$EXPORT_LINE" | grep -Fq "rw"; then
-        TASK7_OK=0
-    fi
-
-    if ! echo "$EXPORT_LINE" | grep -Fq "sync"; then
-        TASK7_OK=0
-    fi
-
-    if ! echo "$EXPORT_LINE" | grep -Fq "no_root_squash"; then
-        TASK7_OK=0
+        mountpoint -q "$MOUNT_POINT" || TASK7_OK=0
     fi
 
     if [ "$TASK7_OK" -eq 1 ]; then
-        pass "Task 7: /nfs_share is exported to the NFS client with required options"
+        pass "Task 7: /etc/fstab is correctly configured for persistent /data mounting"
     else
-        fail "Task 7: /nfs_share export configuration is incorrect"
+        fail "Task 7: /etc/fstab entry is missing, incorrect, or cannot mount /data"
     fi
 
-
-    # ============================================================
-    # TASK 8 - APPLY NFS EXPORT CONFIGURATION
-    # ============================================================
-
-    if exportfs -avr >/dev/null 2>&1; then
-
-        if exportfs -s 2>/dev/null | grep -Fq "/nfs_share"; then
-            pass "Task 8: NFS export configuration applied successfully"
-        else
-            fail "Task 8: /nfs_share is not present in active exports"
-        fi
-
-    else
-        fail "Task 8: exportfs -avr failed"
+    # TASK 8
+    TASK8_OK=1
+    
+    EXTEND_FILE="/home/$STUDENT_NAME/lv_db_extend"
+    
+    DF_OUTPUT=$(df -hT /data 2>/dev/null)
+    
+    echo "$DF_OUTPUT" | grep -qi "xfs" || TASK8_OK=0
+    echo "$DF_OUTPUT" | grep -q "/data" || TASK8_OK=0
+    
+    [ -f "$EXTEND_FILE" ] || TASK8_OK=0
+    
+    if [ -f "$EXTEND_FILE" ]; then
+        grep -qi "xfs" "$EXTEND_FILE" || TASK8_OK=0
+        grep -q "/data" "$EXTEND_FILE" || TASK8_OK=0
     fi
-
-
-    # ============================================================
-    # TASK 9 - VERIFY ACTIVE NFS EXPORTS
-    # ============================================================
-
-    ACTIVE_EXPORT=$(exportfs -v 2>/dev/null | grep -A2 -E "^/nfs_share[[:space:]]")
-
+    
+    if [ "$TASK8_OK" -eq 1 ]; then
+        pass "Task 8: lv_db was extended and the XFS filesystem is mounted on /data"
+    else
+        fail "Task 8: lv_db extension, XFS filesystem, /data mount, or df output is incorrect"
+    fi
+    
+    # TASK 9 - INITIALIZE /dev/sdb4 AS PV
     TASK9_OK=1
-
-    if [ -z "$ACTIVE_EXPORT" ]; then
-        TASK9_OK=0
-    fi
-
-    if ! echo "$ACTIVE_EXPORT" | grep -Fq "$NFS_CLIENT_IP"; then
-        TASK9_OK=0
-    fi
-
+    
+    # Verify /dev/sdb4 is an LVM Physical Volume
+    PV_INFO=$(sudo /usr/sbin/pvs --noheadings -o pv_name /dev/sdb4 2>/dev/null | xargs)
+    
+    [ "$PV_INFO" = "/dev/sdb4" ] || TASK9_OK=0
+    
     if [ "$TASK9_OK" -eq 1 ]; then
-        pass "Task 9: /nfs_share is actively exported to the correct NFS client"
+        pass "Task 9: /dev/sdb4 is initialized as an LVM Physical Volume"
     else
-        fail "Task 9: active NFS export could not be verified"
+        fail "Task 9: /dev/sdb4 is not recognized as an LVM Physical Volume"
     fi
-
-
-    # ============================================================
-    # TASK 10 - CONFIGURE NFS SERVER FIREWALL
-    # ============================================================
-
-    FIREWALL_OK=1
-
-    firewall-cmd --state >/dev/null 2>&1 || FIREWALL_OK=0
-
-    firewall-cmd --query-service=nfs >/dev/null 2>&1 || FIREWALL_OK=0
-    firewall-cmd --query-service=mountd >/dev/null 2>&1 || FIREWALL_OK=0
-    firewall-cmd --query-service=rpc-bind >/dev/null 2>&1 || FIREWALL_OK=0
-
-    if [ "$FIREWALL_OK" -eq 1 ]; then
-        pass "Task 10: NFS, mountd, and rpc-bind firewall services are allowed"
+    
+    # TASK 10 - ADD /dev/sdb4 TO vg_db
+    TASK10_OK=1
+    
+    # Verify /dev/sdb4 belongs to vg_db
+    SDB4_VG=$(sudo /usr/sbin/pvs --noheadings -o vg_name /dev/sdb4 2>/dev/null | xargs)
+    [ "$SDB4_VG" = "$VG_NAME" ] || TASK10_OK=0
+    
+    # Verify vg_db has 4 PVs
+    VG_PV_COUNT=$(sudo /usr/sbin/vgs --noheadings -o pv_count "$VG_NAME" 2>/dev/null | xargs)
+    [ "$VG_PV_COUNT" = "4" ] || TASK10_OK=0
+    
+    if [ "$TASK10_OK" -eq 1 ]; then
+        pass "Task 10: /dev/sdb4 was added to vg_db; vg_db now contains four Physical Volumes"
     else
-        fail "Task 10: required NFS firewall services are not configured"
+        fail "Task 10: /dev/sdb4 was not correctly added to vg_db"
     fi
-
-
-    # ============================================================
-    # TASK 11 - SET SELINUX TO PERMISSIVE
-    # ============================================================
-
-    SELINUX_MODE=$(getenforce 2>/dev/null)
-
-    if [ "$SELINUX_MODE" = "Permissive" ]; then
-        pass "Task 11: SELinux is set to permissive mode"
+    
+    # TASK 11 - FINAL LV AND XFS EXTENSION
+    TASK11_OK=1
+    
+    # Verify vg_db contains four PVs
+    VG_PV_COUNT=$(sudo /usr/sbin/vgs --noheadings -o pv_count "$VG_NAME" 2>/dev/null | xargs)
+    
+    [ "$VG_PV_COUNT" = "4" ] || TASK11_OK=0
+    
+    # Verify VG has no remaining free space
+    VG_FREE=$(sudo /usr/sbin/vgs --noheadings --units g --nosuffix \
+        -o vg_free "$VG_NAME" 2>/dev/null | xargs)
+    
+    if [ -z "$VG_FREE" ]; then
+        TASK11_OK=0
     else
-        fail "Task 11: SELinux is not set to permissive mode"
+        awk -v free="$VG_FREE" 'BEGIN { exit !(free <= 0.01) }' || TASK11_OK=0
     fi
-
-
-    # ============================================================
-    # TASK 12 - VERIFY NFS CLIENT HOSTNAME
-    # ============================================================
-
-    CLIENT_HOSTNAME=$(client_cmd hostname)
-
-    if [ "$CLIENT_HOSTNAME" = "$NFS_CLIENT" ]; then
-        pass "Task 12: NFS client hostname is nfs-client"
+    
+    # Verify XFS filesystem is mounted on /data
+    DF_OUTPUT=$(df -hT "$MOUNT_POINT" 2>/dev/null)
+    
+    echo "$DF_OUTPUT" | grep -qi "xfs" || TASK11_OK=0
+    echo "$DF_OUTPUT" | grep -q "/data" || TASK11_OK=0
+    
+    if [ "$TASK11_OK" -eq 1 ]; then
+        pass "Task 11: Final lv_db and XFS filesystem are correctly extended"
     else
-        fail "Task 12: NFS client hostname is not nfs-client"
+        fail "Task 11: Final lv_db, XFS filesystem, /data mount, or VG capacity is incorrect"
     fi
-
-
-    # ============================================================
-    # TASK 13 - INSTALL NFS CLIENT PACKAGE
-    # ============================================================
-
-    if client_cmd rpm -q nfs-utils >/dev/null 2>&1; then
-        pass "Task 13: nfs-utils package is installed on the NFS client"
-    else
-        fail "Task 13: nfs-utils package is not installed on the NFS client"
-    fi
-
-
-    # ============================================================
-    # TASK 14 - ENABLE AND START RPCBIND ON CLIENT
-    # ============================================================
-
-    CLIENT_RPCBIND_OK=1
-
-    client_cmd systemctl is-active --quiet rpcbind || CLIENT_RPCBIND_OK=0
-    client_cmd systemctl is-enabled --quiet rpcbind || CLIENT_RPCBIND_OK=0
-
-    if [ "$CLIENT_RPCBIND_OK" -eq 1 ]; then
-        pass "Task 14: rpcbind service is active and enabled on the NFS client"
-    else
-        fail "Task 14: rpcbind service is not active and enabled on the NFS client"
-    fi
-
-
-    # ============================================================
-    # TASK 15 - VERIFY CONNECTIVITY TO NFS SERVER
-    # ============================================================
-
-    SERVER_IP=$(getent hosts "$NFS_SERVER" 2>/dev/null | awk 'NR==1 {print $1}')
-
-    if [ -n "$SERVER_IP" ] &&
-       client_cmd ping -c 2 -W 2 "$SERVER_IP" >/dev/null 2>&1; then
-
-        pass "Task 15: NFS client can successfully ping the NFS server"
-
-    else
-        fail "Task 15: NFS client cannot ping the NFS server"
-    fi
-
-
-    # ============================================================
-    # TASK 16 - DISCOVER NFS EXPORT
-    # ============================================================
-
-    SHOWMOUNT_OUTPUT=$(client_cmd showmount -e "$SERVER_IP")
-
-    if echo "$SHOWMOUNT_OUTPUT" | grep -Fq "/nfs_share"; then
-        pass "Task 16: NFS client discovered the /nfs_share export"
-    else
-        fail "Task 16: /nfs_share export could not be discovered from the NFS client"
-    fi
-
-
-    # ============================================================
-    # TASK 17 - CREATE LOCAL MOUNT POINT
-    # ============================================================
-
-    if client_cmd test -d "$MOUNT_POINT"; then
-        pass "Task 17: /mnt/nfs_share mount point exists on the NFS client"
-    else
-        fail "Task 17: /mnt/nfs_share mount point is missing"
-    fi
-
-
-    # ============================================================
-    # TASK 18 - MANUAL NFS MOUNT
-    # ============================================================
-
-    if client_cmd mountpoint -q "$MOUNT_POINT"; then
-
-        MOUNT_SOURCE=$(client_cmd findmnt -n -o SOURCE "$MOUNT_POINT")
-
-        if echo "$MOUNT_SOURCE" | grep -Fq "$NFS_SERVER:/nfs_share"; then
-            pass "Task 18: NFS share is manually mounted at /mnt/nfs_share"
-        else
-            fail "Task 18: /mnt/nfs_share is mounted from an incorrect source"
-        fi
-
-    else
-        fail "Task 18: /mnt/nfs_share is not mounted"
-    fi
-
-
-    # ============================================================
-    # TASK 19 - VERIFY NFS MOUNT
-    # ============================================================
-
-    MOUNT_TYPE=$(client_cmd findmnt -n -o FSTYPE "$MOUNT_POINT")
-
-    if [ "$MOUNT_TYPE" = "nfs" ] || [ "$MOUNT_TYPE" = "nfs4" ]; then
-        pass "Task 19: /mnt/nfs_share is mounted with an NFS filesystem"
-    else
-        fail "Task 19: /mnt/nfs_share is not mounted as NFS"
-    fi
-
-
-    # ============================================================
-    # TASK 20 - VERIFY SERVER TEST FILE FROM CLIENT
-    # ============================================================
-
-    CLIENT_SERVER_FILE="$MOUNT_POINT/server_test.txt"
-
-    if client_cmd test -f "$CLIENT_SERVER_FILE"; then
-
-        CLIENT_FILE_CONTENT=$(client_cmd cat "$CLIENT_SERVER_FILE")
-
-        if [ "$CLIENT_FILE_CONTENT" = "$SERVER_TEST_CONTENT" ]; then
-            pass "Task 20: server_test.txt is accessible from the NFS client with expected content"
-        else
-            fail "Task 20: server_test.txt content is incorrect on the NFS client"
-        fi
-
-    else
-        fail "Task 20: server_test.txt is not accessible from the NFS client"
-    fi
-
-
-    # ============================================================
-    # TASK 21 - CONFIGURE PERSISTENT NFS MOUNT
-    # ============================================================
-
-    FSTAB_LINE=$(client_cmd grep -E "^[^#]*[[:space:]]/mnt/nfs_share[[:space:]]+nfs" /etc/fstab)
-
-    TASK21_OK=1
-
-    if [ -z "$FSTAB_LINE" ]; then
-        TASK21_OK=0
-    fi
-
-    if ! echo "$FSTAB_LINE" | grep -Fq "$NFS_SERVER:/nfs_share"; then
-        TASK21_OK=0
-    fi
-
-    if ! echo "$FSTAB_LINE" | grep -Fq "defaults"; then
-        TASK21_OK=0
-    fi
-
-    if [ "$TASK21_OK" -eq 1 ]; then
-        pass "Task 21: persistent NFS mount is configured in /etc/fstab"
-    else
-        fail "Task 21: required NFS entry is missing or incorrect in /etc/fstab"
-    fi
-
-
-    # ============================================================
-    # TASK 22 - TEST FSTAB CONFIGURATION
-    # ============================================================
-
-    # We do not unmount here because doing so could interfere with
-    # subsequent validation tasks. Test the fstab configuration
-    # using mount -a in a controlled way.
-
-    if client_cmd mount -a >/dev/null 2>&1; then
-
-        if client_cmd mountpoint -q "$MOUNT_POINT"; then
-            pass "Task 22: /etc/fstab configuration successfully mounts the NFS share"
-        else
-            fail "Task 22: mount -a completed but NFS share is not mounted"
-        fi
-
-    else
-        fail "Task 22: mount -a failed"
-    fi
-
-
-    # ============================================================
-    # TASK 23 - MOUNT USING /etc/FSTAB
-    # ============================================================
-
-    # Verify that the mount source comes from the fstab configuration.
-    # mount /mnt/nfs_share must be valid without specifying server/export.
-
-    if client_cmd mount "$MOUNT_POINT" >/dev/null 2>&1; then
-
-        CURRENT_SOURCE=$(client_cmd findmnt -n -o SOURCE "$MOUNT_POINT")
-
-        if echo "$CURRENT_SOURCE" | grep -Fq "$NFS_SERVER:/nfs_share"; then
-            pass "Task 23: NFS filesystem can be mounted using the /etc/fstab entry"
-        else
-            fail "Task 23: NFS filesystem source does not match the /etc/fstab configuration"
-        fi
-
-    else
-
-        # mount may return non-zero when the filesystem is already mounted.
-        # Verify whether it is nevertheless mounted correctly.
-        CURRENT_SOURCE=$(client_cmd findmnt -n -o SOURCE "$MOUNT_POINT")
-
-        if echo "$CURRENT_SOURCE" | grep -Fq "$NFS_SERVER:/nfs_share"; then
-            pass "Task 23: NFS filesystem is mounted using the /etc/fstab configuration"
-        else
-            fail "Task 23: NFS filesystem could not be mounted using /etc/fstab"
-        fi
-
-    fi
-
-
-    # ============================================================
-    # TASK 24 - VERIFY PERSISTENT NFS MOUNT
-    # ============================================================
-
-    TASK24_OK=1
-
-    CURRENT_SOURCE=$(client_cmd findmnt -n -o SOURCE "$MOUNT_POINT")
-    CURRENT_TYPE=$(client_cmd findmnt -n -o FSTYPE "$MOUNT_POINT")
-
-    if ! echo "$CURRENT_SOURCE" | grep -Fq "$NFS_SERVER:/nfs_share"; then
-        TASK24_OK=0
-    fi
-
-    if [ "$CURRENT_TYPE" != "nfs" ] &&
-       [ "$CURRENT_TYPE" != "nfs4" ]; then
-        TASK24_OK=0
-    fi
-
-    if [ "$TASK24_OK" -eq 1 ]; then
-        pass "Task 24: persistent NFS mount is correctly configured and verified"
-    else
-        fail "Task 24: persistent NFS mount verification failed"
-    fi
-
-
-    # ============================================================
-    # TASK 25 - CREATE AND VERIFY CLIENT WRITE ACCESS
-    # ============================================================
-
-    CLIENT_TEST_FILE="$MOUNT_POINT/client_test.txt"
-
-    if client_cmd test -f "$CLIENT_TEST_FILE"; then
-
-        CLIENT_CONTENT=$(client_cmd cat "$CLIENT_TEST_FILE")
-
-        if [ "$CLIENT_CONTENT" = "$CLIENT_TEST_CONTENT" ]; then
-
-            SERVER_CONTENT=$(cat "$CLIENT_TEST_FILE" 2>/dev/null)
-
-            if [ "$SERVER_CONTENT" = "$CLIENT_TEST_CONTENT" ]; then
-                pass "Task 25: client_test.txt was created by the client and verified on the NFS server"
-            else
-                fail "Task 25: client_test.txt exists on the client but could not be verified correctly on the server"
-            fi
-
-        else
-            fail "Task 25: client_test.txt content does not match the required content"
-        fi
-
-    else
-        fail "Task 25: client_test.txt was not created on the NFS share"
-    fi
-
-
-    # ============================================================
-    # TASK 26 - MODIFY AND VERIFY FILE ACROSS NFS SHARE
-    # ============================================================
-
-    ORIGINAL_CONTENT=$(cat "$SERVER_TEST_FILE" 2>/dev/null)
-
-    if client_cmd grep -Fq "$CLIENT_MODIFIED_CONTENT" "$CLIENT_SERVER_FILE"; then
-
-        if grep -Fq "$CLIENT_MODIFIED_CONTENT" "$SERVER_TEST_FILE" 2>/dev/null; then
-            pass "Task 26: server_test.txt modification from the NFS client was verified on the NFS server"
-        else
-            fail "Task 26: modification exists on client but was not verified on NFS server"
-        fi
-
-    else
-        fail "Task 26: required modification was not found in server_test.txt"
-    fi
-
+ 
     # ============================================================
     # SUMMARY
     # ============================================================
@@ -12715,7 +12526,8 @@ $RESULT_ICON $RESULT_TEXT
 </div>
 HTML
 }
-#=================================================================
+
+#=====================================================================================================
 validate_lab230() {
 
     set +e
@@ -14594,3 +14406,692 @@ $RESULT_ICON $RESULT_TEXT
 HTML
 }
 #==================================================================
+
+validate_lab233_nfs() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "<h2 style='color:#white;'>Checking Lab 229 - Linux NFS Server & Client Configuration.</h2>"
+
+    TOTAL_TASKS=26
+    PASSED=0
+
+    LAB_NAME="Lab 229 - Linux NFS Server & Client Configuration"
+    DATE=$(date "+%F %T")
+
+    NFS_SERVER="nfs-server"
+    NFS_CLIENT="nfs-client"
+
+    EXPORT_DIR="/nfs_share"
+    MOUNT_POINT="/mnt/nfs_share"
+
+    SERVER_TEST_FILE="/nfs_share/server_test.txt"
+    CLIENT_TEST_FILE="/nfs_share/client_test.txt"
+
+    SERVER_TEST_CONTENT="This is my first NFS share, and I’m excited to learn how to configure and manage an NFS server."
+    CLIENT_TEST_CONTENT="This file was created from the NFS client to verify write access to the NFS shared filesystem."
+    CLIENT_MODIFIED_CONTENT="This file was modified from the NFS client to verify shared filesystem access."
+
+    # ------------------------------------------------------------
+    # DISCOVER CLIENT IP
+    # ------------------------------------------------------------
+
+    NFS_CLIENT_IP=$(getent hosts "$NFS_CLIENT" 2>/dev/null | awk 'NR==1 {print $1}')
+
+    # ------------------------------------------------------------
+    # HELPERS
+    # ------------------------------------------------------------
+
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # Execute command on NFS client
+    client_cmd() {
+        ssh -o BatchMode=yes \
+            -o ConnectTimeout=5 \
+            -o StrictHostKeyChecking=no \
+            "$NFS_CLIENT" "$@" 2>/dev/null
+    }
+
+
+    # ============================================================
+    # TASK 1 - VERIFY NFS SERVER HOSTNAME
+    # ============================================================
+
+    HOSTNAME_VALUE=$(hostname 2>/dev/null)
+
+    if [ "$HOSTNAME_VALUE" = "$NFS_SERVER" ]; then
+        pass "Task 1: NFS server hostname is nfs-server"
+    else
+        fail "Task 1: NFS server hostname is not nfs-server"
+    fi
+
+
+    # ============================================================
+    # TASK 2 - INSTALL NFS SERVER PACKAGES
+    # ============================================================
+
+    if rpm -q nfs-utils >/dev/null 2>&1; then
+        pass "Task 2: nfs-utils package is installed on the NFS server"
+    else
+        fail "Task 2: nfs-utils package is not installed on the NFS server"
+    fi
+
+
+    # ============================================================
+    # TASK 3 - ENABLE AND START NFS SERVER
+    # ============================================================
+
+    NFS_SERVICE_OK=1
+
+    systemctl is-active --quiet nfs-server || NFS_SERVICE_OK=0
+    systemctl is-enabled --quiet nfs-server || NFS_SERVICE_OK=0
+
+    if [ "$NFS_SERVICE_OK" -eq 1 ]; then
+        pass "Task 3: nfs-server service is active and enabled"
+    else
+        fail "Task 3: nfs-server service is not active and enabled"
+    fi
+
+
+    # ============================================================
+    # TASK 4 - ENABLE AND START RPCBIND
+    # ============================================================
+
+    RPCBIND_OK=1
+
+    systemctl is-active --quiet rpcbind || RPCBIND_OK=0
+    systemctl is-enabled --quiet rpcbind || RPCBIND_OK=0
+
+    if [ "$RPCBIND_OK" -eq 1 ]; then
+        pass "Task 4: rpcbind service is active and enabled on the NFS server"
+    else
+        fail "Task 4: rpcbind service is not active and enabled on the NFS server"
+    fi
+
+
+    # ============================================================
+    # TASK 5 - CREATE NFS EXPORT DIRECTORY
+    # ============================================================
+
+    if [ -d "$EXPORT_DIR" ]; then
+        pass "Task 5: /nfs_share directory exists"
+    else
+        fail "Task 5: /nfs_share directory is missing"
+    fi
+
+
+    # ============================================================
+    # TASK 6 - CREATE SERVER TEST FILE
+    # ============================================================
+
+    if [ -f "$SERVER_TEST_FILE" ]; then
+
+        FILE_CONTENT=$(cat "$SERVER_TEST_FILE" 2>/dev/null)
+
+        if [ "$FILE_CONTENT" = "$SERVER_TEST_CONTENT" ]; then
+            pass "Task 6: server_test.txt exists with the expected content"
+        else
+            fail "Task 6: server_test.txt content does not match the required content"
+        fi
+
+    else
+        fail "Task 6: /nfs_share/server_test.txt is missing"
+    fi
+
+
+    # ============================================================
+    # TASK 7 - CONFIGURE NFS EXPORT
+    # ============================================================
+
+    TASK7_OK=1
+
+    if [ -z "$NFS_CLIENT_IP" ]; then
+        TASK7_OK=0
+    fi
+
+    EXPORT_LINE=$(grep -E "^[[:space:]]*/nfs_share[[:space:]]" /etc/exports 2>/dev/null)
+
+    if [ -z "$EXPORT_LINE" ]; then
+        TASK7_OK=0
+    fi
+
+    if ! echo "$EXPORT_LINE" | grep -Fq "$NFS_CLIENT_IP"; then
+        TASK7_OK=0
+    fi
+
+    if ! echo "$EXPORT_LINE" | grep -Fq "rw"; then
+        TASK7_OK=0
+    fi
+
+    if ! echo "$EXPORT_LINE" | grep -Fq "sync"; then
+        TASK7_OK=0
+    fi
+
+    if ! echo "$EXPORT_LINE" | grep -Fq "no_root_squash"; then
+        TASK7_OK=0
+    fi
+
+    if [ "$TASK7_OK" -eq 1 ]; then
+        pass "Task 7: /nfs_share is exported to the NFS client with required options"
+    else
+        fail "Task 7: /nfs_share export configuration is incorrect"
+    fi
+
+
+    # ============================================================
+    # TASK 8 - APPLY NFS EXPORT CONFIGURATION
+    # ============================================================
+
+    if exportfs -avr >/dev/null 2>&1; then
+
+        if exportfs -s 2>/dev/null | grep -Fq "/nfs_share"; then
+            pass "Task 8: NFS export configuration applied successfully"
+        else
+            fail "Task 8: /nfs_share is not present in active exports"
+        fi
+
+    else
+        fail "Task 8: exportfs -avr failed"
+    fi
+
+
+    # ============================================================
+    # TASK 9 - VERIFY ACTIVE NFS EXPORTS
+    # ============================================================
+
+    ACTIVE_EXPORT=$(exportfs -v 2>/dev/null | grep -A2 -E "^/nfs_share[[:space:]]")
+
+    TASK9_OK=1
+
+    if [ -z "$ACTIVE_EXPORT" ]; then
+        TASK9_OK=0
+    fi
+
+    if ! echo "$ACTIVE_EXPORT" | grep -Fq "$NFS_CLIENT_IP"; then
+        TASK9_OK=0
+    fi
+
+    if [ "$TASK9_OK" -eq 1 ]; then
+        pass "Task 9: /nfs_share is actively exported to the correct NFS client"
+    else
+        fail "Task 9: active NFS export could not be verified"
+    fi
+
+
+    # ============================================================
+    # TASK 10 - CONFIGURE NFS SERVER FIREWALL
+    # ============================================================
+
+    FIREWALL_OK=1
+
+    firewall-cmd --state >/dev/null 2>&1 || FIREWALL_OK=0
+
+    firewall-cmd --query-service=nfs >/dev/null 2>&1 || FIREWALL_OK=0
+    firewall-cmd --query-service=mountd >/dev/null 2>&1 || FIREWALL_OK=0
+    firewall-cmd --query-service=rpc-bind >/dev/null 2>&1 || FIREWALL_OK=0
+
+    if [ "$FIREWALL_OK" -eq 1 ]; then
+        pass "Task 10: NFS, mountd, and rpc-bind firewall services are allowed"
+    else
+        fail "Task 10: required NFS firewall services are not configured"
+    fi
+
+
+    # ============================================================
+    # TASK 11 - SET SELINUX TO PERMISSIVE
+    # ============================================================
+
+    SELINUX_MODE=$(getenforce 2>/dev/null)
+
+    if [ "$SELINUX_MODE" = "Permissive" ]; then
+        pass "Task 11: SELinux is set to permissive mode"
+    else
+        fail "Task 11: SELinux is not set to permissive mode"
+    fi
+
+
+    # ============================================================
+    # TASK 12 - VERIFY NFS CLIENT HOSTNAME
+    # ============================================================
+
+    CLIENT_HOSTNAME=$(client_cmd hostname)
+
+    if [ "$CLIENT_HOSTNAME" = "$NFS_CLIENT" ]; then
+        pass "Task 12: NFS client hostname is nfs-client"
+    else
+        fail "Task 12: NFS client hostname is not nfs-client"
+    fi
+
+
+    # ============================================================
+    # TASK 13 - INSTALL NFS CLIENT PACKAGE
+    # ============================================================
+
+    if client_cmd rpm -q nfs-utils >/dev/null 2>&1; then
+        pass "Task 13: nfs-utils package is installed on the NFS client"
+    else
+        fail "Task 13: nfs-utils package is not installed on the NFS client"
+    fi
+
+
+    # ============================================================
+    # TASK 14 - ENABLE AND START RPCBIND ON CLIENT
+    # ============================================================
+
+    CLIENT_RPCBIND_OK=1
+
+    client_cmd systemctl is-active --quiet rpcbind || CLIENT_RPCBIND_OK=0
+    client_cmd systemctl is-enabled --quiet rpcbind || CLIENT_RPCBIND_OK=0
+
+    if [ "$CLIENT_RPCBIND_OK" -eq 1 ]; then
+        pass "Task 14: rpcbind service is active and enabled on the NFS client"
+    else
+        fail "Task 14: rpcbind service is not active and enabled on the NFS client"
+    fi
+
+
+    # ============================================================
+    # TASK 15 - VERIFY CONNECTIVITY TO NFS SERVER
+    # ============================================================
+
+    SERVER_IP=$(getent hosts "$NFS_SERVER" 2>/dev/null | awk 'NR==1 {print $1}')
+
+    if [ -n "$SERVER_IP" ] &&
+       client_cmd ping -c 2 -W 2 "$SERVER_IP" >/dev/null 2>&1; then
+
+        pass "Task 15: NFS client can successfully ping the NFS server"
+
+    else
+        fail "Task 15: NFS client cannot ping the NFS server"
+    fi
+
+
+    # ============================================================
+    # TASK 16 - DISCOVER NFS EXPORT
+    # ============================================================
+
+    SHOWMOUNT_OUTPUT=$(client_cmd showmount -e "$SERVER_IP")
+
+    if echo "$SHOWMOUNT_OUTPUT" | grep -Fq "/nfs_share"; then
+        pass "Task 16: NFS client discovered the /nfs_share export"
+    else
+        fail "Task 16: /nfs_share export could not be discovered from the NFS client"
+    fi
+
+
+    # ============================================================
+    # TASK 17 - CREATE LOCAL MOUNT POINT
+    # ============================================================
+
+    if client_cmd test -d "$MOUNT_POINT"; then
+        pass "Task 17: /mnt/nfs_share mount point exists on the NFS client"
+    else
+        fail "Task 17: /mnt/nfs_share mount point is missing"
+    fi
+
+
+    # ============================================================
+    # TASK 18 - MANUAL NFS MOUNT
+    # ============================================================
+
+    if client_cmd mountpoint -q "$MOUNT_POINT"; then
+
+        MOUNT_SOURCE=$(client_cmd findmnt -n -o SOURCE "$MOUNT_POINT")
+
+        if echo "$MOUNT_SOURCE" | grep -Fq "$NFS_SERVER:/nfs_share"; then
+            pass "Task 18: NFS share is manually mounted at /mnt/nfs_share"
+        else
+            fail "Task 18: /mnt/nfs_share is mounted from an incorrect source"
+        fi
+
+    else
+        fail "Task 18: /mnt/nfs_share is not mounted"
+    fi
+
+
+    # ============================================================
+    # TASK 19 - VERIFY NFS MOUNT
+    # ============================================================
+
+    MOUNT_TYPE=$(client_cmd findmnt -n -o FSTYPE "$MOUNT_POINT")
+
+    if [ "$MOUNT_TYPE" = "nfs" ] || [ "$MOUNT_TYPE" = "nfs4" ]; then
+        pass "Task 19: /mnt/nfs_share is mounted with an NFS filesystem"
+    else
+        fail "Task 19: /mnt/nfs_share is not mounted as NFS"
+    fi
+
+
+    # ============================================================
+    # TASK 20 - VERIFY SERVER TEST FILE FROM CLIENT
+    # ============================================================
+
+    CLIENT_SERVER_FILE="$MOUNT_POINT/server_test.txt"
+
+    if client_cmd test -f "$CLIENT_SERVER_FILE"; then
+
+        CLIENT_FILE_CONTENT=$(client_cmd cat "$CLIENT_SERVER_FILE")
+
+        if [ "$CLIENT_FILE_CONTENT" = "$SERVER_TEST_CONTENT" ]; then
+            pass "Task 20: server_test.txt is accessible from the NFS client with expected content"
+        else
+            fail "Task 20: server_test.txt content is incorrect on the NFS client"
+        fi
+
+    else
+        fail "Task 20: server_test.txt is not accessible from the NFS client"
+    fi
+
+
+    # ============================================================
+    # TASK 21 - CONFIGURE PERSISTENT NFS MOUNT
+    # ============================================================
+
+    FSTAB_LINE=$(client_cmd grep -E "^[^#]*[[:space:]]/mnt/nfs_share[[:space:]]+nfs" /etc/fstab)
+
+    TASK21_OK=1
+
+    if [ -z "$FSTAB_LINE" ]; then
+        TASK21_OK=0
+    fi
+
+    if ! echo "$FSTAB_LINE" | grep -Fq "$NFS_SERVER:/nfs_share"; then
+        TASK21_OK=0
+    fi
+
+    if ! echo "$FSTAB_LINE" | grep -Fq "defaults"; then
+        TASK21_OK=0
+    fi
+
+    if [ "$TASK21_OK" -eq 1 ]; then
+        pass "Task 21: persistent NFS mount is configured in /etc/fstab"
+    else
+        fail "Task 21: required NFS entry is missing or incorrect in /etc/fstab"
+    fi
+
+
+    # ============================================================
+    # TASK 22 - TEST FSTAB CONFIGURATION
+    # ============================================================
+
+    # We do not unmount here because doing so could interfere with
+    # subsequent validation tasks. Test the fstab configuration
+    # using mount -a in a controlled way.
+
+    if client_cmd mount -a >/dev/null 2>&1; then
+
+        if client_cmd mountpoint -q "$MOUNT_POINT"; then
+            pass "Task 22: /etc/fstab configuration successfully mounts the NFS share"
+        else
+            fail "Task 22: mount -a completed but NFS share is not mounted"
+        fi
+
+    else
+        fail "Task 22: mount -a failed"
+    fi
+
+
+    # ============================================================
+    # TASK 23 - MOUNT USING /etc/FSTAB
+    # ============================================================
+
+    # Verify that the mount source comes from the fstab configuration.
+    # mount /mnt/nfs_share must be valid without specifying server/export.
+
+    if client_cmd mount "$MOUNT_POINT" >/dev/null 2>&1; then
+
+        CURRENT_SOURCE=$(client_cmd findmnt -n -o SOURCE "$MOUNT_POINT")
+
+        if echo "$CURRENT_SOURCE" | grep -Fq "$NFS_SERVER:/nfs_share"; then
+            pass "Task 23: NFS filesystem can be mounted using the /etc/fstab entry"
+        else
+            fail "Task 23: NFS filesystem source does not match the /etc/fstab configuration"
+        fi
+
+    else
+
+        # mount may return non-zero when the filesystem is already mounted.
+        # Verify whether it is nevertheless mounted correctly.
+        CURRENT_SOURCE=$(client_cmd findmnt -n -o SOURCE "$MOUNT_POINT")
+
+        if echo "$CURRENT_SOURCE" | grep -Fq "$NFS_SERVER:/nfs_share"; then
+            pass "Task 23: NFS filesystem is mounted using the /etc/fstab configuration"
+        else
+            fail "Task 23: NFS filesystem could not be mounted using /etc/fstab"
+        fi
+
+    fi
+
+
+    # ============================================================
+    # TASK 24 - VERIFY PERSISTENT NFS MOUNT
+    # ============================================================
+
+    TASK24_OK=1
+
+    CURRENT_SOURCE=$(client_cmd findmnt -n -o SOURCE "$MOUNT_POINT")
+    CURRENT_TYPE=$(client_cmd findmnt -n -o FSTYPE "$MOUNT_POINT")
+
+    if ! echo "$CURRENT_SOURCE" | grep -Fq "$NFS_SERVER:/nfs_share"; then
+        TASK24_OK=0
+    fi
+
+    if [ "$CURRENT_TYPE" != "nfs" ] &&
+       [ "$CURRENT_TYPE" != "nfs4" ]; then
+        TASK24_OK=0
+    fi
+
+    if [ "$TASK24_OK" -eq 1 ]; then
+        pass "Task 24: persistent NFS mount is correctly configured and verified"
+    else
+        fail "Task 24: persistent NFS mount verification failed"
+    fi
+
+
+    # ============================================================
+    # TASK 25 - CREATE AND VERIFY CLIENT WRITE ACCESS
+    # ============================================================
+
+    CLIENT_TEST_FILE="$MOUNT_POINT/client_test.txt"
+
+    if client_cmd test -f "$CLIENT_TEST_FILE"; then
+
+        CLIENT_CONTENT=$(client_cmd cat "$CLIENT_TEST_FILE")
+
+        if [ "$CLIENT_CONTENT" = "$CLIENT_TEST_CONTENT" ]; then
+
+            SERVER_CONTENT=$(cat "$CLIENT_TEST_FILE" 2>/dev/null)
+
+            if [ "$SERVER_CONTENT" = "$CLIENT_TEST_CONTENT" ]; then
+                pass "Task 25: client_test.txt was created by the client and verified on the NFS server"
+            else
+                fail "Task 25: client_test.txt exists on the client but could not be verified correctly on the server"
+            fi
+
+        else
+            fail "Task 25: client_test.txt content does not match the required content"
+        fi
+
+    else
+        fail "Task 25: client_test.txt was not created on the NFS share"
+    fi
+
+
+    # ============================================================
+    # TASK 26 - MODIFY AND VERIFY FILE ACROSS NFS SHARE
+    # ============================================================
+
+    ORIGINAL_CONTENT=$(cat "$SERVER_TEST_FILE" 2>/dev/null)
+
+    if client_cmd grep -Fq "$CLIENT_MODIFIED_CONTENT" "$CLIENT_SERVER_FILE"; then
+
+        if grep -Fq "$CLIENT_MODIFIED_CONTENT" "$SERVER_TEST_FILE" 2>/dev/null; then
+            pass "Task 26: server_test.txt modification from the NFS client was verified on the NFS server"
+        else
+            fail "Task 26: modification exists on client but was not verified on NFS server"
+        fi
+
+    else
+        fail "Task 26: required modification was not found in server_test.txt"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#====================================================================

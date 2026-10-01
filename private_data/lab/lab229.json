@@ -1,318 +1,196 @@
 {
-  "lab_id": "lab229",
-  "title": "Linux NFS Server & Client Configuration",
-  "description": "Configure an NFS server and client to provide, access, test, and persistently mount a shared filesystem. Students will configure NFS exports, firewall services, client discovery, manual and persistent NFS mounts, read/write access, and NFS verification and troubleshooting.",
-
+  "lab_number": "lab229",
+  "title": "Lab 229 - Linux Logical Volume Management - LVM",
   "lab_objective": {
     "description": "By completing this lab, you will learn how to:",
     "objectives": [
-      "Install NFS server packages.",
-      "Install NFS client packages.",
-      "Manage the nfs-server service.",
-      "Manage the rpcbind service.",
-      "Create and configure an NFS export directory.",
-      "Configure /etc/exports.",
-      "Apply and verify NFS export configuration using exportfs.",
-      "Configure the firewall for NFS access.",
-      "Discover NFS exports from the client.",
-      "Manually mount an NFS filesystem.",
-      "Verify NFS mounts using mount and findmnt.",
-      "Verify NFS filesystem information using df.",
-      "Test NFS read and write access.",
-      "Configure a persistent NFS mount using /etc/fstab.",
-      "Test /etc/fstab configuration without rebooting.",
-      "Mount an NFS filesystem using its /etc/fstab entry.",
-      "Verify persistent NFS mounts.",
-      "Troubleshoot and verify NFS server and client configuration."
+      "Identify a newly attached disk using lsblk",
+      "Create a GPT partition table using gdisk",
+      "Create four GPT partitions on a disk",
+      "Set Linux LVM GPT partition types",
+      "Create LVM Physical Volumes (PVs)",
+      "Create and manage a Volume Group (VG)",
+      "Create and manage a Logical Volume (LV)",
+      "Create an XFS filesystem on an LVM logical volume",
+      "Mount an LVM filesystem",
+      "Configure persistent filesystem mounting using /etc/fstab",
+      "Extend a logical volume using free space already available in a Volume Group",
+      "Extend an XFS filesystem after increasing the logical volume",
+      "Add an additional partition as an LVM Physical Volume",
+      "Extend an existing Volume Group with an additional Physical Volume",
+      "Extend a logical volume using newly added Volume Group capacity",
+      "Verify LVM configuration using pvs, vgs, lvs, lsblk, df, and findmnt"
     ],
-
-  "scenario": [
-    "You are working as a Linux Systems Administrator for an organization that needs to provide a centralized shared directory for application and development teams.",
-    "Two Linux servers are available:",
-    "NFS Server: nfs-server",
-    "NFS Client: nfs-client",
-    "The NFS server has been assigned the responsibility of exporting a shared directory to the client.",
-    "The NFS client must discover the exported directory, mount it, verify read/write access, and configure the mount to persist after a system reboot.",
-    "Your task is to configure the NFS server, configure the NFS client, verify connectivity, test read/write access, and ensure that the NFS mount is persistent."
-  ]
- },
+    "scenario": [
+      "You are working as a Linux Systems Administrator responsible for preparing additional storage for an application server.",
+      "A new 2 GB disk has been attached to the server as /dev/sdb.",
+      "The application requires a dedicated filesystem mounted at /data.",
+      "The storage team has requested that the disk be managed using Linux Logical Volume Management (LVM) so that the filesystem can be expanded in the future without rebuilding the filesystem.",
+      "The disk must initially be divided into four GPT partitions.",
+      "/dev/sdb1, /dev/sdb2, and /dev/sdb3 will initially be configured as LVM Physical Volumes and added to the volume group vg_db.",
+      "/dev/sdb4 will initially remain unused and reserved for future storage expansion.",
+      "A logical volume named lv_db will be created inside vg_db and formatted with XFS.",
+      "The filesystem will be mounted at /data and configured to remain available after a system reboot.",
+      "Later in the lab, /dev/sdb4 will be initialized as an LVM Physical Volume, added to vg_db, and used to provide additional capacity to lv_db."
+    ]
+  },
   "tasks": [
     {
       "task_number": 1,
-      "title": "Verify the NFS Server Hostname",
+      "title": "Identify the New Disk",
       "steps": [
-        "On the NFS server, verify the system hostname.",
-        "set hostname to nfs-server",
-        "Hint: hostnamectl set-hostname nfs-server ; bash",
-        "Confirm that the hostname is nfs-server."
+        "Use an appropriate command to display the available disks and their sizes.",
+        "Identify the newly attached 2 GB disk that will be used for this lab.",
+        "The disk must be /dev/sdb.",
+        "Do not modify /dev/sda or any disk containing the operating system.",
+        "Verify the total size of /dev/sdb before continuing."
       ]
     },
-
     {
       "task_number": 2,
-      "title": "Install NFS Server Packages",
+      "title": "Create a GPT Partition Table and Four Partitions",
       "steps": [
-        "On the NFS server, install the 'nfs-utils' package required to provide NFS server functionality.",
-        "Use the appropriate package manager for your Linux distribution."
+        "Start gdisk on /dev/sdb.",
+        "Use gdisk help (?) when needed.",
+        "Create a new GPT partition table on /dev/sdb.",
+        "Create four GPT partitions: /dev/sdb1, /dev/sdb2, /dev/sdb3, and /dev/sdb4.",
+        "The first three partitions should each be approximately 512 MB.",
+        "Create /dev/sdb4 using the remaining available disk space.",
+        "All four partitions must collectively use the available space on /dev/sdb.",
+        "Set the GPT partition type of all four partitions to Linux LVM.",
+        "Use GPT partition type code 8E00 for Linux LVM.",
+        "Verify the partition table before writing the changes.",
+        "Write the partition table to /dev/sdb and exit gdisk.",
+        "Run partprobe so that the kernel detects the new partition table without rebooting."
       ]
     },
-
     {
       "task_number": 3,
-      "title": "Enable and Start the NFS Server",
+      "title": "Create the Initial Physical Volumes",
       "steps": [
-        "Enable and start the NFS server service.",
-        "Verify that the NFS server service is active and running."
+        "Create an LVM Physical Volume on /dev/sdb1.",
+        "Create an LVM Physical Volume on /dev/sdb2.",
+        "Create an LVM Physical Volume on /dev/sdb3.",
+        "Do not initialize /dev/sdb4 as an LVM Physical Volume at this stage.",
+        "Use pvs to verify the Physical Volumes.",
+        "Verify that /dev/sdb1, /dev/sdb2, and /dev/sdb3 appear as LVM Physical Volumes.",
+        "Verify that /dev/sdb4 does not yet appear as an LVM Physical Volume."
       ]
     },
-
     {
       "task_number": 4,
-      "title": "Enable and Start rpcbind",
+      "title": "Create the Volume Group",
       "steps": [
-        "Make sure the rpcbind service is active and enabled on the NFS server.",
-        "Verify the status of the rpcbind service."
+        "Create a Volume Group named vg_db.",
+        "Use /dev/sdb1, /dev/sdb2, and /dev/sdb3 as the Physical Volumes for vg_db.",
+        "Display the Volume Group information.",
+        "Use vgs and/or vgdisplay to verify the configuration.",
+        "Verify that vg_db exists.",
+        "Verify that vg_db contains exactly three Physical Volumes.",
+        "Verify that vg_db has available free space for creating and extending Logical Volumes."
       ]
     },
-
     {
       "task_number": 5,
-      "title": "Create the NFS Export Directory",
+      "title": "Create the Logical Volume",
       "steps": [
-        "Create the NFS export directory.",
-        "The directory must be named /nfs_share."
+        "Create a Logical Volume named lv_db inside vg_db.",
+        "Allocate approximately 1 GB of the currently available free space to lv_db from the vg_db volume group.",
+        "Do not consume all available space in vg_db.",
+        "Verify that /dev/vg_db/lv_db exists.",
+        "Use lvs to display the Logical Volume information.",
+        "Verify that lv_db belongs to vg_db.",
+        "Verify that the Volume Group retains free space after creating lv_db."
       ]
     },
-
     {
       "task_number": 6,
-      "title": "Create the Server Test File",
+      "title": "Create the XFS Filesystem and Mount /data",
       "steps": [
-        "Create the file /nfs_share/server_test.txt.",
-        "Add the following content to the file:",
-        "This is my first NFS share, and I’m excited to learn how to configure and manage an NFS server."
+        "Create an XFS filesystem on /dev/vg_db/lv_db.",
+        "Verify that the Logical Volume contains an XFS filesystem.",
+        "Create the /data directory as the mount point.",
+        "Verify that /data exists and is a directory.",
+        "Mount /dev/vg_db/lv_db on /data.",
+        "Verify that the filesystem is mounted successfully.",
+        "Use df -hT to verify the filesystem type, capacity, and mount point.",
+        "Redirect the df -hT output to /home/your_username/lv_db_mount.",
+        "Verify that the redirected output file was created successfully."
       ]
     },
-
     {
       "task_number": 7,
-      "title": "Configure the NFS Export",
+      "title": "Configure Persistent Mounting Using /etc/fstab",
       "steps": [
-        "Add an entry to /etc/exports so that /nfs_share is exported to the NFS client only.",
-        "Use the NFS client's IP address rather than allowing unrestricted access from the entire network.",
-        "Configure the export options with read/write access, synchronous writes and root on the client retains root privileges over the NFS export.",
-        "Hint:",
-        "/nfs_share <NFS_CLIENT_IP>(rw,sync,no_root_squash)"
+        "Configure /etc/fstab so that /dev/vg_db/lv_db is automatically mounted on /data after a reboot.",
+        "Use /dev/vg_db/lv_db as the device specification in /etc/fstab.",
+        "Use XFS as the filesystem type.",
+        "Use the defaults mount option.",
+        "Configure the entry so that no dump is performed.",
+        "Configure the entry so that no filesystem check is performed at boot.",
+        "Verify the /etc/fstab entry before rebooting.",
+        "Test the /etc/fstab configuration without rebooting the system.",
+        "Verify that /data mounts successfully without errors."
       ]
     },
-
     {
       "task_number": 8,
-      "title": "Apply the NFS Export Configuration",
+      "title": "Extend lv_db Using Free Space in vg_db",
       "steps": [
-        "Apply the NFS export configuration.",
-        "Reload or export the configured NFS share without requiring a server reboot.",
-        "Hint: exportfs -avr"
+        "Before extending lv_db, check its current size.",
+        "Verify that vg_db has sufficient free space.",
+        "Extend /dev/vg_db/lv_db by 500 MB and use -r option to resize the XFS filesystem so that it uses the additional Logical Volume capacity.",
+        "Do not initialize or add /dev/sdb4 at this stage.",
+        "Verify that the Logical Volume size increased.",
+        "Verify the updated filesystem size.",
+        "Verify the filesystem type and mount point.",
+        "Use df -hT to verify the increased capacity and redirect the output to /home/your_username/lv_db_extend.",
+        "Verify that the redirected output file was created successfully."
       ]
     },
-
     {
       "task_number": 9,
-      "title": "Verify Active NFS Exports",
+      "title": "Initialize /dev/sdb4 as an LVM Physical Volume",
       "steps": [
-        "Display the currently exported filesystems on the NFS server.",
-        "Verify that /nfs_share is exported to the correct NFS client.",
-        "Confirm that the export configuration is active.",
-        "Hint: exportfs -v"
+        "The fourth partition, /dev/sdb4, was intentionally left unused during the initial LVM configuration.",
+        "The storage team has now provided /dev/sdb4 for additional application capacity.",
+        "Create an LVM Physical Volume on /dev/sdb4.",
+        "Use pvs to verify that /dev/sdb4 appears as an LVM Physical Volume.",
+        "Verify that /dev/sdb1, /dev/sdb2, /dev/sdb3, and /dev/sdb4 are now recognized as LVM Physical Volumes.",
+        "Do not create another Volume Group."
       ]
     },
-
     {
       "task_number": 10,
-      "title": "Configure the NFS Server Firewall",
+      "title": "Add /dev/sdb4 to vg_db",
       "steps": [
-        "Configure the NFS server firewall so that NFS clients can access the exported filesystem.",
-        "Allow the NFS service through the firewall.",
-        "Allow the mountd service through the firewall.",
-        "Allow the rpc-bind service through the firewall.",
-        "Reload the firewall configuration.",
-        "Verify that the required firewall services are allowed.",
-        "Hint:",
-        "firewall-cmd --add-service=nfs --permanent",
-        "firewall-cmd --add-service=mountd --permanent",
-        "firewall-cmd --add-service=rpc-bind --permanent",
-        "firewall-cmd --reload",
-        "firewall-cmd --list-services",
-        "You should see nfs mountd rpc-bind."
+        "Extend the existing vg_db Volume Group by adding /dev/sdb4.",
+        "Do not create a second Volume Group.",
+        "Use vgs and/or vgdisplay to verify the Volume Group.",
+        "Verify that vg_db now contains four Physical Volumes.",
+        "Verify that /dev/sdb4 belongs to vg_db.",
+        "Verify that the total size of vg_db increased after adding /dev/sdb4.",
+        "Verify the updated Physical Volume, Volume Group, and free-space information."
       ]
     },
-
     {
       "task_number": 11,
-      "title": "Set SELinux to Permissive Mode",
+      "title": "Extend lv_db Using the Newly Added Capacity",
       "steps": [
-        "Set SELinux to permissive mode on the NFS server.",
-        "Verify the current SELinux mode."
-      ]
-    },
-
-    {
-      "task_number": 12,
-      "title": "Verify the NFS Client Hostname",
-      "steps": [
-        "On the NFS client, verify the system hostname.",
-        "set hostname to nfs-client",
-        "Hint: hostnamectl set-hostname nfs-client ; bash",
-        "Confirm that the hostname is nfs-client."
-      ]
-    },
-
-    {
-      "task_number": 13,
-      "title": "Install NFS Client Packages",
-      "steps": [
-        "On the NFS client, install the nfs-utils package required to mount NFS filesystems.",
-        "Use the appropriate package manager for your Linux distribution."
-      ]
-    },
-
-    {
-      "task_number": 14,
-      "title": "Enable and Start rpcbind on the Client",
-      "steps": [
-        "Make sure the rpcbind service is active and enabled on the NFS client.",
-        "Verify the status of the rpcbind service."
-      ]
-    },
-
-    {
-      "task_number": 15,
-      "title": "Verify Connectivity to the NFS Server",
-      "steps": [
-        "From the NFS client, verify network connectivity to the NFS server by successfully pinging the NFS server's IP address."
-      ]
-    },
-
-    {
-      "task_number": 16,
-      "title": "Discover the NFS Export",
-      "steps": [
-        "From the NFS client, query the NFS server and verify that the /nfs_share export is available to the client.",
-        "Confirm that /nfs_share is exported by the NFS server.",
-        "Hint: showmount -e <nfs_server_IP>"
-      ]
-    },
-
-    {
-      "task_number": 17,
-      "title": "Create the Local Mount Point",
-      "steps": [
-        "On the NFS client, create the /mnt/nfs_share directory to serve as the local mount point for the NFS share."
-      ]
-    },
-
-    {
-      "task_number": 18,
-      "title": "Mount the NFS Share Manually",
-      "steps": [
-        "On the NFS client, manually mount the NFS server's /nfs_share export on the local mount point /mnt/nfs_share.",
-        "Hint:",
-        "mount <NFS_SERVER_IP>:/nfs_share /mnt/nfs_share"
-      ]
-    },
-
-    {
-      "task_number": 19,
-      "title": "Verify the NFS Mount",
-      "steps": [
-        "Use an appropriate command to confirm that /mnt/nfs_share is mounted successfully.",
-        "Verify that the mounted filesystem type is NFS.",
-        "Hint: You can use 'df -h' or findmnt /mnt/nfs_share"
-      ]
-    },
-
-    {
-      "task_number": 20,
-      "title": "Verify the Server Test File from the Client",
-      "steps": [
-        "From the NFS client, verify that /mnt/nfs_share/server_test.txt exists and is accessible.",
-        "Verify that the file contains the expected content.",
-        "Hint:",
-        " cd /mnt/nfs_share/",
-        "ls -l server_test.txt",
-        "cat server_test.txt",
-        "cd"
-      ]
-    },
-
-    {
-      "task_number": 21,
-      "title": "Configure a Persistent NFS Mount",
-      "steps": [
-        "Add an entry to /etc/fstab so that the NFS server's /nfs_share export is automatically mounted at /mnt/nfs_share after a system reboot.",
-        "Hint:",
-        "<NFS_SERVER>:/nfs_share <mount_point> nfs defaults 0 0"
-      ]
-    },
-
-    {
-      "task_number": 22,
-      "title": "Test the /etc/fstab Configuration",
-      "steps": [
-        "Unmount the NFS share.",
-        "Use an appropriate command to test the /etc/fstab entry.",
-        "Verify that the NFS share mounts successfully without rebooting the system.",
-        "Hint:",
-        "mount -a"
-      ]
-    },
-
-    {
-      "task_number": 23,
-      "title": "Mount the NFS Filesystem Using /etc/fstab",
-      "steps": [
-        "Unmount the NFS share again.",
-        "Use the configuration defined in /etc/fstab to mount the NFS filesystem.",
-        "Do not specify the NFS server or export manually on the command line.",
-        "Hint:",
-        "mount /mnt/nfs_share"
-      ]
-    },
-
-    {
-      "task_number": 24,
-      "title": "Verify the Persistent NFS Mount",
-      "steps": [
-        "Confirm that /mnt/nfs_share is mounted.",
-        "Verify that the source of the mount is nfs-server:/nfs_share.",
-        "Verify that the filesystem type is NFS.",
-        "Hint:",
-        "findmnt /mnt/nfs_share"
-      ]
-    },
-
-    {
-      "task_number": 25,
-      "title": "Create and Verify Client Write Access",
-      "steps": [
-        "From the NFS client, create /mnt/nfs_share/client_test.txt to verify that the client has write access to the NFS share.",
-        "Add the following content to /mnt/nfs_share/client_test.txt:",
-        "This file was created from the NFS client to verify write access to the NFS shared filesystem.",
-        "On the NFS server, verify that /nfs_share/client_test.txt exists.",
-        "Verify that the file contains the expected content written from the NFS client."
-      ]
-    },
-
-    {
-      "task_number": 26,
-      "title": "Modify and Verify a File Across the NFS Share",
-      "steps": [
-        "From the NFS client, modify /mnt/nfs_share/server_test.txt by adding the following line:",
-        "This file was modified from the NFS client to verify shared filesystem access.",
-        "Then, on the NFS server, verify that the changes are visible in /nfs_share/server_test.txt."
+        "Extend /dev/vg_db/lv_db using 100% of the available free space in vg_db.",
+        "Do not create a second Logical Volume.",
+        "Do not use the -r option when extending the Logical Volume.",
+        "Verify that lv_db increased in size.",
+        "Extend the existing XFS filesystem so that it uses the newly allocated Logical Volume capacity.",
+        "The existing filesystem must remain XFS.",
+        "The existing filesystem must remain mounted at /data.",
+        "Verify that the XFS filesystem size increased.",
+        "Verify that the filesystem size reflects the latest Logical Volume size.",
+        "Use lvs to verify the final Logical Volume size.",
+        "Use vgs to verify that the available free space in vg_db has been consumed appropriately.",
+        "Use df -hT to verify the final filesystem size, filesystem type, and /data mount point."
       ]
     }
   ],
-
-  "completion_message": "Excellent work! You have completed Lab 229 and practiced NFS server and client configuration, NFS exports, exportfs, firewall configuration, client discovery, manual NFS mounting, read/write testing, /etc/fstab configuration, persistent NFS mounts, and NFS verification from both the server and client."
+  "completion_message": "Great job! Lab 229 completed successfully. You practiced the complete LVM workflow, including GPT partitioning, Physical Volumes, Volume Groups, Logical Volumes, XFS filesystems, persistent mounting, extending Logical Volumes using existing VG space, adding a new Physical Volume, extending the Volume Group, and expanding the filesystem."
 }
