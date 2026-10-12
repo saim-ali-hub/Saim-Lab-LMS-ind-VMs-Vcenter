@@ -1,0 +1,212 @@
+{
+  "lab_number": "lab233",
+  "title": "Lab 233 - Linux Logical Volume Management (LVM) - Advanced",
+
+  "lab_objective": {
+    "description": "The objective of this lab is to practice Linux Logical Volume Management (LVM) by creating a physical volume directly on /dev/sdb, adding it to a volume group, creating multiple logical volumes with different filesystems, and managing their size.",
+
+    "objectives": [
+      "Create a physical volume directly on /dev/sdb.",
+      "Create a volume group and add the physical volume to it.",
+      "Create multiple logical volumes.",
+      "Create an XFS filesystem on one logical volume.",
+      "Create an ext4 filesystem on another logical volume.",
+      "Mount the filesystems and configure them for persistent mounting.",
+      "Extend logical volumes.",
+      "Resize the filesystems after extending the logical volumes.",
+      "Shrink an ext4 logical volume safely.",
+      "Resize the ext4 filesystem before reducing the logical volume.",
+      "Verify filesystem sizes using df -hT.",
+      "Save intermediate df -hT output to files for validation.",
+      "Verify the final LVM configuration."
+    ],
+
+    "scenario": [
+      "You are working as a Linux Systems Administrator for an application server that requires flexible storage management.",
+      "A 2 GB disk, /dev/sdb, has been attached to the server. The disk needs to be managed using LVM so that storage can be allocated and resized without having to repartition the disk.",
+      "Create a physical volume directly on /dev/sdb and add it to a new volume group named vg_app.",
+      "Create two logical volumes in vg_app:",
+      "lv_data - 600 MB",
+      "lv_logs - 500 MB",
+      "Create an XFS filesystem on lv_data and mount it persistently at /data.",
+      "Create an ext4 filesystem on lv_logs and mount it persistently at /logs.",
+      "After the initial configuration, increase the size of both logical volumes and resize their respective filesystems.",
+      "The ext4 logical volume must then be reduced in size. Because ext4 supports shrinking, safely reduce the filesystem first and then reduce the logical volume.",
+      "The XFS filesystem must not be shrunk because XFS does not support shrinking.",
+      "Use df -hT at the required stages and save the output to the specified files so that the intermediate storage configuration can be validated."
+    ]
+  },
+
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Identify the New Disk",
+      "steps": [
+        "Identify the newly attached disk and confirm that /dev/sdb is available for use.",
+        "The disk /dev/sdb must be used for this lab.",
+        "Do not create a partition table or partitions on /dev/sdb."
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Create a Physical Volume",
+      "steps": [
+        "Create a physical volume directly on /dev/sdb.",
+        "Verify that /dev/sdb is recognized as an LVM physical volume."
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Create a Volume Group",
+      "steps": [
+        "Create a volume group named:",
+        "vg_app",
+        "Add the physical volume /dev/sdb to vg_app.",
+        "Verify the volume group and confirm that /dev/sdb is an active physical volume in the volume group."
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Create the Data Logical Volume",
+      "steps": [
+        "Create a logical volume named:",
+        "lv_data",
+        "The logical volume must initially be 600 MB in size.",
+        "Verify that lv_data belongs to vg_app and has the required initial size."
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Create the Logs Logical Volume",
+      "steps": [
+        "Create a logical volume named:",
+        "lv_logs",
+        "The logical volume must initially be 500 MB in size.",
+        "Verify that lv_logs belongs to vg_app and has the required initial size."
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Create the XFS Filesystem",
+      "steps": [
+        "Create an XFS filesystem on:",
+        "/dev/vg_app/lv_data",
+        "Create the mount point:",
+        "/data",
+        "Mount the logical volume at /data.",
+        "Verify that the filesystem type is XFS and that the filesystem is mounted correctly."
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "Create the ext4 Filesystem",
+      "steps": [
+        "Create an ext4 filesystem on:",
+        "/dev/vg_app/lv_logs",
+        "Create the mount point:",
+        "/logs",
+        "Mount the logical volume at /logs.",
+        "Verify that the filesystem type is ext4 and that the filesystem is mounted correctly."
+      ]
+    },
+    {
+      "task_number": 8,
+      "title": "Configure Persistent Mounting",
+      "steps": [
+        "Configure both logical volumes in /etc/fstab so that they are mounted automatically after a system reboot.",
+        "The following filesystems must be configured:",
+        "/dev/vg_app/lv_data    /data",
+        "/dev/vg_app/lv_logs    /logs",
+        "Verify the /etc/fstab configuration and confirm that both filesystems can be mounted using the configured entries."
+      ]
+    },
+    {
+      "task_number": 9,
+      "title": "Record the Initial Filesystem Configuration",
+      "steps": [
+        "Run ‘df –hT’ and redirect the output to ‘/home/your_username/lvm_initial’",
+        "The file must contain the filesystem information after the initial LVM configuration."
+      ]
+    },
+    {
+      "task_number": 10,
+      "title": "Extend the XFS Logical Volume",
+      "steps": [
+        "Extend lv_data by 200 MB.",
+        "The logical volume must increase from approximately 600 MB to approximately 800 MB.",
+        "Verify the new logical volume size."
+      ]
+    },
+    {
+      "task_number": 11,
+      "title": "Resize the XFS Filesystem",
+      "steps": [
+        "Resize the XFS filesystem on /data so that it uses the additional space provided to lv_data.",
+        "Verify that the filesystem has been successfully expanded.",
+        "Run ‘df –hT’ and redirect the output to ‘/home/your_username/lvm_xfs_extend’",
+        "The output file must contain the updated filesystem information for /data."
+      ]
+    },
+    {
+      "task_number": 12,
+      "title": "Resize the ext4 Logical Volume",
+      "steps": [
+        "Resize lv_logs from approximately 500 MB to 700 MB.",
+        "The logical volume must increase to approximately 700 MB in size.",
+        "Verify the new logical volume size."
+      ]
+    },
+    {
+      "task_number": 13,
+      "title": "Resize the ext4 Filesystem",
+      "steps": [
+        "Resize the ext4 filesystem on /logs so that it uses the additional space provided to lv_logs.",
+        "Verify that the filesystem has been successfully expanded.",
+        "Run ‘df –hT’ and redirect the output to ‘/home/your_username/lvm_ext4_extend’",
+        "The output file must contain the updated filesystem information for /logs."
+      ]
+    },
+    {
+      "task_number": 14,
+      "title": "Shrink the ext4 Filesystem and Logical Volume",
+      "steps": [
+        "Safely reduce lv_logs from approximately **700 MB back to 500 MB**.",
+        "Before shrinking the filesystem, **unmount /logs**.",
+        "Check the ext4 filesystem for errors before performing the resize operation. Using 'e2fsck -f /dev/vg_app/lv_logs'",
+        "If there are errors that can be safely repaired, you can use 'e2fsck -f -y /dev/vg_app/lv_logs' otherwise move forward.",
+        "Shrink the ext4 filesystem to **500 MB**.",
+        "After successfully shrinking the filesystem, reduce the logical volume to **500 MB**.",
+        "Mount /logs again after completing the operation.",
+        "Verify that the ext4 filesystem and logical volume are approximately **500 MB** in size.",
+        "**The filesystem must be reduced before the logical volume is reduced.**"
+      ]
+    },
+    {
+      "task_number": 15,
+      "title": "Record the Shrunk Filesystem Configuration",
+      "steps": [
+        "Run ‘df -hT' and redirect the output to ‘/home/your_username/lvm_ext4_shrink’",
+        "The output file must contain the filesystem information after shrinking /logs."
+      ]
+    },
+    {
+      "task_number": 16,
+      "title": "Extend the ext4 Logical Volume Again",
+      "steps": [
+        "Extend lv_logs by 200 MB.",
+        "The logical volume must increase from approximately 500 MB to approximately 700 MB.",
+        "Verify the new logical volume size."
+      ]
+    },
+    {
+      "task_number": 17,
+      "title": "Resize the ext4 Filesystem Again",
+      "steps": [
+        "Resize the ext4 filesystem on /logs so that it uses the additional space.",
+        "Verify that the filesystem has successfully grown to approximately 700 MB."
+      ]
+    }
+  ],
+
+  "completion_message": "Congratulations!\n\nYou have successfully completed Lab 233.\n\nYou created and configured an LVM environment using /dev/sdb, created a volume group and multiple logical volumes, worked with both XFS and ext4 filesystems, configured persistent mounts, extended logical volumes, resized filesystems, and safely shrank an ext4 filesystem and logical volume."
+}

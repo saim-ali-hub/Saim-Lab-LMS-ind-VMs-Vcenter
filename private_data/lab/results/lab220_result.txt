@@ -400,3 +400,11 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 396   hamza.bashir              2026-10-01 03:57:03    11     9      82%       
 397   hamza.bashir              2026-10-01 04:01:29    11     8      73%       
 398   hamza.bashir              2026-10-01 04:10:05    11     11     100%      
+399   muhammad.usman            2026-10-02 17:11:46    11     8      73%       
+400   muhammad.azlan            2026-10-03 23:05:22    11     9      82%       
+401   raza.ali                  2026-10-06 00:32:39    11     11     100%      
+402   yuliana.cuzzi             2026-10-07 02:26:47    11     4      36%       
+403   yuliana.cuzzi             2026-10-07 02:46:39    11     9      82%       
+404   yuliana.cuzzi             2026-10-07 02:48:00    11     9      82%       
+405   yuliana.cuzzi             2026-10-07 02:49:00    11     9      82%       
+406   muhammad.bilal            2026-10-07 14:35:18    11     11     100%      

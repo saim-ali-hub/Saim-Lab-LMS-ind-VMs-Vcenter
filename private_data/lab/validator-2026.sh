@@ -2286,7 +2286,7 @@ validate_lab207_ownership_group_management() {
     FILE1_OWNER=$(stat -c %U "$FILE1" 2>/dev/null)
     FILE1_GROUP=$(stat -c %G "$FILE1" 2>/dev/null)
 
-    EXPECTED_ORIGINAL_GROUP="domain users"
+    EXPECTED_ORIGINAL_GROUP="$STUDENT_NAME"
 
     if [ -f "$FILE1" ] &&
        [ "$FILE1_OWNER" = "john" ] &&
@@ -12043,7 +12043,7 @@ validate_lab229_lvm() {
     set +u
     set +o pipefail
 
-    echo "<h2 style='color:#white;'>Checking Lab 229 - Linux Logical Volume Management - LVM.</h2>"
+    echo "<h2 style='color:#white;'>Checking Lab 229 - Linux Logical Volume Management - LVM</h2>"
 
     TOTAL_TASKS=11
     PASSED=0
@@ -14406,39 +14406,906 @@ $RESULT_ICON $RESULT_TEXT
 HTML
 }
 #==================================================================
-
-validate_lab233_nfs() {
+validate_lab233_lvm() {
 
     set +e
     set +u
     set +o pipefail
 
-    echo "<h2 style='color:#white;'>Checking Lab 229 - Linux NFS Server & Client Configuration.</h2>"
+    echo "<h2 style='color:#white;'>Checking Lab 233 - Linux Logical Volume Management (LVM) - Advanced</h2>"
 
-    TOTAL_TASKS=26
+    TOTAL_TASKS=17
     PASSED=0
 
-    LAB_NAME="Lab 229 - Linux NFS Server & Client Configuration"
+    LAB_NAME="Lab 233 - Linux Logical Volume Management (LVM) - Advanced"
     DATE=$(date "+%F %T")
 
-    NFS_SERVER="nfs-server"
-    NFS_CLIENT="nfs-client"
+    DISK="/dev/sdb"
+    VG_NAME="vg_app"
 
-    EXPORT_DIR="/nfs_share"
-    MOUNT_POINT="/mnt/nfs_share"
+    LV_DATA="lv_data"
+    LV_LOGS="lv_logs"
 
-    SERVER_TEST_FILE="/nfs_share/server_test.txt"
-    CLIENT_TEST_FILE="/nfs_share/client_test.txt"
+    LV_DATA_PATH="/dev/vg_app/lv_data"
+    LV_LOGS_PATH="/dev/vg_app/lv_logs"
 
-    SERVER_TEST_CONTENT="This is my first NFS share, and I’m excited to learn how to configure and manage an NFS server."
-    CLIENT_TEST_CONTENT="This file was created from the NFS client to verify write access to the NFS shared filesystem."
-    CLIENT_MODIFIED_CONTENT="This file was modified from the NFS client to verify shared filesystem access."
+    DATA_MOUNT="/data"
+    LOGS_MOUNT="/logs"
 
-    # ------------------------------------------------------------
-    # DISCOVER CLIENT IP
-    # ------------------------------------------------------------
+    FSTAB="/etc/fstab"
+    HOME_DIR="/home/$STUDENT_NAME"
 
-    NFS_CLIENT_IP=$(getent hosts "$NFS_CLIENT" 2>/dev/null | awk 'NR==1 {print $1}')
+
+    # ============================================================
+    # HELPERS
+    # ============================================================
+
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+
+    # ============================================================
+    # TASK 1 - IDENTIFY THE NEW DISK
+    # ============================================================
+
+    TASK1_OK=1
+
+    if [ ! -b "$DISK" ]; then
+        TASK1_OK=0
+    else
+
+        DISK_SIZE=$(lsblk -bndo SIZE "$DISK" 2>/dev/null)
+
+        if [ -z "$DISK_SIZE" ] || [ "$DISK_SIZE" -le 0 ] 2>/dev/null; then
+            TASK1_OK=0
+        fi
+
+        # Verify disk is approximately 2 GB or larger than 1.8 GB.
+        MIN_DISK_SIZE=$((1800 * 1000 * 1000))
+
+        if [ -n "$DISK_SIZE" ] &&
+           [ "$DISK_SIZE" -lt "$MIN_DISK_SIZE" ] 2>/dev/null; then
+            TASK1_OK=0
+        fi
+
+        # Verify no partitions exist on /dev/sdb.
+        PARTITION_COUNT=$(lsblk -nr -o TYPE "$DISK" 2>/dev/null |
+            grep -c '^part$')
+
+        [ "$PARTITION_COUNT" -eq 0 ] || TASK1_OK=0
+    fi
+
+    if [ "$TASK1_OK" -eq 1 ]; then
+        pass "Task 1: /dev/sdb is available, approximately 2 GB, and has no partitions"
+    else
+        fail "Task 1: /dev/sdb is missing, incorrectly sized, or contains partitions"
+    fi
+
+
+    # ============================================================
+    # TASK 2 - CREATE PHYSICAL VOLUME
+    # ============================================================
+
+    TASK2_OK=1
+
+    PV_NAME=$(sudo /usr/sbin/pvs --noheadings \
+        -o pv_name "$DISK" 2>/dev/null | xargs)
+
+    [ "$PV_NAME" = "$DISK" ] || TASK2_OK=0
+
+    PV_ATTR=$(sudo /usr/sbin/pvs --noheadings \
+        -o pv_attr "$DISK" 2>/dev/null | xargs)
+
+    [ -n "$PV_ATTR" ] || TASK2_OK=0
+
+    if [ "$TASK2_OK" -eq 1 ]; then
+        pass "Task 2: /dev/sdb is configured directly as an LVM Physical Volume"
+    else
+        fail "Task 2: /dev/sdb is not correctly configured as an LVM Physical Volume"
+    fi
+
+
+    # ============================================================
+    # TASK 3 - CREATE VOLUME GROUP
+    # ============================================================
+
+    TASK3_OK=1
+
+    VG_EXISTS=$(sudo /usr/sbin/vgs --noheadings \
+        -o vg_name "$VG_NAME" 2>/dev/null | xargs)
+
+    [ "$VG_EXISTS" = "$VG_NAME" ] || TASK3_OK=0
+
+    PV_VG=$(sudo /usr/sbin/pvs --noheadings \
+        -o vg_name "$DISK" 2>/dev/null | xargs)
+
+    [ "$PV_VG" = "$VG_NAME" ] || TASK3_OK=0
+
+    if [ "$TASK3_OK" -eq 1 ]; then
+        pass "Task 3: Volume Group vg_app exists and /dev/sdb is an active Physical Volume in it"
+    else
+        fail "Task 3: Volume Group vg_app is missing or /dev/sdb is not correctly assigned"
+    fi
+
+        # ============================================================
+    # TASK 4 - CREATE DATA LOGICAL VOLUME
+    # ============================================================
+
+    TASK4_OK=1
+
+    # Verify lv_data exists
+    if [ ! -b "$LV_DATA_PATH" ]; then
+        TASK4_OK=0
+    fi
+
+    # Verify lv_data belongs to vg_app
+    DATA_VG=$(sudo /usr/sbin/lvs --noheadings \
+        -o vg_name "$LV_DATA_PATH" 2>/dev/null | xargs)
+
+    [ "$DATA_VG" = "$VG_NAME" ] || TASK4_OK=0
+
+    # Verify the initial filesystem size from saved df output.
+    # The initial LV was 600 MB. The XFS filesystem reports
+    # approximately 536 MB in df -hT because of filesystem overhead.
+    INITIAL_FILE="$HOME_DIR/lvm_initial"
+
+    if [ ! -f "$INITIAL_FILE" ]; then
+
+        TASK4_OK=0
+
+    else
+
+        INITIAL_DATA_LINE=$(awk '$NF=="/data" {line=$0} END {print line}' \
+            "$INITIAL_FILE")
+
+        if [ -z "$INITIAL_DATA_LINE" ]; then
+
+            TASK4_OK=0
+
+        else
+
+            INITIAL_DATA_TYPE=$(echo "$INITIAL_DATA_LINE" | awk '{print $2}')
+            INITIAL_DATA_SIZE=$(echo "$INITIAL_DATA_LINE" | awk '{print $3}')
+
+            # Verify XFS filesystem
+            [ "$INITIAL_DATA_TYPE" = "xfs" ] || TASK4_OK=0
+
+            # Convert df size to MB
+            case "$INITIAL_DATA_SIZE" in
+                *M)
+                    INITIAL_DATA_SIZE_MB=${INITIAL_DATA_SIZE%M}
+                    ;;
+                *G)
+                    INITIAL_DATA_SIZE_G=${INITIAL_DATA_SIZE%G}
+                    INITIAL_DATA_SIZE_MB=$(awk -v g="$INITIAL_DATA_SIZE_G" \
+                        'BEGIN {printf "%.0f", g * 1024}')
+                    ;;
+                *)
+                    TASK4_OK=0
+                    INITIAL_DATA_SIZE_MB=0
+                    ;;
+            esac
+
+            # XFS on a 600 MB LV reports approximately 536 MB.
+            # Accept a reasonable range around the expected value.
+            if [ "$INITIAL_DATA_SIZE_MB" -lt 500 ] ||
+               [ "$INITIAL_DATA_SIZE_MB" -gt 620 ]; then
+                TASK4_OK=0
+            fi
+        fi
+    fi
+
+    if [ "$TASK4_OK" -eq 1 ]; then
+        pass "Task 4: lv_data exists in vg_app and the initial filesystem configuration was approximately 600 MB"
+    else
+        fail "Task 4: lv_data is missing, is not in vg_app, or the initial 600 MB configuration is incorrect"
+    fi
+
+
+    # ============================================================
+    # TASK 5 - CREATE LOGS LOGICAL VOLUME
+    # ============================================================
+
+    TASK5_OK=1
+
+    # Verify lv_logs exists
+    if [ ! -b "$LV_LOGS_PATH" ]; then
+        TASK5_OK=0
+    fi
+
+    # Verify lv_logs belongs to vg_app
+    LOGS_VG=$(sudo /usr/sbin/lvs --noheadings \
+        -o vg_name "$LV_LOGS_PATH" 2>/dev/null | xargs)
+
+    [ "$LOGS_VG" = "$VG_NAME" ] || TASK5_OK=0
+
+    # Verify the initial filesystem size from saved df output.
+    # The initial LV was 500 MB. The ext4 filesystem reports
+    # approximately 459 MB in df -hT because of filesystem overhead.
+
+    if [ ! -f "$INITIAL_FILE" ]; then
+
+        TASK5_OK=0
+
+    else
+
+        INITIAL_LOGS_LINE=$(awk '$NF=="/logs" {line=$0} END {print line}' \
+            "$INITIAL_FILE")
+
+        if [ -z "$INITIAL_LOGS_LINE" ]; then
+
+            TASK5_OK=0
+
+        else
+
+            INITIAL_LOGS_TYPE=$(echo "$INITIAL_LOGS_LINE" | awk '{print $2}')
+            INITIAL_LOGS_SIZE=$(echo "$INITIAL_LOGS_LINE" | awk '{print $3}')
+
+            # Verify ext4 filesystem
+            [ "$INITIAL_LOGS_TYPE" = "ext4" ] || TASK5_OK=0
+
+            # Convert df size to MB
+            case "$INITIAL_LOGS_SIZE" in
+                *M)
+                    INITIAL_LOGS_SIZE_MB=${INITIAL_LOGS_SIZE%M}
+                    ;;
+                *G)
+                    INITIAL_LOGS_SIZE_G=${INITIAL_LOGS_SIZE%G}
+                    INITIAL_LOGS_SIZE_MB=$(awk -v g="$INITIAL_LOGS_SIZE_G" \
+                        'BEGIN {printf "%.0f", g * 1024}')
+                    ;;
+                *)
+                    TASK5_OK=0
+                    INITIAL_LOGS_SIZE_MB=0
+                    ;;
+            esac
+
+            # ext4 on a 500 MB LV reports approximately 459 MB.
+            # Accept a reasonable range around the expected value.
+            if [ "$INITIAL_LOGS_SIZE_MB" -lt 420 ] ||
+               [ "$INITIAL_LOGS_SIZE_MB" -gt 550 ]; then
+                TASK5_OK=0
+            fi
+        fi
+    fi
+
+    if [ "$TASK5_OK" -eq 1 ]; then
+        pass "Task 5: lv_logs exists in vg_app and the initial filesystem configuration was approximately 500 MB"
+    else
+        fail "Task 5: lv_logs is missing, is not in vg_app, or the initial 500 MB configuration is incorrect"
+    fi 
+   
+
+    # ============================================================
+    # TASK 6 - CREATE XFS FILESYSTEM
+    # ============================================================
+
+    TASK6_OK=1
+
+    DATA_FSTYPE=$(sudo /usr/sbin/blkid -o value \
+        -s TYPE "$LV_DATA_PATH" 2>/dev/null)
+
+    [ "$DATA_FSTYPE" = "xfs" ] || TASK6_OK=0
+
+    if ! mountpoint -q "$DATA_MOUNT" 2>/dev/null; then
+        TASK6_OK=0
+    fi
+
+    DATA_SOURCE=$(findmnt -n -o SOURCE "$DATA_MOUNT" 2>/dev/null)
+
+    if [[ "$DATA_SOURCE" != "/dev/mapper/vg_app-lv_data" &&
+          "$DATA_SOURCE" != "$LV_DATA_PATH" ]]; then
+        TASK6_OK=0
+    fi
+
+    if [ "$TASK6_OK" -eq 1 ]; then
+        pass "Task 6: lv_data is formatted with XFS and mounted correctly on /data"
+    else
+        fail "Task 6: XFS filesystem, /data mount, or logical volume configuration is incorrect"
+    fi
+
+
+    # ============================================================
+    # TASK 7 - CREATE EXT4 FILESYSTEM
+    # ============================================================
+
+    TASK7_OK=1
+
+    LOGS_FSTYPE=$(sudo /usr/sbin/blkid -o value \
+        -s TYPE "$LV_LOGS_PATH" 2>/dev/null)
+
+    [ "$LOGS_FSTYPE" = "ext4" ] || TASK7_OK=0
+
+    if ! mountpoint -q "$LOGS_MOUNT" 2>/dev/null; then
+        TASK7_OK=0
+    fi
+
+    LOGS_SOURCE=$(findmnt -n -o SOURCE "$LOGS_MOUNT" 2>/dev/null)
+
+    if [[ "$LOGS_SOURCE" != "/dev/mapper/vg_app-lv_logs" &&
+          "$LOGS_SOURCE" != "$LV_LOGS_PATH" ]]; then
+        TASK7_OK=0
+    fi
+
+    if [ "$TASK7_OK" -eq 1 ]; then
+        pass "Task 7: lv_logs is formatted with ext4 and mounted correctly on /logs"
+    else
+        fail "Task 7: ext4 filesystem, /logs mount, or logical volume configuration is incorrect"
+    fi
+
+
+    # ============================================================
+    # TASK 8 - CONFIGURE PERSISTENT MOUNTING
+    # ============================================================
+
+    TASK8_OK=1
+
+    if [ ! -f "$FSTAB" ]; then
+        TASK8_OK=0
+    else
+
+        awk '
+        $1 == "/dev/vg_app/lv_data" &&
+        $2 == "/data" &&
+        $3 == "xfs" &&
+        $4 == "defaults" {
+            found_data=1
+        }
+
+        $1 == "/dev/vg_app/lv_logs" &&
+        $2 == "/logs" &&
+        $3 == "ext4" &&
+        $4 == "defaults" {
+            found_logs=1
+        }
+
+        END {
+            if (!found_data || !found_logs)
+                exit 1
+        }' "$FSTAB" || TASK8_OK=0
+    fi
+
+    # Test fstab without rebooting.
+    if [ "$TASK8_OK" -eq 1 ]; then
+
+        if ! mount -a >/dev/null 2>&1; then
+            TASK8_OK=0
+        fi
+
+        mountpoint -q "$DATA_MOUNT" || TASK8_OK=0
+        mountpoint -q "$LOGS_MOUNT" || TASK8_OK=0
+    fi
+
+    if [ "$TASK8_OK" -eq 1 ]; then
+        pass "Task 8: /etc/fstab is correctly configured for persistent /data and /logs mounting"
+    else
+        fail "Task 8: /etc/fstab entries are missing, incorrect, or cannot mount the filesystems"
+    fi
+
+
+    # ============================================================
+    # TASK 9 - RECORD INITIAL FILESYSTEM CONFIGURATION
+    # ============================================================
+
+    TASK9_OK=1
+
+    if [ ! -f "$INITIAL_FILE" ]; then
+        TASK9_OK=0
+    else
+
+        grep -Eq '[[:space:]]/data[[:space:]]*$' "$INITIAL_FILE" ||
+            TASK9_OK=0
+
+        grep -Eq '[[:space:]]/logs[[:space:]]*$' "$INITIAL_FILE" ||
+            TASK9_OK=0
+
+        grep -Eq '[[:space:]]xfs[[:space:]]' "$INITIAL_FILE" ||
+            TASK9_OK=0
+
+        grep -Eq '[[:space:]]ext4[[:space:]]' "$INITIAL_FILE" ||
+            TASK9_OK=0
+    fi
+
+    if [ "$TASK9_OK" -eq 1 ]; then
+        pass "Task 9: Initial df -hT output was saved to lvm_initial"
+    else
+        fail "Task 9: lvm_initial is missing or does not contain the required filesystem information"
+    fi
+
+
+    # ============================================================
+    # TASK 10 - EXTEND XFS LOGICAL VOLUME
+    # ============================================================
+
+    TASK10_OK=1
+
+    DATA_LV_SIZE=$(sudo /usr/sbin/lvs --noheadings \
+        --units m --nosuffix \
+        -o lv_size "$LV_DATA_PATH" 2>/dev/null | xargs)
+
+    if [ -z "$DATA_LV_SIZE" ]; then
+        TASK10_OK=0
+    else
+
+        DATA_LV_SIZE_INT=${DATA_LV_SIZE%.*}
+
+        # Approximately 800 MB.
+        if [ "$DATA_LV_SIZE_INT" -lt 780 ] ||
+           [ "$DATA_LV_SIZE_INT" -gt 820 ]; then
+            TASK10_OK=0
+        fi
+    fi
+
+    if [ "$TASK10_OK" -eq 1 ]; then
+        pass "Task 10: lv_data was extended to approximately 800 MB"
+    else
+        fail "Task 10: lv_data is not approximately 800 MB"
+    fi
+
+
+    # ============================================================
+    # TASK 11 - RESIZE XFS FILESYSTEM
+    # ============================================================
+
+    TASK11_OK=1
+
+    XFS_EXTEND_FILE="$HOME_DIR/lvm_xfs_extend"
+
+    if [ ! -f "$XFS_EXTEND_FILE" ]; then
+        TASK11_OK=0
+    else
+
+        XFS_DATA_LINE=$(grep -E '[[:space:]]/data[[:space:]]*$' \
+            "$XFS_EXTEND_FILE" | tail -1)
+
+        [ -n "$XFS_DATA_LINE" ] || TASK11_OK=0
+
+        echo "$XFS_DATA_LINE" | grep -qi "xfs" ||
+            TASK11_OK=0
+    fi
+
+    [ "$DATA_FSTYPE" = "xfs" ] || TASK11_OK=0
+    mountpoint -q "$DATA_MOUNT" || TASK11_OK=0
+
+    if [ "$TASK11_OK" -eq 1 ]; then
+        pass "Task 11: XFS filesystem was resized and lvm_xfs_extend was saved correctly"
+    else
+        fail "Task 11: XFS filesystem resize or lvm_xfs_extend output is incorrect"
+    fi
+
+    # ============================================================
+    # TASK 12 - EXTEND EXT4 LOGICAL VOLUME
+    # ============================================================
+
+    TASK12_OK=1
+
+    # Verify lv_logs currently exists in vg_app
+    if ! sudo /usr/sbin/lvs --noheadings --units m --nosuffix \
+        -o lv_name,vg_name,lv_size 2>/dev/null |
+        awk '$1=="lv_logs" && $2=="vg_app" && $3 >= 680 && $3 <= 720 {found=1}
+             END {exit !found}'; then
+        TASK12_OK=0
+    fi
+
+    if [ "$TASK12_OK" -eq 1 ]; then
+        pass "Task 12: lv_logs was extended to approximately 700 MB"
+    else
+        fail "Task 12: lv_logs was not extended to approximately 700 MB"
+    fi
+
+
+    # ============================================================
+    # TASK 13 - RESIZE EXT4 FILESYSTEM
+    # ============================================================
+
+    TASK13_OK=1
+
+    EXT4_EXTEND_FILE="$HOME_DIR/lvm_ext4_extend"
+
+    if [ ! -f "$EXT4_EXTEND_FILE" ]; then
+
+        TASK13_OK=0
+
+    else
+
+        # Find the df -hT entry whose mount point is /logs
+        EXT4_LOGS_LINE=$(awk '$NF=="/logs" {line=$0} END {print line}' \
+            "$EXT4_EXTEND_FILE")
+
+        if [ -z "$EXT4_LOGS_LINE" ]; then
+            TASK13_OK=0
+        else
+
+            # Verify filesystem type
+            EXT4_TYPE=$(echo "$EXT4_LOGS_LINE" | awk '{print $2}')
+
+            if [ "$EXT4_TYPE" != "ext4" ]; then
+                TASK13_OK=0
+            fi
+
+            # df -hT Size column
+            EXT4_SIZE=$(echo "$EXT4_LOGS_LINE" | awk '{print $3}')
+
+            # Convert the size to MB for reliable validation.
+            case "$EXT4_SIZE" in
+                *M)
+                    EXT4_SIZE_MB=${EXT4_SIZE%M}
+                    ;;
+                *G)
+                    EXT4_SIZE_G=${EXT4_SIZE%G}
+                    EXT4_SIZE_MB=$(awk -v g="$EXT4_SIZE_G" \
+                        'BEGIN {printf "%.0f", g * 1024}')
+                    ;;
+                *)
+                    TASK13_OK=0
+                    EXT4_SIZE_MB=0
+                    ;;
+            esac
+
+            # The filesystem should be approximately 700 MB.
+            if [ "$EXT4_SIZE_MB" -lt 600 ] ||
+               [ "$EXT4_SIZE_MB" -gt 800 ]; then
+                TASK13_OK=0
+            fi
+        fi
+    fi
+
+    if [ "$TASK13_OK" -eq 1 ]; then
+        pass "Task 13: ext4 filesystem was resized to approximately 700 MB"
+    else
+        fail "Task 13: ext4 filesystem was not correctly resized or recorded"
+    fi
+
+
+    # ============================================================
+    # TASK 14 - SHRINK EXT4 FILESYSTEM AND LOGICAL VOLUME
+    # ============================================================
+
+    TASK14_OK=1
+
+    SHRINK_FILE="$HOME_DIR/lvm_ext4_shrink"
+
+    if [ ! -f "$SHRINK_FILE" ]; then
+
+        TASK14_OK=0
+
+    else
+
+        # Find the df -hT entry whose mount point is /logs
+        SHRINK_LOGS_LINE=$(awk '$NF=="/logs" {line=$0} END {print line}' \
+            "$SHRINK_FILE")
+
+        if [ -z "$SHRINK_LOGS_LINE" ]; then
+
+            TASK14_OK=0
+
+        else
+
+            # Verify filesystem type
+            SHRINK_TYPE=$(echo "$SHRINK_LOGS_LINE" | awk '{print $2}')
+
+            if [ "$SHRINK_TYPE" != "ext4" ]; then
+                TASK14_OK=0
+            fi
+
+            # df -hT Size column
+            SHRINK_SIZE=$(echo "$SHRINK_LOGS_LINE" | awk '{print $3}')
+
+            case "$SHRINK_SIZE" in
+                *M)
+                    SHRINK_SIZE_MB=${SHRINK_SIZE%M}
+                    ;;
+                *G)
+                    SHRINK_SIZE_G=${SHRINK_SIZE%G}
+                    SHRINK_SIZE_MB=$(awk -v g="$SHRINK_SIZE_G" \
+                        'BEGIN {printf "%.0f", g * 1024}')
+                    ;;
+                *)
+                    TASK14_OK=0
+                    SHRINK_SIZE_MB=0
+                    ;;
+            esac
+
+            # After shrinking, the filesystem should be approximately 500 MB.
+            # df reports 459M in the user's example, which is valid.
+            if [ "$SHRINK_SIZE_MB" -lt 400 ] ||
+               [ "$SHRINK_SIZE_MB" -gt 600 ]; then
+                TASK14_OK=0
+            fi
+        fi
+    fi
+
+    # /logs should have been mounted again after the shrink operation.
+    if ! mountpoint -q "$LOGS_MOUNT"; then
+        TASK14_OK=0
+    fi
+
+    # The filesystem must be ext4.
+    CURRENT_LOGS_FSTYPE=$(findmnt -n -o FSTYPE "$LOGS_MOUNT" 2>/dev/null)
+
+    if [ "$CURRENT_LOGS_FSTYPE" != "ext4" ]; then
+        TASK14_OK=0
+    fi
+
+    if [ "$TASK14_OK" -eq 1 ]; then
+        pass "Task 14: ext4 filesystem was safely shrunk to approximately 500 MB before the logical volume was reduced"
+    else
+        fail "Task 14: ext4 shrink operation, saved output, or /logs verification is incorrect"
+    fi
+
+
+    # ============================================================
+    # TASK 15 - RECORD EXT4 SHRINK
+    # ============================================================
+
+    TASK15_OK=1
+
+    if [ ! -f "$SHRINK_FILE" ]; then
+
+        TASK15_OK=0
+
+    else
+
+        SHRINK_LOGS_LINE=$(awk '$NF=="/logs" {line=$0} END {print line}' \
+            "$SHRINK_FILE")
+
+        if [ -z "$SHRINK_LOGS_LINE" ]; then
+            TASK15_OK=0
+        fi
+
+        echo "$SHRINK_LOGS_LINE" | awk '$2=="ext4" {found=1}
+            END {exit !found}' || TASK15_OK=0
+    fi
+
+    if [ "$TASK15_OK" -eq 1 ]; then
+        pass "Task 15: lvm_ext4_shrink contains the filesystem information after the ext4 shrink"
+    else
+        fail "Task 15: lvm_ext4_shrink output is missing or incorrect"
+    fi
+
+
+    # ============================================================
+    # TASK 16 - EXTEND EXT4 LOGICAL VOLUME AGAIN
+    # ============================================================
+
+    TASK16_OK=1
+
+    CURRENT_LOGS_LV_SIZE=$(sudo /usr/sbin/lvs --noheadings \
+        --units m --nosuffix \
+        -o lv_size "$LV_LOGS_PATH" 2>/dev/null | xargs)
+
+    if [ -z "$CURRENT_LOGS_LV_SIZE" ]; then
+        TASK16_OK=0
+    else
+
+        CURRENT_LOGS_LV_SIZE_INT=${CURRENT_LOGS_LV_SIZE%.*}
+
+        # Final expected size is approximately 700 MB.
+        if [ "$CURRENT_LOGS_LV_SIZE_INT" -lt 680 ] ||
+           [ "$CURRENT_LOGS_LV_SIZE_INT" -gt 720 ]; then
+            TASK16_OK=0
+        fi
+    fi
+
+    if [ "$TASK16_OK" -eq 1 ]; then
+        pass "Task 16: lv_logs was extended again to approximately 700 MB"
+    else
+        fail "Task 16: lv_logs is not approximately 700 MB"
+    fi
+
+
+    # ============================================================
+    # TASK 17 - RESIZE EXT4 FILESYSTEM AGAIN
+    # ============================================================
+
+    TASK17_OK=1
+
+    [ "$LOGS_FSTYPE" = "ext4" ] || TASK17_OK=0
+    mountpoint -q "$LOGS_MOUNT" || TASK17_OK=0
+
+    CURRENT_LOGS_SIZE=$(df -BM "$LOGS_MOUNT" 2>/dev/null |
+        awk 'NR==2 {gsub(/M/,"",$2); print $2}')
+
+    if [ -z "$CURRENT_LOGS_SIZE" ]; then
+        TASK17_OK=0
+    else
+
+        # Allow filesystem overhead.
+        if [ "$CURRENT_LOGS_SIZE" -lt 600 ] ||
+           [ "$CURRENT_LOGS_SIZE" -gt 750 ]; then
+            TASK17_OK=0
+        fi
+    fi
+
+    if [ "$TASK17_OK" -eq 1 ]; then
+        pass "Task 17: ext4 filesystem on /logs was successfully grown to approximately 700 MB"
+    else
+        fail "Task 17: ext4 filesystem on /logs is not approximately 700 MB"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#==================================================================
+validate_lab234_nfs() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "<h2 style='color:#white;'>Checking Lab 234 - Network File Sharing (NFS).</h2>"
+
+    TOTAL_TASKS=12
+    PASSED=0
+
+    LAB_NAME="Lab 234 - Network File Sharing (NFS)"
+    DATE=$(date "+%F %T")
+
+    NFS_SERVER_IP="192.168.111.165"
+
+    EXPORT_READONLY="/nfs_share_readonly"
+    EXPORT_NOROOTSQUASH="/nfs_share_rw_norootsquash"
+    EXPORT_ROOTSQUASH="/nfs_share_rw_rootsquash"
+
+    MOUNT_READONLY="/mnt/nfs_readonly"
+    MOUNT_NOROOTSQUASH="/mnt/nfs_rw_norootsquash"
+    MOUNT_ROOTSQUASH="/mnt/nfs_rw_rootsquash"
+
+    # STUDENT_IP is supplied by the lab validation wrapper.
+    CLIENT_IP="${STUDENT_IP:-}"
 
     # ------------------------------------------------------------
     # HELPERS
@@ -14453,496 +15320,1129 @@ validate_lab233_nfs() {
         echo "<div class='validation-fail'>✗ $1 – Fail</div>"
     }
 
-    # Execute command on NFS client
-    client_cmd() {
-        ssh -o BatchMode=yes \
-            -o ConnectTimeout=5 \
-            -o StrictHostKeyChecking=no \
-            "$NFS_CLIENT" "$@" 2>/dev/null
-    }
-
-
     # ============================================================
-    # TASK 1 - VERIFY NFS SERVER HOSTNAME
-    # ============================================================
-
-    HOSTNAME_VALUE=$(hostname 2>/dev/null)
-
-    if [ "$HOSTNAME_VALUE" = "$NFS_SERVER" ]; then
-        pass "Task 1: NFS server hostname is nfs-server"
-    else
-        fail "Task 1: NFS server hostname is not nfs-server"
-    fi
-
-
-    # ============================================================
-    # TASK 2 - INSTALL NFS SERVER PACKAGES
+    # TASK 1 - CHECK / INSTALL NFS CLIENT PACKAGE
     # ============================================================
 
     if rpm -q nfs-utils >/dev/null 2>&1; then
-        pass "Task 2: nfs-utils package is installed on the NFS server"
+        pass "Task 1: nfs-utils package is installed on the NFS client"
     else
-        fail "Task 2: nfs-utils package is not installed on the NFS server"
+        fail "Task 1: nfs-utils package is not installed on the NFS client"
     fi
 
-
     # ============================================================
-    # TASK 3 - ENABLE AND START NFS SERVER
+    # TASK 2 - DISCOVER SERVER EXPORTS
     # ============================================================
 
-    NFS_SERVICE_OK=1
+    SHOWMOUNT_OUTPUT=$(showmount -e "$NFS_SERVER_IP" 2>/dev/null)
 
-    systemctl is-active --quiet nfs-server || NFS_SERVICE_OK=0
-    systemctl is-enabled --quiet nfs-server || NFS_SERVICE_OK=0
+    TASK2_OK=1
+    
+    echo "$SHOWMOUNT_OUTPUT" | grep -Fq "$EXPORT_READONLY" || TASK2_OK=0
+    echo "$SHOWMOUNT_OUTPUT" | grep -Fq "$EXPORT_NOROOTSQUASH" || TASK2_OK=0
+    echo "$SHOWMOUNT_OUTPUT" | grep -Fq "$EXPORT_ROOTSQUASH" || TASK2_OK=0
 
-    if [ "$NFS_SERVICE_OK" -eq 1 ]; then
-        pass "Task 3: nfs-server service is active and enabled"
+    if [ "$TASK2_OK" -eq 1 ]; then
+        pass "Task 2: NFS client discovered all three NFS exports"
     else
-        fail "Task 3: nfs-server service is not active and enabled"
+        fail "Task 2: one or more required NFS exports could not be discovered"
     fi
 
-
     # ============================================================
-    # TASK 4 - ENABLE AND START RPCBIND
+    # TASK 3 - CREATE NFS CLIENT MOUNT POINTS
     # ============================================================
 
-    RPCBIND_OK=1
+    TASK3_OK=1
 
-    systemctl is-active --quiet rpcbind || RPCBIND_OK=0
-    systemctl is-enabled --quiet rpcbind || RPCBIND_OK=0
+    test -d "$MOUNT_READONLY" || TASK3_OK=0
+    test -d "$MOUNT_NOROOTSQUASH" || TASK3_OK=0
+    test -d "$MOUNT_ROOTSQUASH" || TASK3_OK=0
 
-    if [ "$RPCBIND_OK" -eq 1 ]; then
-        pass "Task 4: rpcbind service is active and enabled on the NFS server"
+    if [ "$TASK3_OK" -eq 1 ]; then
+        pass "Task 3: all three NFS client mount points exist"
     else
-        fail "Task 4: rpcbind service is not active and enabled on the NFS server"
+        fail "Task 3: one or more required NFS client mount points are missing"
     fi
 
-
     # ============================================================
-    # TASK 5 - CREATE NFS EXPORT DIRECTORY
+    # TASK 4 - MOUNT THE READ-ONLY EXPORT
     # ============================================================
 
-    if [ -d "$EXPORT_DIR" ]; then
-        pass "Task 5: /nfs_share directory exists"
-    else
-        fail "Task 5: /nfs_share directory is missing"
+    TASK4_OK=1
+
+    if ! mountpoint -q "$MOUNT_READONLY"; then
+        mount "$NFS_SERVER_IP:$EXPORT_READONLY" "$MOUNT_READONLY" >/dev/null 2>&1
     fi
 
+    mountpoint -q "$MOUNT_READONLY" || TASK4_OK=0
+
+    CURRENT_SOURCE=$(findmnt -n -o SOURCE "$MOUNT_READONLY" 2>/dev/null)
+
+    if ! echo "$CURRENT_SOURCE" | grep -Fq "$NFS_SERVER_IP:$EXPORT_READONLY"; then
+        TASK4_OK=0
+    fi
+
+    if [ "$TASK4_OK" -eq 1 ]; then
+        pass "Task 4: read-only NFS export is mounted at /mnt/nfs_readonly"
+    else
+        fail "Task 4: read-only NFS export is not mounted correctly"
+    fi
 
     # ============================================================
-    # TASK 6 - CREATE SERVER TEST FILE
+    # TASK 5 - TEST READ-ONLY BEHAVIOR
     # ============================================================
 
-    if [ -f "$SERVER_TEST_FILE" ]; then
+    RO_TEST_FILE="$MOUNT_READONLY/client_test_${CLIENT_IP}.txt"
+    RO_TEST_DIR="$MOUNT_READONLY/test_directory_${CLIENT_IP}"
 
-        FILE_CONTENT=$(cat "$SERVER_TEST_FILE" 2>/dev/null)
+    # Remove stale test objects only if they already exist.
+    rm -f "$RO_TEST_FILE" >/dev/null 2>&1
+    rmdir "$RO_TEST_DIR" >/dev/null 2>&1
 
-        if [ "$FILE_CONTENT" = "$SERVER_TEST_CONTENT" ]; then
-            pass "Task 6: server_test.txt exists with the expected content"
-        else
-            fail "Task 6: server_test.txt content does not match the required content"
+    TASK5_OK=1
+
+    if touch "$RO_TEST_FILE" >/dev/null 2>&1; then
+        TASK5_OK=0
+        rm -f "$RO_TEST_FILE" >/dev/null 2>&1
+    fi
+
+    if mkdir "$RO_TEST_DIR" >/dev/null 2>&1; then
+        TASK5_OK=0
+        rmdir "$RO_TEST_DIR" >/dev/null 2>&1
+    fi
+
+    if [ "$TASK5_OK" -eq 1 ]; then
+        pass "Task 5: read-only NFS export correctly rejects write operations"
+    else
+        fail "Task 5: read-only NFS export allowed a write operation"
+    fi
+
+    # ============================================================
+    # TASK 6 - MOUNT RW,NO_ROOT_SQUASH EXPORT AND TEST NORMAL USER
+    # ============================================================
+
+    TASK6_OK=1
+
+    if ! mountpoint -q "$MOUNT_NOROOTSQUASH"; then
+        mount "$NFS_SERVER_IP:$EXPORT_NOROOTSQUASH" "$MOUNT_NOROOTSQUASH" >/dev/null 2>&1
+    fi
+
+    mountpoint -q "$MOUNT_NOROOTSQUASH" || TASK6_OK=0
+
+    CURRENT_SOURCE=$(findmnt -n -o SOURCE "$MOUNT_NOROOTSQUASH" 2>/dev/null)
+
+    if ! echo "$CURRENT_SOURCE" | grep -Fq "$NFS_SERVER_IP:$EXPORT_NOROOTSQUASH"; then
+        TASK6_OK=0
+    fi
+
+    if [ -n "$CLIENT_IP" ]; then
+        USER_TEST_FILE="$MOUNT_NOROOTSQUASH/user_test.txt_${CLIENT_IP}"
+
+        if ! test -f "$USER_TEST_FILE"; then
+            # Do not create the student's requested file as root.
+            # The existence check is used when the student's regular-user
+            # operation has already created the file.
+            TASK6_OK=0
         fi
-
-    else
-        fail "Task 6: /nfs_share/server_test.txt is missing"
     fi
 
+    if [ "$TASK6_OK" -eq 1 ]; then
+        pass "Task 6: rw,no_root_squash export is mounted and normal-user test file exists"
+    else
+        fail "Task 6: rw,no_root_squash export or normal-user test file verification failed"
+    fi
 
     # ============================================================
-    # TASK 7 - CONFIGURE NFS EXPORT
+    # TASK 7 - TEST ROOT ACCESS WITH no_root_squash
     # ============================================================
+
+    NOROOTSQUASH_ROOT_FILE="$MOUNT_NOROOTSQUASH/root_test.txt_${CLIENT_IP}"
 
     TASK7_OK=1
 
-    if [ -z "$NFS_CLIENT_IP" ]; then
+    if ! test -f "$NOROOTSQUASH_ROOT_FILE"; then
         TASK7_OK=0
-    fi
+    else
+        ROOT_UID=$(stat -c "%u" "$NOROOTSQUASH_ROOT_FILE" 2>/dev/null)
 
-    EXPORT_LINE=$(grep -E "^[[:space:]]*/nfs_share[[:space:]]" /etc/exports 2>/dev/null)
-
-    if [ -z "$EXPORT_LINE" ]; then
-        TASK7_OK=0
-    fi
-
-    if ! echo "$EXPORT_LINE" | grep -Fq "$NFS_CLIENT_IP"; then
-        TASK7_OK=0
-    fi
-
-    if ! echo "$EXPORT_LINE" | grep -Fq "rw"; then
-        TASK7_OK=0
-    fi
-
-    if ! echo "$EXPORT_LINE" | grep -Fq "sync"; then
-        TASK7_OK=0
-    fi
-
-    if ! echo "$EXPORT_LINE" | grep -Fq "no_root_squash"; then
-        TASK7_OK=0
+        if [ "$ROOT_UID" != "0" ]; then
+            TASK7_OK=0
+        fi
     fi
 
     if [ "$TASK7_OK" -eq 1 ]; then
-        pass "Task 7: /nfs_share is exported to the NFS client with required options"
+        pass "Task 7: no_root_squash preserves UID 0 for the root-created file"
     else
-        fail "Task 7: /nfs_share export configuration is incorrect"
+        fail "Task 7: root-created file does not have UID 0 on the no_root_squash export"
     fi
 
+    # ============================================================
+    # TASK 8 - MOUNT RW,ROOT_SQUASH EXPORT
+    # ============================================================
+
+    TASK8_OK=1
+
+    if ! mountpoint -q "$MOUNT_ROOTSQUASH"; then
+        mount "$NFS_SERVER_IP:$EXPORT_ROOTSQUASH" "$MOUNT_ROOTSQUASH" >/dev/null 2>&1
+    fi
+
+    mountpoint -q "$MOUNT_ROOTSQUASH" || TASK8_OK=0
+
+    CURRENT_SOURCE=$(findmnt -n -o SOURCE "$MOUNT_ROOTSQUASH" 2>/dev/null)
+
+    if ! echo "$CURRENT_SOURCE" | grep -Fq "$NFS_SERVER_IP:$EXPORT_ROOTSQUASH"; then
+        TASK8_OK=0
+    fi
+
+    if [ "$TASK8_OK" -eq 1 ]; then
+        pass "Task 8: rw,root_squash export is mounted at /mnt/nfs_rw_rootsquash"
+    else
+        fail "Task 8: rw,root_squash export is not mounted correctly"
+    fi
 
     # ============================================================
-    # TASK 8 - APPLY NFS EXPORT CONFIGURATION
+    # TASK 9 - TEST NORMAL USER ACCESS
     # ============================================================
 
-    if exportfs -avr >/dev/null 2>&1; then
+    ROOTSQUASH_USER_FILE="$MOUNT_ROOTSQUASH/user_test2.txt_${CLIENT_IP}"
 
-        if exportfs -s 2>/dev/null | grep -Fq "/nfs_share"; then
-            pass "Task 8: NFS export configuration applied successfully"
-        else
-            fail "Task 8: /nfs_share is not present in active exports"
+    if test -f "$ROOTSQUASH_USER_FILE"; then
+        pass "Task 9: normal-user test file exists on the root_squash export"
+    else
+        fail "Task 9: normal-user test file was not created on the root_squash export"
+    fi
+
+    # ============================================================
+    # TASK 10 - DEMONSTRATE root_squash
+    # ============================================================
+
+    ROOTSQUASH_ROOT_FILE="$MOUNT_ROOTSQUASH/root_test2.txt_${CLIENT_IP}"
+
+    TASK10_OK=1
+
+    if ! test -f "$ROOTSQUASH_ROOT_FILE"; then
+        TASK10_OK=0
+    else
+        ROOTSQUASH_UID=$(stat -c "%u" "$ROOTSQUASH_ROOT_FILE" 2>/dev/null)
+
+        # root_squash must prevent the client-side root identity
+        # from appearing as UID 0 on the NFS server.
+        if [ "$ROOTSQUASH_UID" = "0" ] || [ -z "$ROOTSQUASH_UID" ]; then
+            TASK10_OK=0
+        fi
+    fi
+
+    if [ "$TASK10_OK" -eq 1 ]; then
+        pass "Task 10: root_squash maps the client-side root identity to a non-root UID"
+    else
+        fail "Task 10: root_squash behavior could not be verified"
+    fi
+
+    # ============================================================
+    # TASK 11 - CONFIGURE PERSISTENT NFS MOUNTS
+    # ============================================================
+
+    TASK11_OK=1
+
+    FSTAB_READONLY=$(awk '$1 !~ /^#/ && $2 == "/mnt/nfs_readonly" && $3 == "nfs" {print}' /etc/fstab 2>/dev/null)
+    FSTAB_NOROOTSQUASH=$(awk '$1 !~ /^#/ && $2 == "/mnt/nfs_rw_norootsquash" && $3 == "nfs" {print}' /etc/fstab 2>/dev/null)
+    FSTAB_ROOTSQUASH=$(awk '$1 !~ /^#/ && $2 == "/mnt/nfs_rw_rootsquash" && $3 == "nfs" {print}' /etc/fstab 2>/dev/null)
+
+    if [ -z "$FSTAB_READONLY" ] || ! echo "$FSTAB_READONLY" | grep -Fq "$NFS_SERVER_IP:$EXPORT_READONLY"; then
+        TASK11_OK=0
+    fi
+
+    if [ -z "$FSTAB_NOROOTSQUASH" ] || ! echo "$FSTAB_NOROOTSQUASH" | grep -Fq "$NFS_SERVER_IP:$EXPORT_NOROOTSQUASH"; then
+        TASK11_OK=0
+    fi
+
+    if [ -z "$FSTAB_ROOTSQUASH" ] || ! echo "$FSTAB_ROOTSQUASH" | grep -Fq "$NFS_SERVER_IP:$EXPORT_ROOTSQUASH"; then
+        TASK11_OK=0
+    fi
+
+    if [ "$TASK11_OK" -eq 1 ]; then
+        pass "Task 11: all three persistent NFS mounts are configured in /etc/fstab"
+    else
+        fail "Task 11: one or more required NFS entries are missing or incorrect in /etc/fstab"
+    fi
+
+    # ============================================================
+    # TASK 12 - TEST /etc/FSTAB
+    # ============================================================
+
+    TASK12_OK=1
+
+    # Unmount the three lab mounts before testing mount -a.
+    umount "$MOUNT_READONLY" >/dev/null 2>&1
+    umount "$MOUNT_NOROOTSQUASH" >/dev/null 2>&1
+    umount "$MOUNT_ROOTSQUASH" >/dev/null 2>&1
+
+    if ! mount -a >/dev/null 2>&1; then
+        TASK12_OK=0
+    fi
+
+    mountpoint -q "$MOUNT_READONLY" || TASK12_OK=0
+    mountpoint -q "$MOUNT_NOROOTSQUASH" || TASK12_OK=0
+    mountpoint -q "$MOUNT_ROOTSQUASH" || TASK12_OK=0
+
+    if [ "$TASK12_OK" -eq 1 ]; then
+        pass "Task 12: /etc/fstab successfully mounts all three NFS shares"
+    else
+        fail "Task 12: mount -a did not successfully mount all three NFS shares"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#====================================================================
+validate_lab235_assessment() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "<h2 style='color:#white;'>Checking Lab 235 - Linux Systems Administration - Assessment .</h2>"
+
+    TOTAL_TASKS=40
+    PASSED=0
+
+    LAB_NAME="Lab 235 - Linux Systems Administration - Assessment"
+    DATE=$(date "+%F %T")
+
+    STUDENT_HOME="$HOME"
+    LINUX_TEST="$STUDENT_HOME/linux_test"
+
+    # HELPERS
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+# Task 1 - Directory Navigation and Structure
+if [[ -d "$LINUX_TEST" &&
+      -d "$LINUX_TEST/documents" &&
+      -d "$LINUX_TEST/logs" &&
+      -d "$LINUX_TEST/scripts" &&
+      -d "$LINUX_TEST/backup" ]]; then
+    pass "Task 1: linux_test directory structure"
+else
+    fail "Task 1: linux_test directory structure"
+fi
+
+# Task 2 - File Creation and Management
+if [[ -f "$LINUX_TEST/documents/report.txt" &&
+      -f "$LINUX_TEST/documents/notes.txt" &&
+      -f "$LINUX_TEST/logs/summary.txt" ]]; then
+
+    report_content=$(cat "$LINUX_TEST/documents/report.txt" 2>/dev/null)
+    notes_content=$(cat "$LINUX_TEST/documents/notes.txt" 2>/dev/null)
+    summary_content=$(cat "$LINUX_TEST/logs/summary.txt" 2>/dev/null)
+
+    if [[ "$report_content" == "Linux system administration requires careful management of users, files, permissions, and services" &&
+          "$notes_content" == "Regular system monitoring helps identify configuration and performance issues" &&
+          "$summary_content" == "This document contains a summary of Linux administration activities" ]]; then
+
+        pass "Task 2: required files and content"
+    else
+        fail "Task 2: file content is incorrect"
+    fi
+else
+    fail "Task 2: required files are missing"
+fi
+
+# Task 3 - File and Directory Operations
+if [[ -f "$LINUX_TEST/backup/report.txt" &&
+      -f "$LINUX_TEST/logs/summary.txt" &&
+      -f "$LINUX_TEST/scripts/summary.sh" &&
+      ! -f "$LINUX_TEST/documents/summary.txt" ]]; then
+
+    if cmp -s "$LINUX_TEST/logs/summary.txt" "$LINUX_TEST/scripts/summary.sh"; then
+        pass "Task 3: file copy and move operations"
+    else
+        fail "Task 3: summary.sh does not match summary.txt"
+    fi
+else
+    fail "Task 3: required files are not in the expected locations"
+fi
+
+# Task 4 - Output Redirection
+if [[ -f "$LINUX_TEST/system_info.txt" ]]; then
+
+    if grep -Eqi "kernel|linux" "$LINUX_TEST/system_info.txt" &&
+       grep -Eqi "hostname" "$LINUX_TEST/system_info.txt" &&
+       grep -Eq  "[0-9]+[[:space:]]+up[[:space:]]+" "$LINUX_TEST/system_info.txt" &&
+       grep -Eqi "oracle|red hat|alma|centos|rocky|linux" "$LINUX_TEST/system_info.txt"; then
+        pass "Task 4: system information file"
+    else
+        fail "Task 4: system information is incomplete"
+    fi
+else
+    fail "Task 4: system_info.txt missing"
+fi
+
+# Task 5 - Tar Archive
+if [[ -f "$LINUX_TEST/backup/documents_backup.tar" ]] &&
+   sudo tar -tf "$LINUX_TEST/backup/documents_backup.tar" >/dev/null 2>&1; then
+
+    if sudo tar -tf "$LINUX_TEST/backup/documents_backup.tar" 2>/dev/null |
+       grep -q "documents"; then
+        pass "Task 5: documents tar archive"
+    else
+        fail "Task 5: archive does not contain documents directory"
+    fi
+else
+    fail "Task 5: documents_backup.tar missing or invalid"
+fi
+
+# Task 6 - Compressed Archive
+if [[ -f "$LINUX_TEST/backup/linux_test_backup.tar.gz" ]] &&
+   tar -tzf "$LINUX_TEST/backup/linux_test_backup.tar.gz" >/dev/null 2>&1; then
+
+    if tar -tzf "$LINUX_TEST/backup/linux_test_backup.tar.gz" 2>/dev/null |
+       grep -q "scripts"; then
+        pass "Task 6: scripts gzip archive"
+    else
+        fail "Task 6: archive does not contain scripts directory"
+    fi
+else
+    fail "Task 6: linux_test_backup.tar.gz missing or invalid"
+fi
+
+# TASK 7 - FIND FILES BY SIZE
+FILE_LIST="$LINUX_TEST/find_large_files.txt"
+
+if [[ -f "$FILE_LIST" && -s "$FILE_LIST" ]]; then
+
+    TASK7_OK=1
+
+    while IFS= read -r line; do
+        [[ -z "$line" ]] && continue
+
+        # Require long-listing format for a regular file
+        [[ "$line" =~ ^- ]] || {
+            TASK7_OK=0
+            break
+        }
+
+        # Extract the pathname (last field in ls -l output)
+        file="${line##* }"
+
+        # Check that the path currently exists as a regular file
+        if ! sudo test -f "$file"; then
+            TASK7_OK=0
+            break
         fi
 
-    else
-        fail "Task 8: exportfs -avr failed"
-    fi
+        # Verify current size is greater than 100 MiB
+        size=$(sudo stat -c '%s' -- "$file" 2>/dev/null)
 
-
-    # ============================================================
-    # TASK 9 - VERIFY ACTIVE NFS EXPORTS
-    # ============================================================
-
-    ACTIVE_EXPORT=$(exportfs -v 2>/dev/null | grep -A2 -E "^/nfs_share[[:space:]]")
-
-    TASK9_OK=1
-
-    if [ -z "$ACTIVE_EXPORT" ]; then
-        TASK9_OK=0
-    fi
-
-    if ! echo "$ACTIVE_EXPORT" | grep -Fq "$NFS_CLIENT_IP"; then
-        TASK9_OK=0
-    fi
-
-    if [ "$TASK9_OK" -eq 1 ]; then
-        pass "Task 9: /nfs_share is actively exported to the correct NFS client"
-    else
-        fail "Task 9: active NFS export could not be verified"
-    fi
-
-
-    # ============================================================
-    # TASK 10 - CONFIGURE NFS SERVER FIREWALL
-    # ============================================================
-
-    FIREWALL_OK=1
-
-    firewall-cmd --state >/dev/null 2>&1 || FIREWALL_OK=0
-
-    firewall-cmd --query-service=nfs >/dev/null 2>&1 || FIREWALL_OK=0
-    firewall-cmd --query-service=mountd >/dev/null 2>&1 || FIREWALL_OK=0
-    firewall-cmd --query-service=rpc-bind >/dev/null 2>&1 || FIREWALL_OK=0
-
-    if [ "$FIREWALL_OK" -eq 1 ]; then
-        pass "Task 10: NFS, mountd, and rpc-bind firewall services are allowed"
-    else
-        fail "Task 10: required NFS firewall services are not configured"
-    fi
-
-
-    # ============================================================
-    # TASK 11 - SET SELINUX TO PERMISSIVE
-    # ============================================================
-
-    SELINUX_MODE=$(getenforce 2>/dev/null)
-
-    if [ "$SELINUX_MODE" = "Permissive" ]; then
-        pass "Task 11: SELinux is set to permissive mode"
-    else
-        fail "Task 11: SELinux is not set to permissive mode"
-    fi
-
-
-    # ============================================================
-    # TASK 12 - VERIFY NFS CLIENT HOSTNAME
-    # ============================================================
-
-    CLIENT_HOSTNAME=$(client_cmd hostname)
-
-    if [ "$CLIENT_HOSTNAME" = "$NFS_CLIENT" ]; then
-        pass "Task 12: NFS client hostname is nfs-client"
-    else
-        fail "Task 12: NFS client hostname is not nfs-client"
-    fi
-
-
-    # ============================================================
-    # TASK 13 - INSTALL NFS CLIENT PACKAGE
-    # ============================================================
-
-    if client_cmd rpm -q nfs-utils >/dev/null 2>&1; then
-        pass "Task 13: nfs-utils package is installed on the NFS client"
-    else
-        fail "Task 13: nfs-utils package is not installed on the NFS client"
-    fi
-
-
-    # ============================================================
-    # TASK 14 - ENABLE AND START RPCBIND ON CLIENT
-    # ============================================================
-
-    CLIENT_RPCBIND_OK=1
-
-    client_cmd systemctl is-active --quiet rpcbind || CLIENT_RPCBIND_OK=0
-    client_cmd systemctl is-enabled --quiet rpcbind || CLIENT_RPCBIND_OK=0
-
-    if [ "$CLIENT_RPCBIND_OK" -eq 1 ]; then
-        pass "Task 14: rpcbind service is active and enabled on the NFS client"
-    else
-        fail "Task 14: rpcbind service is not active and enabled on the NFS client"
-    fi
-
-
-    # ============================================================
-    # TASK 15 - VERIFY CONNECTIVITY TO NFS SERVER
-    # ============================================================
-
-    SERVER_IP=$(getent hosts "$NFS_SERVER" 2>/dev/null | awk 'NR==1 {print $1}')
-
-    if [ -n "$SERVER_IP" ] &&
-       client_cmd ping -c 2 -W 2 "$SERVER_IP" >/dev/null 2>&1; then
-
-        pass "Task 15: NFS client can successfully ping the NFS server"
-
-    else
-        fail "Task 15: NFS client cannot ping the NFS server"
-    fi
-
-
-    # ============================================================
-    # TASK 16 - DISCOVER NFS EXPORT
-    # ============================================================
-
-    SHOWMOUNT_OUTPUT=$(client_cmd showmount -e "$SERVER_IP")
-
-    if echo "$SHOWMOUNT_OUTPUT" | grep -Fq "/nfs_share"; then
-        pass "Task 16: NFS client discovered the /nfs_share export"
-    else
-        fail "Task 16: /nfs_share export could not be discovered from the NFS client"
-    fi
-
-
-    # ============================================================
-    # TASK 17 - CREATE LOCAL MOUNT POINT
-    # ============================================================
-
-    if client_cmd test -d "$MOUNT_POINT"; then
-        pass "Task 17: /mnt/nfs_share mount point exists on the NFS client"
-    else
-        fail "Task 17: /mnt/nfs_share mount point is missing"
-    fi
-
-
-    # ============================================================
-    # TASK 18 - MANUAL NFS MOUNT
-    # ============================================================
-
-    if client_cmd mountpoint -q "$MOUNT_POINT"; then
-
-        MOUNT_SOURCE=$(client_cmd findmnt -n -o SOURCE "$MOUNT_POINT")
-
-        if echo "$MOUNT_SOURCE" | grep -Fq "$NFS_SERVER:/nfs_share"; then
-            pass "Task 18: NFS share is manually mounted at /mnt/nfs_share"
-        else
-            fail "Task 18: /mnt/nfs_share is mounted from an incorrect source"
+        if [[ ! "$size" =~ ^[0-9]+$ ]] || (( size <= 104857600 )); then
+            TASK7_OK=0
+            break
         fi
 
+    done < "$FILE_LIST"
+
+    if [[ "$TASK7_OK" -eq 1 ]]; then
+        pass "Task 7: large file search"
     else
-        fail "Task 18: /mnt/nfs_share is not mounted"
+        fail "Task 7: invalid entries in find_large_files.txt"
     fi
 
+else
+    fail "Task 7: find_large_files.txt missing or empty"
+fi
 
-    # ============================================================
-    # TASK 19 - VERIFY NFS MOUNT
-    # ============================================================
+# Task 8 - Find Files by Permission
+if [[ -f "$LINUX_TEST/setuid_files.txt" ]]; then
 
-    MOUNT_TYPE=$(client_cmd findmnt -n -o FSTYPE "$MOUNT_POINT")
+    valid=1
 
-    if [ "$MOUNT_TYPE" = "nfs" ] || [ "$MOUNT_TYPE" = "nfs4" ]; then
-        pass "Task 19: /mnt/nfs_share is mounted with an NFS filesystem"
-    else
-        fail "Task 19: /mnt/nfs_share is not mounted as NFS"
-    fi
+    while IFS= read -r file; do
+        [[ -z "$file" ]] && continue
 
-
-    # ============================================================
-    # TASK 20 - VERIFY SERVER TEST FILE FROM CLIENT
-    # ============================================================
-
-    CLIENT_SERVER_FILE="$MOUNT_POINT/server_test.txt"
-
-    if client_cmd test -f "$CLIENT_SERVER_FILE"; then
-
-        CLIENT_FILE_CONTENT=$(client_cmd cat "$CLIENT_SERVER_FILE")
-
-        if [ "$CLIENT_FILE_CONTENT" = "$SERVER_TEST_CONTENT" ]; then
-            pass "Task 20: server_test.txt is accessible from the NFS client with expected content"
-        else
-            fail "Task 20: server_test.txt content is incorrect on the NFS client"
+        if [[ ! -f "$file" ]]; then
+            valid=0
+            break
         fi
 
-    else
-        fail "Task 20: server_test.txt is not accessible from the NFS client"
-    fi
+        perms=$(stat -c "%a" "$file" 2>/dev/null)
 
-
-    # ============================================================
-    # TASK 21 - CONFIGURE PERSISTENT NFS MOUNT
-    # ============================================================
-
-    FSTAB_LINE=$(client_cmd grep -E "^[^#]*[[:space:]]/mnt/nfs_share[[:space:]]+nfs" /etc/fstab)
-
-    TASK21_OK=1
-
-    if [ -z "$FSTAB_LINE" ]; then
-        TASK21_OK=0
-    fi
-
-    if ! echo "$FSTAB_LINE" | grep -Fq "$NFS_SERVER:/nfs_share"; then
-        TASK21_OK=0
-    fi
-
-    if ! echo "$FSTAB_LINE" | grep -Fq "defaults"; then
-        TASK21_OK=0
-    fi
-
-    if [ "$TASK21_OK" -eq 1 ]; then
-        pass "Task 21: persistent NFS mount is configured in /etc/fstab"
-    else
-        fail "Task 21: required NFS entry is missing or incorrect in /etc/fstab"
-    fi
-
-
-    # ============================================================
-    # TASK 22 - TEST FSTAB CONFIGURATION
-    # ============================================================
-
-    # We do not unmount here because doing so could interfere with
-    # subsequent validation tasks. Test the fstab configuration
-    # using mount -a in a controlled way.
-
-    if client_cmd mount -a >/dev/null 2>&1; then
-
-        if client_cmd mountpoint -q "$MOUNT_POINT"; then
-            pass "Task 22: /etc/fstab configuration successfully mounts the NFS share"
-        else
-            fail "Task 22: mount -a completed but NFS share is not mounted"
+        if ! stat -c "%A" "$file" 2>/dev/null | grep -q "s"; then
+            valid=0
+            break
         fi
+    done < "$LINUX_TEST/setuid_files.txt"
 
+    if [[ "$valid" -eq 1 ]]; then
+        pass "Task 8: setuid file search"
     else
-        fail "Task 22: mount -a failed"
+        fail "Task 8: invalid setuid entries"
     fi
+else
+    fail "Task 8: setuid_files.txt missing"
+fi
 
+# Task 9 - Grep Configuration Information
+if [[ -f "$LINUX_TEST/documents/root_entries.txt" ]]; then
 
-    # ============================================================
-    # TASK 23 - MOUNT USING /etc/FSTAB
-    # ============================================================
+    if grep -qi "root" "$LINUX_TEST/documents/root_entries.txt"; then
+        pass "Task 9: sshd_config root entries"
+    else
+        fail "Task 9: root entries not found"
+    fi
+else
+    fail "Task 9: root_entries.txt missing"
+fi
 
-    # Verify that the mount source comes from the fstab configuration.
-    # mount /mnt/nfs_share must be valid without specifying server/export.
+# Task 10 - Process Identification
+if [[ -f "$LINUX_TEST/ssh_process.txt" ]]; then
 
-    if client_cmd mount "$MOUNT_POINT" >/dev/null 2>&1; then
-
-        CURRENT_SOURCE=$(client_cmd findmnt -n -o SOURCE "$MOUNT_POINT")
-
-        if echo "$CURRENT_SOURCE" | grep -Fq "$NFS_SERVER:/nfs_share"; then
-            pass "Task 23: NFS filesystem can be mounted using the /etc/fstab entry"
+    if grep -Eqi "sshd|ssh" "$LINUX_TEST/ssh_process.txt"; then
+        if pgrep -x sshd >/dev/null 2>&1; then
+            pass "Task 10: SSH server process"
         else
-            fail "Task 23: NFS filesystem source does not match the /etc/fstab configuration"
+            fail "Task 10: sshd process is not running"
         fi
-
     else
+        fail "Task 10: ssh process information not found"
+    fi
+else
+    fail "Task 10: ssh_process.txt missing"
+fi
 
-        # mount may return non-zero when the filesystem is already mounted.
-        # Verify whether it is nevertheless mounted correctly.
-        CURRENT_SOURCE=$(client_cmd findmnt -n -o SOURCE "$MOUNT_POINT")
+# Task 11 - Package Management
+if rpm -q vsftpd >/dev/null 2>&1; then
+    pass "Task 11: vsfptd package installed"
+else
+    fail "Task 11: vsftpd package is not installed"
+fi
 
-        if echo "$CURRENT_SOURCE" | grep -Fq "$NFS_SERVER:/nfs_share"; then
-            pass "Task 23: NFS filesystem is mounted using the /etc/fstab configuration"
+# Task 12 - Service Management
+if systemctl is-active --quiet vsftpd &&
+   systemctl is-enabled --quiet vsftpd; then
+    pass "Task 12: vsftpd running and enabled"
+else
+    fail "Task 12: vsftpd is not running and enabled"
+fi
+
+# Task 13 - Service Verification
+VSFTPD_STATUS="$LINUX_TEST/vsftpd_service_status.txt"
+
+if [[ -f "$VSFTPD_STATUS" ]]; then
+
+    if grep -Eqi "active|running" "$VSFTPD_STATUS" &&
+       grep -Eqi "enabled|enable" "$VSFTPD_STATUS"; then
+        pass "Task 13: vsftpd service status file with correct info exist"
+    else
+        fail "Task 13: vsftpd status information incomplete"
+    fi
+else
+    fail "Task 13: vsftpd_service_status.txt missing"
+fi
+
+# Task 14 - User Creation
+if id linuxstudent >/dev/null 2>&1 &&
+   id jack >/dev/null 2>&1; then
+
+    if getent passwd linuxstudent >/dev/null &&
+       getent passwd jack >/dev/null; then
+        pass "Task 14: users linuxstudent and jack"
+    else
+        fail "Task 14: user account information incomplete"
+    fi
+else
+    fail "Task 14: required users are missing"
+fi
+
+# Task 15 - Group Creation
+if getent group linuxadmins >/dev/null 2>&1; then
+    pass "Task 15: linuxadmins group"
+else
+    fail "Task 15: linuxadmins group missing"
+fi
+
+# Task 16 - Secondary Group
+if id linuxstudent 2>/dev/null | grep -qw linuxadmins; then
+    pass "Task 16: linuxstudent is member of linuxadmins"
+else
+    fail "Task 16: linuxstudent is not a member of linuxadmins"
+fi
+
+# Task 17 - User Account Locking
+if id jack >/dev/null 2>&1; then
+
+    jack_status=$(sudo passwd -S jack 2>/dev/null)
+
+    if echo "$jack_status" | awk '{print $2}' | grep -q "^L"; then
+        pass "Task 17: jack account is locked"
+    else
+        fail "Task 17: jack account is not locked"
+    fi
+else
+    fail "Task 17: jack user does not exist"
+fi
+
+# Task 18 - File Permissions
+REPORT="$LINUX_TEST/documents/report.txt"
+
+if [[ -f "$REPORT" ]]; then
+
+    perms=$(stat -c "%a" "$REPORT")
+    owner=$(stat -c "%U" "$REPORT")
+
+    if [[ "$perms" == "640" ]]; then
+        pass "Task 18: report.txt permissions"
+    else
+        fail "Task 18: report.txt permissions are $perms"
+    fi
+else
+    fail "Task 18: report.txt missing"
+fi
+
+# Task 19 - Directory Permissions
+DOCS="$LINUX_TEST/documents"
+
+if [[ -d "$DOCS" ]]; then
+
+    perms=$(stat -c "%a" "$DOCS")
+
+    if [[ "$perms" == "750" ]]; then
+        pass "Task 19: documents directory permissions"
+    else
+        fail "Task 19: documents directory permissions are $perms"
+    fi
+else
+    fail "Task 19: documents directory missing"
+fi
+
+# Task 20 - File Ownership
+if [[ -f "$REPORT" ]]; then
+
+    group=$(stat -c "%G" "$REPORT")
+
+    if [[ "$group" == "linuxadmins" ]]; then
+        pass "Task 20: report.txt group ownership"
+    else
+        fail "Task 20: report.txt group is $group"
+    fi
+else
+    fail "Task 20: report.txt missing"
+fi
+
+# Task 21 - User-Owned Project File
+PROJECT="/home/linuxstudent/project.txt"
+
+if sudo test -f "$PROJECT"; then
+
+    owner=$(sudo stat -c "%U" "$PROJECT")
+    group=$(sudo stat -c "%G" "$PROJECT")
+    perms=$(sudo stat -c "%a" "$PROJECT")
+
+    if [[ "$owner" == "linuxstudent" &&
+          "$group" == "linuxadmins" &&
+          "$perms" == "640" ]]; then
+        pass "Task 21: linuxstudent project file"
+    else
+        fail "Task 21: project.txt ownership or permissions incorrect"
+    fi
+else
+    fail "Task 21: project.txt missing"
+fi
+
+# Task 22 - Hard Link
+ORIGINAL="$LINUX_TEST/documents/original.txt"
+HARDLINK="$LINUX_TEST/documents/hardlink.txt"
+
+if [[ -f "$ORIGINAL" && -f "$HARDLINK" ]]; then
+
+    inode1=$(stat -c "%i" "$ORIGINAL")
+    inode2=$(stat -c "%i" "$HARDLINK")
+
+    if [[ "$inode1" == "$inode2" ]] &&
+       grep -q "I am creating hard link and this is my first attempt" "$ORIGINAL"; then
+        pass "Task 22: hard link"
+    else
+        fail "Task 22: hard link or content incorrect"
+    fi
+else
+    fail "Task 22: hard link files missing"
+fi
+
+# Task 23 - Symbolic Link
+SOFTLINK="$LINUX_TEST/documents/softlink.txt"
+ORIGINAL="$LINUX_TEST/documents/original.txt"
+
+if [[ -L "$SOFTLINK" ]]; then
+
+    target=$(readlink -f "$SOFTLINK" 2>/dev/null)
+    original=$(readlink -f "$ORIGINAL" 2>/dev/null)
+
+    if [[ "$target" == "$original" ]]; then
+        pass "Task 23: symbolic link"
+    else
+        fail "Task 23: symbolic link target incorrect"
+    fi
+else
+    fail "Task 23: softlink.txt missing"
+fi
+
+# Task 24 - Apache Installation
+if rpm -q httpd >/dev/null 2>&1; then
+    pass "Task 24: Apache HTTP Server installed"
+else
+    fail "Task 24: Apache HTTP Server is not installed"
+fi
+
+# Task 25 - Apache Service
+if systemctl is-active --quiet httpd &&
+   systemctl is-enabled --quiet httpd; then
+    pass "Task 25: Apache running and enabled"
+else
+    fail "Task 25: Apache is not running and enabled"
+fi
+
+# Task 26 - Web Content
+if [[ -f /var/www/html/index.html ]]; then
+
+    if grep -Fxq "<h1>LINOOP Linux Training Server</h1>" \
+        /var/www/html/index.html; then
+        pass "Task 26: Apache web content"
+    else
+        fail "Task 26: required web content not found"
+    fi
+else
+    fail "Task 26: index.html missing"
+fi
+
+# Task 27 - Apache Network Listening
+if sudo ss -lntp 2>/dev/null |
+   grep -Eq ':(9191)[[:space:]]'; then
+    pass "Task 27: Apache listening on port 9191"
+else
+    fail "Task 27: port 9191 is not listening"
+fi
+
+# Task 28 - Web Server Verification
+if curl -s http://127.0.0.1:9191 2>/dev/null |
+   grep -q "LINOOP Linux Training Server"; then
+    pass "Task 28: Apache web page retrieval"
+else
+    fail "Task 28: Apache page could not be retrieved"
+fi
+
+# Task 29 - Create and Configure Network Team
+if nmcli connection show team0 >/dev/null 2>&1 &&
+   nmcli connection show team0-port192 >/dev/null 2>&1 &&
+   nmcli connection show team0-port224 >/dev/null 2>&1; then
+
+    if nmcli connection show team0-port192 | grep -q "ens192" &&
+       nmcli connection show team0-port224 | grep -q "ens224"; then
+        pass "Task 29: team0 and team port profiles"
+    else
+        fail "Task 29: team port assignments incorrect"
+    fi
+else
+    fail "Task 29: required team profiles missing"
+fi
+
+# Task 30 - Configure Team Network Settings
+TEAM_IP="$STUDENT_IP"
+
+if [[ -n "$TEAM_IP" ]]; then
+
+    team_ip_ok=0
+    gateway_ok=0
+    dns_ok=0
+
+    if nmcli -g IP4.ADDRESS device show team0 2>/dev/null |
+       grep -q "$TEAM_IP/22"; then
+        team_ip_ok=1
+    fi
+
+    if nmcli -g IP4.GATEWAY device show team0 2>/dev/null |
+       grep -q "10.90.0.1"; then
+        gateway_ok=1
+    fi
+
+    dns_values=$(nmcli -g IP4.DNS device show team0 2>/dev/null)
+
+    if echo "$dns_values" | grep -q "192.168.111.50" &&
+       echo "$dns_values" | grep -q "8.8.8.8"; then
+        dns_ok=1
+    fi
+
+    if [[ "$team_ip_ok" -eq 1 &&
+          "$gateway_ok" -eq 1 &&
+          "$dns_ok" -eq 1 ]]; then
+        pass "Task 30: team0 network configuration"
+    else
+        fail "Task 30: team0 IP, gateway, or DNS configuration"
+    fi
+else
+    fail "Task 30: STUDENT_IP is not available"
+fi
+
+# Task 31 - Verify Team Configuration
+if nmcli device status 2>/dev/null | grep -q "team0" &&
+   nmcli connection show team0 >/dev/null 2>&1; then
+
+    team_config=$(nmcli connection show team0 2>/dev/null)
+
+    if echo "$team_config" | grep -qi "activebackup" ||
+       sudo teamdctl team0 state 2>/dev/null | grep -qi "activebackup"; then
+
+        if nmcli connection show team0-port192 >/dev/null 2>&1 &&
+           nmcli connection show team0-port224 >/dev/null 2>&1; then
+            pass "Task 31: team0 configuration"
         else
-            fail "Task 23: NFS filesystem could not be mounted using /etc/fstab"
+            fail "Task 31: team port profiles incomplete"
         fi
-
-    fi
-
-
-    # ============================================================
-    # TASK 24 - VERIFY PERSISTENT NFS MOUNT
-    # ============================================================
-
-    TASK24_OK=1
-
-    CURRENT_SOURCE=$(client_cmd findmnt -n -o SOURCE "$MOUNT_POINT")
-    CURRENT_TYPE=$(client_cmd findmnt -n -o FSTYPE "$MOUNT_POINT")
-
-    if ! echo "$CURRENT_SOURCE" | grep -Fq "$NFS_SERVER:/nfs_share"; then
-        TASK24_OK=0
-    fi
-
-    if [ "$CURRENT_TYPE" != "nfs" ] &&
-       [ "$CURRENT_TYPE" != "nfs4" ]; then
-        TASK24_OK=0
-    fi
-
-    if [ "$TASK24_OK" -eq 1 ]; then
-        pass "Task 24: persistent NFS mount is correctly configured and verified"
     else
-        fail "Task 24: persistent NFS mount verification failed"
+        fail "Task 31: team0 is not configured for Active-Backup"
+    fi
+else
+    fail "Task 31: team0 is not operational"
+fi
+
+# Task 32 - Test Active-Backup Failover
+if sudo teamdctl team0 state 2>/dev/null |
+   grep -qi "activebackup"; then
+
+    team_state=$(sudo teamdctl team0 state 2>/dev/null)
+
+    if echo "$team_state" | grep -qi "link_watch" ||
+       echo "$team_state" | grep -qi "active"; then
+        pass "Task 32: Active-Backup failover configuration"
+    else
+        fail "Task 32: Active-Backup state could not be verified"
+    fi
+else
+    fail "Task 32: team0 Active-Backup state not detected"
+fi
+
+# Task 33 - Partition the Additional Disk
+if sudo lsblk -dn -o NAME /dev/sdb >/dev/null 2>&1; then
+
+    p1=$(sudo lsblk -dn -o NAME /dev/sdb1 2>/dev/null)
+    p2=$(sudo lsblk -dn -o NAME /dev/sdb2 2>/dev/null)
+    p3=$(sudo lsblk -dn -o NAME /dev/sdb3 2>/dev/null)
+    p4=$(sudo lsblk -dn -o NAME /dev/sdb4 2>/dev/null)
+
+    if [[ -n "$p1" && -n "$p2" && -n "$p3" && -n "$p4" ]]; then
+        pass "Task 33: /dev/sdb partition structure"
+    else
+        fail "Task 33: required /dev/sdb partitions are missing"
+    fi
+else
+    fail "Task 33: /dev/sdb not found"
+fi
+
+# Task 34 - Configure Persistent Swap
+if sudo swapon --show=NAME --noheadings 2>/dev/null |
+   grep -q "/dev/sdb1"; then
+
+    if grep -Eq '^[[:space:]]*/dev/sdb1[[:space:]]' /etc/fstab ||
+       grep -Eq '^[[:space:]]*[^#]+[[:space:]]+none[[:space:]]+swap' /etc/fstab; then
+        pass "Task 34: persistent swap"
+    else
+        fail "Task 34: swap is active but not persistent"
+    fi
+else
+    fail "Task 34: /dev/sdb1 is not active swap"
+fi
+
+# Task 35 - Create LVM Physical Volumes and VG
+if sudo pvs --noheadings -o pv_name 2>/dev/null |
+   grep -qw "/dev/sdb2" &&
+   sudo pvs --noheadings -o pv_name 2>/dev/null |
+   grep -qw "/dev/sdb3" &&
+   sudo vgs --noheadings -o vg_name 2>/dev/null |
+   grep -qw "vg-app"; then
+
+    pass "Task 35: LVM physical volumes and vg-app"
+else
+    fail "Task 35: LVM physical volumes or vg-app missing"
+fi
+
+# Task 36 - Create and Mount Application LV
+if sudo lvs vg-app/lv-app >/dev/null 2>&1 &&
+   findmnt /app >/dev/null 2>&1; then
+
+    fs_type=$(findmnt -n -o FSTYPE /app 2>/dev/null)
+
+    if [[ "$fs_type" == "xfs" ]] &&
+       grep -Eq '[[:space:]]/app[[:space:]]' /etc/fstab; then
+        pass "Task 36: lv-app XFS mounted at /app"
+    else
+        fail "Task 36: /app filesystem or persistence incorrect"
+    fi
+else
+    fail "Task 36: lv-app or /app is missing"
+fi
+
+# Task 37 - Extend Application Storage
+if sudo lvs vg-app/lv-app >/dev/null 2>&1 &&
+   findmnt -n /app >/dev/null 2>&1 &&
+   sudo test -f "$LINUX_TEST/lv-app"; then
+
+    lv_size=$(sudo lvs --noheadings --nosuffix --units m \
+        -o lv_size vg-app/lv-app 2>/dev/null |
+        awk '{gsub(/[^0-9.]/,""); print int($1)}')
+
+    app_size=$(df -BM /app 2>/dev/null |
+        awk 'NR==2 {gsub(/M/,"",$2); print int($2)}')
+
+    fs_type=$(findmnt -n -o FSTYPE /app)
+
+    if [[ "$fs_type" == "xfs" ]] &&
+       [[ "$lv_size" -ge 800 ]] &&
+       [[ "$app_size" -ge 770 ]]; then
+
+        pass "Task 37: lv-app and XFS filesystem extended"
+    else
+        fail "Task 37: lv-app or XFS filesystem was not extended"
     fi
 
+else
+    fail "Task 37: lv-app, /app, or verification file missing"
+fi
 
-    # ============================================================
-    # TASK 25 - CREATE AND VERIFY CLIENT WRITE ACCESS
-    # ============================================================
+# Task 38 - Expand Volume Group and Logical Volume
+if sudo pvs /dev/sdb4 >/dev/null 2>&1 &&
+   sudo vgs vg-app >/dev/null 2>&1 &&
+   sudo lvs vg-app/lv-app >/dev/null 2>&1; then
 
-    CLIENT_TEST_FILE="$MOUNT_POINT/client_test.txt"
+    pv_vg=$(sudo pvs --noheadings -o vg_name /dev/sdb4 2>/dev/null |
+        xargs)
 
-    if client_cmd test -f "$CLIENT_TEST_FILE"; then
+    app_size=$(df -BM /app 2>/dev/null |
+        awk 'NR==2 {gsub("M","",$2); print int($2)}')
 
-        CLIENT_CONTENT=$(client_cmd cat "$CLIENT_TEST_FILE")
+    fs_type=$(findmnt -n -o FSTYPE /app 2>/dev/null)
 
-        if [ "$CLIENT_CONTENT" = "$CLIENT_TEST_CONTENT" ]; then
+    if [[ "$pv_vg" == "vg-app" &&
+          "$fs_type" == "xfs" &&
+          "$app_size" -ge 1400 &&
+          "$app_size" -le 1600 ]]; then
 
-            SERVER_CONTENT=$(cat "$CLIENT_TEST_FILE" 2>/dev/null)
+        pass "Task 38: final LVM and filesystem expansion"
+    else
+        fail "Task 38: final LVM or filesystem expansion is incorrect"
+    fi
+else
+    fail "Task 38: /dev/sdb4 or LVM configuration is incomplete"
+fi
 
-            if [ "$SERVER_CONTENT" = "$CLIENT_TEST_CONTENT" ]; then
-                pass "Task 25: client_test.txt was created by the client and verified on the NFS server"
-            else
-                fail "Task 25: client_test.txt exists on the client but could not be verified correctly on the server"
+# Task 39 - Mount and Verify NFS Share
+if findmnt /mnt/nfs_share >/dev/null 2>&1; then
+
+    nfs_type=$(findmnt -n -o FSTYPE /mnt/nfs_share 2>/dev/null)
+
+    if [[ "$nfs_type" == "nfs" || "$nfs_type" == "nfs4" ]] &&
+       [[ -f /mnt/nfs_share/server_test.txt ]]; then
+        pass "Task 39: NFS share mounted and accessible"
+    else
+        fail "Task 39: NFS filesystem or server_test.txt not available"
+    fi
+else
+    fail "Task 39: /mnt/nfs_share is not mounted"
+fi
+
+# Task 40 - Persistent NFS Mount and Client File
+CLIENT_FILE="/mnt/nfs_share/client_test_$STUDENT_IP"
+EXPECTED_CONTENT="This file was created on the NFS client for NFS share verification."
+
+if sudo test -f "$CLIENT_FILE"; then
+
+    content=$(sudo cat "$CLIENT_FILE" 2>/dev/null)
+
+    if [[ "$content" == "$EXPECTED_CONTENT" ]]; then
+
+        FSTAB_OK=0
+
+        while read -r server mount_point fs_type options dump passno; do
+            [[ -z "$server" || "$server" == \#* ]] && continue
+
+            if [[ "$server" == "192.168.111.165:/nfs_share" &&
+                  "$mount_point" == "/mnt/nfs_share" &&
+                  "$fs_type" == "nfs" &&
+                  "$options" == *"_netdev"* &&
+                  "$dump" == "0" &&
+                  "$passno" == "0" ]]; then
+                FSTAB_OK=1
+                break
             fi
 
+        done < /etc/fstab
+
+        if [[ "$FSTAB_OK" -eq 1 ]] &&
+           findmnt -n -o FSTYPE /mnt/nfs_share | grep -q '^nfs'; then
+
+            pass "Task 40: persistent NFS mount and client file"
+
         else
-            fail "Task 25: client_test.txt content does not match the required content"
+            fail "Task 40: fstab entry, _netdev option, or active NFS mount is incorrect"
         fi
 
     else
-        fail "Task 25: client_test.txt was not created on the NFS share"
+        fail "Task 40: client file content is incorrect"
     fi
 
-
-    # ============================================================
-    # TASK 26 - MODIFY AND VERIFY FILE ACROSS NFS SHARE
-    # ============================================================
-
-    ORIGINAL_CONTENT=$(cat "$SERVER_TEST_FILE" 2>/dev/null)
-
-    if client_cmd grep -Fq "$CLIENT_MODIFIED_CONTENT" "$CLIENT_SERVER_FILE"; then
-
-        if grep -Fq "$CLIENT_MODIFIED_CONTENT" "$SERVER_TEST_FILE" 2>/dev/null; then
-            pass "Task 26: server_test.txt modification from the NFS client was verified on the NFS server"
-        else
-            fail "Task 26: modification exists on client but was not verified on NFS server"
-        fi
-
-    else
-        fail "Task 26: required modification was not found in server_test.txt"
-    fi
+else
+    fail "Task 40: client file missing"
+fi
 
     # ============================================================
     # SUMMARY

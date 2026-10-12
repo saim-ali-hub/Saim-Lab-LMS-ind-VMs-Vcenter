@@ -1,0 +1,191 @@
+{
+  "lab_id": "lab232",
+  "title": "Lab 232 - NIC Teaming Using Active-Backup - Advanced",
+  "lab_objective": {
+    "description": "By completing this lab, you will learn:",
+    "objectives": [
+      "You will configure two network interfaces as a single logical team interface using Active-Backup mode.",
+      "You will configure ens192 and ens224 as ports of the logical team0 interface.",
+      "The IP configuration must be applied to team0, not directly to the individual physical interfaces.",
+      "You will verify the configured team runner and confirm that both network interfaces are members of team0.",
+      "You will identify which team interface is currently active and which interface is available as the backup.",
+      "You will test network connectivity through team0 while both interfaces are available.",
+      "You will simulate the failure of the active team interface and verify that the backup interface becomes active.",
+      "You will verify that network connectivity continues after the active interface fails.",
+      "You will restore the failed interface and verify that both interfaces are available to the team again.",
+      "You will verify that Active-Backup provides network redundancy rather than increased bandwidth."
+    ]
+  },
+  "tasks": [
+    {
+      "task_number": 1,
+      "task_title": "Verify Network Interfaces and Current Configuration",
+      "steps": [
+        "Identify all available network interfaces on the Linux server.",
+        "Identify ens192 and ens224 as the interfaces that will be used for NIC teaming.",
+        "Verify the current IP address configuration.",
+        "Verify the current network configuration, including the default gateway and DNS configuration.",
+        "Record any existing network configuration before making changes."
+      ]
+    },
+    {
+      "task_number": 2,
+      "task_title": "Verify NetworkManager Teaming Support",
+      "steps": [
+        "Verify that the required NIC teaming software and NetworkManager teaming support are installed.",
+        "Verify that the NetworkManager service is active and running.",
+        "If required components are missing, install the appropriate packages before continuing.",
+        "Confirm that the system is ready to create a NetworkManager team connection."
+      ]
+    },
+    {
+      "task_number": 3,
+      "task_title": "Create the team0 Connection and Configure Active-Backup Mode",
+      "steps": [
+        "Create a logical team connection named team0.",
+        "Configure the team runner to use Active-Backup mode.",
+        "Verify that the team0 connection was created successfully.",
+        "Verify that the configured runner is Active-Backup."
+      ]
+    },
+    {
+      "task_number": 4,
+      "task_title": "Configure the Team Ports",
+      "steps": [
+        "Add ens192 to team0 and create a connection profile named team0-port1.",
+        "Add ens224 to team0 and create a connection profile named team0-port2.",
+        "Verify that both interfaces are configured as ports of team0.",
+        "Do not configure the same IP address directly on ens192 or ens224."
+      ]
+    },
+    {
+      "task_number": 5,
+      "task_title": "Configure IP Address and Network Settings on team0",
+      "steps": [
+        "Configure the required static IP address on team0.",
+        "Use your assigned or existing IP address with the required network prefix.",
+        "Configure the default gateway as 10.90.0.1.",
+        "Configure the DNS servers as 192.168.111.50 and 8.8.8.8.",
+        "Set the IPv4 method to manual.",
+        "Configure team0 to automatically connect when the system boots.",
+        "Ensure that the IP address, gateway, and DNS configuration are applied to team0 rather than ens192 or ens224.",
+        "Verify that ens192 and ens224 do not have independent IP configurations that conflict with the team configuration."
+      ]
+    },
+    {
+      "task_number": 6,
+      "task_title": "Bring the Team Connection Online",
+      "steps": [
+        "Bring the team0 connection and both team ports online.",
+        "Verify that NetworkManager successfully activates the team and its ports.",
+        "If any connection fails to activate, troubleshoot the configuration before continuing."
+      ]
+    },
+    {
+      "task_number": 7,
+      "task_title": "Verify team0 Is UP and Operational",
+      "steps": [
+        "Verify that team0 is in the UP state.",
+        "Verify that the required IP address is assigned to team0.",
+        "Verify the state of team0, ens192, and ens224.",
+        "Confirm that the physical interfaces are functioning as team ports rather than independent interfaces.",
+        "Verify that the system has a valid default route through team0."
+      ]
+    },
+    {
+      "task_number": 8,
+      "task_title": "Verify the Configured Team Runner",
+      "steps": [
+        "Display the current team configuration.",
+        "Verify that team0 is using the Active-Backup runner.",
+        "Verify that the runner is configured for network redundancy.",
+        "Identify which team port is currently active."
+      ]
+    },
+    {
+      "task_number": 9,
+      "task_title": "Verify Team Membership and Port Status",
+      "steps": [
+        "Verify that ens192 is a member of team0.",
+        "Verify that ens224 is a member of team0.",
+        "Verify the operational state of both team ports.",
+        "Examine the team state and identify the active team port.",
+        "Identify which interface is currently acting as the backup port."
+      ]
+    },
+    {
+      "task_number": 10,
+      "task_title": "Test Network Connectivity Through team0",
+      "steps": [
+        "Verify the IP address assigned to team0.",
+        "Test connectivity to the default gateway.",
+        "Test connectivity to an external IP address.",
+        "Test DNS name resolution.",
+        "Confirm that network connectivity is working before performing failure testing.",
+        "Record the results of your connectivity tests."
+      ]
+    },
+    {
+      "task_number": 11,
+      "task_title": "Identify the Active and Backup Team Ports",
+      "steps": [
+        "Display the current team state.",
+        "Identify which interface is currently active.",
+        "Identify the second interface as the available backup interface.",
+        "Verify that both interfaces have an operational link.",
+        "Explain the difference between an active interface and a backup interface in Active-Backup mode.",
+        "Explain why Active-Backup provides redundancy rather than increased network bandwidth."
+      ]
+    },
+    {
+      "task_number": 12,
+      "task_title": "Disconnect the Active Team Interface",
+      "steps": [
+        "Identify which interface is currently active.",
+        "Disconnect or deactivate the active team port without bringing down team0.",
+        "Do not remove the team configuration.",
+        "Observe the team state after the active interface has been disconnected.",
+        "Verify that the remaining interface is available to take over."
+      ]
+    },
+    {
+      "task_number": 13,
+      "task_title": "Verify Active-Backup Failover",
+      "steps": [
+        "Verify that team0 remains operational after the active team port is disconnected.",
+        "Verify that the previously standby interface becomes the active interface.",
+        "Verify the active port using the team state.",
+        "Test connectivity to the default gateway.",
+        "Test connectivity to an external IP address.",
+        "Test DNS name resolution.",
+        "Confirm that network connectivity continues through the remaining interface."
+      ]
+    },
+    {
+      "task_number": 14,
+      "task_title": "Restore the Failed Interface",
+      "steps": [
+        "Restore the disconnected team interface.",
+        "Verify that the restored interface rejoins team0.",
+        "Confirm that the team recognizes both interfaces again.",
+        "Verify the operational state of both team ports.",
+        "Do not recreate the team connection unless troubleshooting requires it."
+      ]
+    },
+    {
+      "task_number": 15,
+      "task_title": "Verify Team Recovery and Normal Operation",
+      "steps": [
+        "Verify that team0 is UP and operational.",
+        "Verify that ens192 and ens224 are both available as team ports.",
+        "Verify that the Active-Backup runner is still configured.",
+        "Verify that an active port is identified.",
+        "Verify that the IP address remains configured on team0.",
+        "Verify that network connectivity is working normally.",
+        "Examine the final team state after both ports have been restored.",
+        "Explain how Active-Backup provides network redundancy when one team interface fails."
+      ]
+    }
+  ],
+  "completion_message": "Great Job! You have successfully completed Lab 232 — NIC Teaming Using Active-Backup - Advanced. You configured team0 using Active-Backup mode, added ens192 and ens224 as team ports, configured network connectivity through the logical interface, identified the active and backup interfaces, tested failover by disconnecting the active interface, verified continued network connectivity through the backup interface, restored the failed interface, and verified that the team returned to normal operation."
+}

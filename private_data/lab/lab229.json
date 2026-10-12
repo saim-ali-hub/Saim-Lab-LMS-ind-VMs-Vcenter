@@ -139,7 +139,7 @@
       "steps": [
         "Before extending lv_db, check its current size.",
         "Verify that vg_db has sufficient free space.",
-        "Extend /dev/vg_db/lv_db by 500 MB and use -r option to resize the XFS filesystem so that it uses the additional Logical Volume capacity.",
+        "Extend /dev/vg_db/lv_db by '125 extents' and use -r option to resize the XFS filesystem so that it uses the additional Logical Volume capacity.",
         "Do not initialize or add /dev/sdb4 at this stage.",
         "Verify that the Logical Volume size increased.",
         "Verify the updated filesystem size.",

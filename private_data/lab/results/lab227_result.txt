@@ -97,3 +97,16 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 93    harinderpreet.kaur        2026-09-30 21:29:17    10     10     100%      
 94    asfiya.umair              2026-10-01 15:48:08    10     2      20%       
 95    asfiya.umair              2026-10-01 16:17:57    10     10     100%      
+96    muhammad.shoaib           2026-10-03 11:46:18    10     0      0%        
+97    raza.ali                  2026-10-06 06:39:47    10     9      90%       
+98    raza.ali                  2026-10-06 06:40:37    10     10     100%      
+99    kamaljeet.kaur            2026-10-06 17:27:33    10     2      20%       
+100   nakhal.iqbal              2026-10-06 18:57:54    10     0      0%        
+101   jenny.salman              2026-10-06 23:09:23    10     9      90%       
+102   talha.zubair              2026-10-07 22:33:45    10     9      90%       
+103   muhammad.danial           2026-10-07 22:42:42    10     9      90%       
+104   muhammad.bilal            2026-10-08 16:51:38    10     10     100%      
+105   nimrah.nawaz              2026-10-10 03:56:55    10     7      70%       
+106   muhammad.azlan            2026-10-11 20:42:08    10     9      90%       
+107   muhammad.azlan            2026-10-11 20:44:28    10     9      90%       
+108   muhammad.azlan            2026-10-11 20:45:39    10     10     100%      

@@ -1,0 +1,201 @@
+{
+  "lab_id": "lab234",
+  "title": "Lab 234 - Network File System (NFS)",
+  "description": "Manage an NFS client using three preconfigured NFS server shares with different access and root-mapping behaviors. Students will install and verify NFS client utilities, discover NFS exports, manually mount read-only and read-write NFS shares, demonstrate root_squash and no_root_squash behavior, configure persistent NFS mounts, and verify /etc/fstab configuration.",
+  "lab_objective": {
+    "description": "By the end of this lab, students should be able to:",
+    "objectives": [
+      "Check whether nfs-utils is installed.",
+      "Install nfs-utils if required.",
+      "Identify available NFS client utilities.",
+      "Discover NFS exports from a server.",
+      "Mount NFS exports manually.",
+      "Understand the difference between ro and rw.",
+      "Understand root_squash and no_root_squash.",
+      "Demonstrate the security implications of root access from an NFS client.",
+      "Test file creation, modification, and deletion.",
+      "Understand UID/GID-based ownership across NFS.",
+      "Configure persistent NFS mounts using /etc/fstab.",
+      "Validate persistent mounts.",
+      "Use mount, findmnt, df, and /proc/mounts to troubleshoot NFS mounts.",
+      "Understand why client-side rw does not override a server-side ro export."
+    ]
+  },
+  "scenario": [
+    "You are working as a Linux Systems Administrator responsible for managing NFS client systems in an organization.",
+    "The NFS server has already been configured and is providing three NFS exports to the client.",
+    "NFS Server: 192.168.111.165",
+    "NFS Client: Your assigned Linux client VM",
+    "The NFS server provides the following three exports:",
+    "/nfs_share_readonly",
+    "/nfs_share_rw_norootsquash",
+    "/nfs_share_rw_rootsquash",
+    "The three exports are configured with different access and root-mapping behaviors.",
+    "Your task is to manage the NFS client only, discover the available exports, mount each share, test read and write behavior, demonstrate the difference between root_squash and no_root_squash, and configure all three NFS mounts to persist using /etc/fstab."
+  ],
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Check NFS Client Package",
+      "steps": [
+        "Verify whether the NFS client package is installed.",
+        "rpm -q nfs-utils",
+        "If it is not installed, install it.",
+        "dnf install -y nfs-utils",
+        "Then verify:",
+        "rpm -q nfs-utils"
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Discover Server Exports",
+      "steps": [
+        "Query the NFS server:",
+        "showmount -e 192.168.111.165",
+        "Students should identify the three available exports.",
+        "Expected concept:",
+        "/nfs_share_readonly",
+        "/nfs_share_rw_norootsquash",
+        "/nfs_share_rw_rootsquash",
+        "showmount -e tells the client what the NFS server is exporting.",
+        "It does not mean the client automatically has write access."
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Create NFS Client Mount Points",
+      "steps": [
+        "Create three separate mount points:",
+        "mkdir -p /mnt/nfs_readonly",
+        "mkdir -p /mnt/nfs_rw_norootsquash",
+        "mkdir -p /mnt/nfs_rw_rootsquash",
+        "Verify all three mount points created:",
+        "ls -ld /mnt/nfs_*"
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Mount the Read-Only Export",
+      "steps": [
+        "Mount the first export:",
+        "mount 192.168.111.165:/nfs_share_readonly /mnt/nfs_readonly",
+        "Verify:",
+        "df -hT /mnt/nfs_readonly"
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Test Read-Only Behavior",
+      "steps": [
+        "Attempt to create a file:",
+        "touch /mnt/nfs_readonly/client_test.txt_<Your_vm_ip>",
+        "Then attempt:",
+        "mkdir /mnt/nfs_readonly/test_directory_<Your_vm_ip>",
+        "The operations should fail with a read-only error.",
+        "You should distinguish between:",
+        "Filesystem is mounted",
+        "and:",
+        "Filesystem is writable",
+        "A successful NFS mount does not imply write access."
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Mount the rw,no_root_squash Export",
+      "steps": [
+        "Mount:",
+        "mount 192.168.111.165:/nfs_share_rw_norootsquash /mnt/nfs_rw_norootsquash",
+        "Verify:",
+        "df -hT /mnt/nfs_rw_norootsquash",
+        "Then create a file as a regular user (your_vpnuser):",
+        "touch /mnt/nfs_rw_norootsquash/user_test.txt_<Your_vm_ip>",
+        "Check:",
+        "ls -ln /mnt/nfs_rw_norootsquash/user_test.txt_<Your_vm_ip>"
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "Test Root Access with no_root_squash",
+      "steps": [
+        "This is the important security exercise.",
+        "Create file as root user:",
+        "touch /mnt/nfs_rw_norootsquash/root_test.txt_<Your_vm_ip>",
+        "Verify:",
+        "ls -ln /mnt/nfs_rw_norootsquash/root_test.txt_<Your_vm_ip>",
+        "Observe that the file can retain:",
+        "UID 0 & GID 0",
+        "because the server export uses:",
+        "no_root_squash",
+        "Normally, NFS protects the server from root on the client.",
+        "But with no_root_squash the server does not map client-side root to the anonymous NFS user.",
+        "This is why no_root_squash can be dangerous."
+      ]
+    },
+    {
+      "task_number": 8,
+      "title": "Mount the rw,root_squash Export",
+      "steps": [
+        "Mount:",
+        "mount 192.168.111.165:/nfs_share_rw_rootsquash /mnt/nfs_rw_rootsquash",
+        "Verify:",
+        "df -h /mnt/nfs_rw_rootsquash"
+      ]
+    },
+    {
+      "task_number": 9,
+      "title": "Test Normal User Access",
+      "steps": [
+        "As the regular user (your_vpnuser):",
+        "touch /mnt/nfs_rw_rootsquash/user_test2.txt_<Your_vm_ip>",
+        "Then:",
+        "ls -ln /mnt/nfs_rw_rootsquash/user_test2.txt_<Your_vm_ip>",
+        "You should observe that normal users can write to the export if the directory permissions permit it."
+      ]
+    },
+    {
+      "task_number": 10,
+      "title": "Demonstrate root_squash",
+      "steps": [
+        "Now perform the same operation as root:",
+        "touch /mnt/nfs_rw_rootsquash/root_test2.txt_<Your_vm_ip>",
+        "Then:",
+        "ls -ln /mnt/nfs_rw_rootsquash/root_test2.txt_<Your_vm_ip>",
+        "root_squash does not mean ‘Nobody can write’. It means:",
+        "Root from the NFS client is treated as an anonymous/unprivileged identity on the NFS server.",
+        "You should notice that the file does not appear as:",
+        "root root",
+        "Instead, the server maps the client-side root identity to the anonymous identity configured by the NFS server, commonly something like:",
+        "nobody:nobody",
+        "or another anonymous UID/GID depending on the server configuration."
+      ]
+    },
+    {
+      "task_number": 11,
+      "title": "Configure Persistent NFS Mounts",
+      "steps": [
+        "Add all three exports to:",
+        "/etc/fstab",
+        "For example:",
+        "192.168.111.165:/nfs_share_readonly /mnt/nfs_readonly nfs defaults,_netdev 0 0",
+        "192.168.111.165:/nfs_share_rw_norootsquash /mnt/nfs_rw_norootsquash nfs defaults,_netdev 0 0",
+        "192.168.111.165:/nfs_share_rw_rootsquash /mnt/nfs_rw_rootsquash nfs defaults,_netdev 0 0"
+      ]
+    },
+    {
+      "task_number": 12,
+      "title": "Test /etc/fstab",
+      "steps": [
+        "Unmount all three:",
+        "umount /mnt/nfs_readonly",
+        "umount /mnt/nfs_rw_norootsquash",
+        "umount /mnt/nfs_rw_rootsquash",
+        "Then mount them using:",
+        "mount -a",
+        "Verify:",
+        "df -hT",
+        "This verify that /etc/fstab entries are actually valid."
+      ]
+    }
+  ],
+  "completion_message": "Excellent work! You have completed Lab 234 - Network File System (NFS). You practiced NFS client package management, NFS export discovery, manual NFS mounting, read-only and read-write access testing, root_squash and no_root_squash behavior, UID/GID ownership verification, and persistent NFS mounts using /etc/fstab."
+}

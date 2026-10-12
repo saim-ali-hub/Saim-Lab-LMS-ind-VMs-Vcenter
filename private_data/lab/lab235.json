@@ -1,0 +1,409 @@
+{
+  "lab_number": "lab235",
+  "title": "Lab 235 - Linux Systems Administration - Assessment",
+  "lab_objective": {
+    "description": "By completing this lab, you will demonstrate your ability to:",
+    "objectives": [
+      "Complete all tasks directly on your personal virtual machine in Vcenter.",
+      "Perform the configuration yourself; do not copy configurations from any other source.",
+      "Unless a task specifically requires an output file, the final system state will be used for validation.",
+      "Do not remove or modify configurations created by previous tasks unless required by the current task.",
+      "Use the required filenames, directories, users, groups, mount points, and configuration values exactly as specified.",
+      "Ensure configurations that are required to survive a reboot are made persistent.",
+      "Where a task asks for a specific behavior, the behavior must be demonstrable during validation."
+    ]
+  },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Directory Navigation and Structure",
+      "steps": [
+        "Create a directory named linux_test in your home directory.",
+        "Inside linux_test, create the following four subdirectories:",
+        "documents",
+        "logs",
+        "scripts",
+        "backup",
+        "The resulting directory structure must contain linux_test with all four specified subdirectories directly beneath it."
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "File Creation and Management",
+      "steps": [
+        "Inside the documents/ directory created in the previous task, create the following files with the exact content specified below:",
+        "Create report.txt containing: Linux system administration requires careful management of users, files, permissions, and services",
+        "Create notes.txt containing: Regular system monitoring helps identify configuration and performance issues",
+        "Create summary.txt containing: This document contains a summary of Linux administration activities",
+        "Ensure that all three files are regular files and contain the specified content exactly."
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "File and Directory Operations",
+      "steps": [
+        "Recall the directory structure and files created in task 1 and 2. Perform following file operations:",
+        "Copy report.txt from documents into backup/.",
+        "Move summary.txt from documents/ into logs/ without changing the filename.",
+        "Create summary.sh in scripts/ using the summary.txt file."
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Output Redirection",
+      "steps": [
+        "Create a file named ~/linux_test/system_info.txt",
+        "The file must contain information identifying:",
+        "Record the kernel release and version information",
+        "The system hostname details",
+        "Record the system uptime information",
+        "Operating system release information"
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Tar Archive",
+      "steps": [
+        "Create an archive named documents_backup.tar inside ~/linux_test/backup containing the complete ~/linux_test/documents/ directory."
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Compressed Archive",
+      "steps": [
+        "Create a gzip-compressed archive named linux_test_backup.tar.gz inside ~/linux_test/backup containing the complete ~/linux_test/scripts directory."
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "Find Files by Size",
+      "steps": [
+        "Search the Linux filesystem for regular files larger than 100 MB.",
+        "Use the find command to identify the files and save a long-listing format of the results in /home/your_username/linux_test/find_large_files.txt",
+        "Execute this command as root user",
+        "Ensure that the output contains only regular files that meet the specified size requirement."
+      ]
+    },
+    {
+      "task_number": 8,
+      "title": "Find Files by Permission",
+      "steps": [
+        "Search the Linux filesystem for regular files with the Setuid special permission enabled.",
+        "Save the resulting list of file paths in ~/linux_test/setuid_files.txt",
+        "Ensure that The output contains only regular files and every listed file has the Setuid special permission enabled."
+      ]
+    },
+    {
+      "task_number": 9,
+      "title": "Grep Configuration Information",
+      "steps": [
+        "Search the ssh configuration file '/etc/ssh/sshd_config' for lines containing a string 'root', ignoring case sensitivity, and save the output to ~/linux_test/documents/root_entries.txt"
+      ]
+    },
+    {
+      "task_number": 10,
+      "title": "Process Identification",
+      "steps": [
+        "Identify the process associated with the SSH server using 'ps -ef' command.",
+        "Create ~/linux_test/ssh_process.txt containing sufficient information to identify the running SSH server process."
+      ]
+    },
+    {
+      "task_number": 11,
+      "title": "Package Management",
+      "steps": [
+        "Ensure that the vsftpd package is installed on your personal VM."
+      ]
+    },
+    {
+      "task_number": 12,
+      "title": "Service Management",
+      "steps": [
+        "Configure the vsftpd service so that:",
+        "It is currently running.",
+        "It starts automatically when the system boots."
+      ]
+    },
+    {
+      "task_number": 13,
+      "title": "Service Verification",
+      "steps": [
+        "Create /home/your_username/linux_test/vsftpd_service_status.txt containing information demonstrating the current vsftpd service state and whether it is configured to start automatically."
+      ]
+    },
+    {
+      "task_number": 14,
+      "title": "User Creation",
+      "steps": [
+        "Create a local user named linuxstudent.",
+        "Create another user named jack",
+        "Assign password to both users."
+      ]
+    },
+    {
+      "task_number": 15,
+      "title": "Group Creation",
+      "steps": [
+        "Create the group linuxadmins",
+        "Verify linuxadmins group exist."
+      ]
+    },
+    {
+      "task_number": 16,
+      "title": "Secondary Group",
+      "steps": [
+        "Configure linuxstudent as a member of linuxadmins group."
+      ]
+    },
+    {
+      "task_number": 17,
+      "title": "User Account Locking",
+      "steps": [
+        "Lock the jack user account.",
+        "Verify that the account is locked and is not permitted to authenticate normally."
+      ]
+    },
+    {
+      "task_number": 18,
+      "title": "File Permissions",
+      "steps": [
+        "Set permission for ~/linux_test/documents/report.txt so that:",
+        "Owner: read and write, Group: read only, Others: no access"
+      ]
+    },
+    {
+      "task_number": 19,
+      "title": "Directory Permissions",
+      "steps": [
+        "Configure permissions for ~/linux_test/documents/ so that the owner has full access, the group can access and read the directory contents, and others have no access."
+      ]
+    },
+    {
+      "task_number": 20,
+      "title": "File Ownership",
+      "steps": [
+        "Change the group ownership of ~/linux_test/documents/report.txt to linuxadmins."
+      ]
+    },
+    {
+      "task_number": 21,
+      "title": "User-Owned Project File",
+      "steps": [
+        "Create /home/linuxstudent/project.txt",
+        "The file must:",
+        "Be owned by linuxstudent.",
+        "Belong to the linuxadmins group.",
+        "Have permissions allowing the owner to read/write, the group to read, and others no access."
+      ]
+    },
+    {
+      "task_number": 22,
+      "title": "Hard Link",
+      "steps": [
+        "Create a file named ~/linux_test/documents/original.txt",
+        "Add 'I am creating hard link and this is my first attempt' to ~/linux_test/documents/original.txt.",
+        "Create a hard link named ~/linux_test/documents/hardlink.txt",
+        "Both files must reference the same inode."
+      ]
+    },
+    {
+      "task_number": 23,
+      "title": "Symbolic Link",
+      "steps": [
+        "Create a symbolic link named ~/linux_test/documents/softlink.txt that points to original.txt"
+      ]
+    },
+    {
+      "task_number": 24,
+      "title": "Apache Installation",
+      "steps": [
+        "Ensure the Apache HTTP Server is installed and available on the system."
+      ]
+    },
+    {
+      "task_number": 25,
+      "title": "Apache Service",
+      "steps": [
+        "Configure Apache service (httpd) to:",
+        "Run currently.",
+        "Start automatically after a system reboot."
+      ]
+    },
+    {
+      "task_number": 26,
+      "title": "Web Content",
+      "steps": [
+        "Create or replace /var/www/html/index.html",
+        "The page must contain the following exact text:",
+        "<h1>LINOOP Linux Training Server</h1>"
+      ]
+    },
+    {
+      "task_number": 27,
+      "title": "Apache Network Listening",
+      "steps": [
+        "Configure Apache so that it provides HTTP service on the HTTP port 9191.",
+        "The service must be actively listening on the system's network interface."
+      ]
+    },
+    {
+      "task_number": 28,
+      "title": "Web Server Verification",
+      "steps": [
+        "Verify that the local system can successfully retrieve the Apache web page.",
+        "The returned page must contain:",
+        "LINOOP Linux Training Server"
+      ]
+    },
+    {
+      "task_number": 29,
+      "title": "Create and Configure the Network Team",
+      "steps": [
+        "Configure the two network interfaces ens192 and ens224 as members of a single network team named team0",
+        "Configure the team to operate in Active-Backup mode.",
+        "Create the following team port profiles:",
+        "team0-port192 for ens192",
+        "team0-port224 for ens224",
+        "The network configuration must be assigned to team0 rather than directly to either physical interface."
+      ]
+    },
+    {
+      "task_number": 30,
+      "title": "Configure Team Network Settings",
+      "steps": [
+        "Configure team0 using the network configuration like, the team interface must use:",
+        "The IP address of your machine with /22 prefix.",
+        "Default gateway 10.90.0.1.",
+        "DNS1 192.168.111.50.",
+        "DNS2 8.8.8.8.",
+        "Configuration should be boot persistent.",
+        "The physical team-member interfaces must not have independent IP configurations."
+      ]
+    },
+    {
+      "task_number": 31,
+      "title": "Verify Team Configuration",
+      "steps": [
+        "Verify that the completed configuration meets all of the following requirements:",
+        "team0 is operational.",
+        "ens192 is a member of team0.",
+        "ens224 is a member of team0.",
+        "team0-port192 is associated with ens192.",
+        "team0-port224 is associated with ens224.",
+        "The team operates in Active-Backup mode.",
+        "One team member is active.",
+        "The other team member is available as the backup.",
+        "The IP address is configured on team0.",
+        "The required gateway and DNS settings are associated with the team configuration."
+      ]
+    },
+    {
+      "task_number": 32,
+      "title": "Test Active-Backup Failover",
+      "steps": [
+        "Verify network connectivity through team0.",
+        "Simulate failure of the currently active team member and verify that the backup interface automatically becomes active.",
+        "Execute command 'nmcli device disconnect ens192'",
+        "After the failover:",
+        "team0 must remain operational.",
+        "Network connectivity must continue.",
+        "The previously active interface must no longer be active.",
+        "The backup interface must become active.",
+        "Restore the failed interface after completing the failover test and return the team to a healthy state."
+      ]
+    },
+    {
+      "task_number": 33,
+      "title": "Partition the Additional Disk",
+      "steps": [
+        "Identify the additional /dev/sdb 2 GB disk attached to you VM and partition it according to the following requirements:",
+        "Partition 1: 512 MB - GPT partition type = Linux swap",
+        "Partition 2: 512 MB - GPT partition type = Linux LVM",
+        "Partition 3: 500 MB - GPT partition type = Linux LVM",
+        "Partition 4: All remaining available space - GPT partition type = Linux LVM",
+        "Do not modify the operating-system disk or any existing operating-system partitions."
+      ]
+    },
+    {
+      "task_number": 34,
+      "title": "Configure Persistent Swap",
+      "steps": [
+        "Configure the first partition as swap space.",
+        "Activate the swap space and verify that it is currently enabled.",
+        "Configure the system so that the swap space is automatically activated after a system reboot."
+      ]
+    },
+    {
+      "task_number": 35,
+      "title": "Create the LVM Physical Volumes and Volume Group",
+      "steps": [
+        "Use the second and third partitions as LVM physical volumes.",
+        "Create the following volume group:",
+        "vg-app",
+        "Both physical volumes must be members of vg-app."
+      ]
+    },
+    {
+      "task_number": 36,
+      "title": "Create and Mount the Application Logical Volume",
+      "steps": [
+        "Create a logical volume named 'lv-app' with an initial size of 600 MB",
+        "Create an XFS filesystem on the logical volume.",
+        "Mount the filesystem at /app",
+        "Configure the system so that /app is automatically mounted after a reboot."
+      ]
+    },
+    {
+      "task_number": 37,
+      "title": "Extend the Application Storage",
+      "steps": [
+        "Extend lv-app by an additional 250 MB",
+        "The resulting logical volume must be approximately 850 MB in size.",
+        "A filesystem size between 770 MB and 840 MB, as reported by 'df -h /app', is acceptable.",
+        "Extend the XFS filesystem so that the additional logical volume space is available to the filesystem.",
+        "Verify that the expanded filesystem is available through /app.",
+        "Create /home/your_username/linux_test/lv-app containing information that demonstrates the extended logical volume and filesystem size."
+      ]
+    },
+    {
+      "task_number": 38,
+      "title": "Expand the Volume Group and Logical Volume",
+      "steps": [
+        "Use the fourth partition of the additional disk to further expand the LVM storage.",
+        "Perform the following:",
+        "Configure partition 4 as an LVM physical volume.",
+        "Add the physical volume to vg-app.",
+        "Extend lv-app using 100% of the remaining free space available in vg-app.",
+        "Extend the XFS filesystem to utilize the newly allocated logical volume space.",
+        "Verify that the final filesystem mounted at /app can utilize the expanded capacity.",
+        "A filesystem size of approximately 1.5 GB is expected."
+      ]
+    },
+    {
+      "task_number": 39,
+      "title": "Mount and Verify the NFS Share",
+      "steps": [
+        "Consider your machine as NFS client:",
+        "Install nfs-utils package on your personal VM",
+        "Using showmount command verify that the NFS share exported by the server 192.168.111.165 is available.",
+        "Mount the share at /mnt/nfs_share",
+        "Verify that the mounted filesystem is an NFS filesystem.",
+        "Verify that server_test.txt is accessible through /mnt/nfs_share."
+      ]
+    },
+    {
+      "task_number": 40,
+      "title": "Persistent NFS Mount and Client File",
+      "steps": [
+        "Configure the NFS client (your personal VM), so that the NFS share is automatically mounted at /mnt/nfs_share after a system reboot.",
+        "When making entry in /etc/fstab, explicitly specifiy that mount is a network device",
+        "After the share is mounted, as root user create the following file from the NFS client /mnt/nfs_share/client_test_<IP_Address_of_your_VM>",
+        "The file must contain the exact text:",
+        "This file was created on the NFS client for NFS share verification.",
+        "Verify from the NFS server that 'client_test_<IP_Address_of_your_VM>' is visible through /nfs_share.",
+        "The NFS share must remain accessible after a system reboot without requiring manual mounting."
+      ]
+    }
+  ],
+  "completion_message": "Great job! Lab 235 - Linux systems Adminitration - Assessment completed successfully. You demonstrated your Linux Systems Administration skills across directory and file management, output redirection, archives, file searching, permissions and ownership, users and groups, Apache web server configuration, network teaming and failover, disk partitioning, persistent swap, LVM storage management, filesystem expansion, and persistent NFS configuration."
+}
