@@ -1029,3 +1029,7 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 1025  awais.sattar              2026-10-12 11:17:07    21     20     95%       
 1026  awais.sattar              2026-10-12 11:19:04    21     20     95%       
 1027  saffi.ullah               2026-10-12 16:58:25    21     21     100%      
+1028  jawad.hassan              2026-10-12 22:50:40    0      0      0%        
+1029  jawad.hassan              2026-10-12 22:51:57    0      0      0%        
+1030  raza.ali                  2026-10-14 05:51:50    21     0      0%        
+1031  raza.ali                  2026-10-14 18:10:11    21     21     100%      

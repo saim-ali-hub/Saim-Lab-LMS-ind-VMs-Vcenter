@@ -1,0 +1,341 @@
+{
+  "lab_id": "lab303",
+  "title": "Lab 303 - Git and GitLab - Branching, Pushing, and Merge Requests",
+  "lab_objective": {
+    "description": "By the end of this lab, you should be able to:",
+    "objectives": [
+      "Explain why teams use branches instead of making every change directly on main.",
+      "Display local branches and identify the currently checked-out branch.",
+      "Create and switch to a feature branch.",
+      "Make changes, stage files, and create commits on a feature branch.",
+      "Push a feature branch to GitLab and configure its upstream.",
+      "Compare a feature branch with main using Git commands and GitLab.",
+      "Create, review, and merge a GitLab merge request.",
+      "Update the local main branch after a merge request is merged.",
+      "Create a second feature branch and repeat the workflow for a different change.",
+      "Safely switch branches and delete a feature branch after it has been merged."
+    ],
+  "scenario": [
+    "You are a Linux Systems Administrator working on a project that is already stored in GitLab.",
+    "You must not make project changes directly on main. Instead, create a feature branch, make and commit your changes there, push the branch to GitLab, and ask a reviewer to merge the changes through a merge request.",
+    "Complete two separate feature-branch examples. Merge Example 1 before starting Example 2 so the second branch starts from the latest main branch.",
+    "GitLab URL: https://gitlab.corp.linoop.us",
+    "GitLab SSH host: gitlab-01.corp.linoop.us",
+    "GitLab SSH port: 2222",
+    "Local project directory: ~/git-labs/local-project",
+    "GitLab project name: local-project",
+    "Remote name: origin",
+    "Base branch: main",
+    "Example 1 branch: feature/branching-guide",
+    "Example 2 branch: feature/maintenance-checklist",
+    "Prerequisite: Complete Lab 302 or use an existing local-project repository with a main branch pushed to GitLab, a working origin remote, and README.md and reports/system-report files.",
+    "Use your actual GitLab username or namespace in the remote URL. Merge request creation and merging are performed in the GitLab web interface. If your project requires approvals, request an authorized reviewer rather than approving your own request."
+   ]
+  },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Verify the Existing Repository",
+      "steps": [
+        "Move into your Lab 302 project directory:",
+        "cd ~/git-labs/local-project",
+        "Verify the current directory:",
+        "pwd",
+        "Check the working tree:",
+        "git status",
+        "Display configured remotes:",
+        "git remote -v",
+        "Display local branches:",
+        "git branch",
+        "Display the current branch:",
+        "git branch --show-current",
+        "Confirm that origin points to your local-project GitLab repository and that main exists.",
+        "If you have uncommitted changes, review and commit or safely save them before continuing. Do not discard work that you need.",
+        "Concept: A branch is a movable reference to a commit. The current branch identifies the line of development your next commit will advance."
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Understand the Branching Workflow",
+      "steps": [
+        "Review this workflow before making changes:",
+        "main is the shared baseline branch.",
+        "feature/branching-guide is an isolated branch for Example 1.",
+        "Push the feature branch to origin, then create a GitLab merge request with source feature/branching-guide and target main.",
+        "After the merge request is merged, update your local main branch before starting Example 2.",
+        "Concept: A branch lets you develop a change separately from main. A merge request asks teammates to review and integrate the branch; creating a merge request does not itself merge the code."
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Inspect Branches and Recent Commits",
+      "steps": [
+        "List local branches:",
+        "git branch",
+        "List local and remote-tracking branches:",
+        "git branch -a",
+        "Show the current branch:",
+        "git branch --show-current",
+        "Review recent four commits:",
+        "git log -4",
+        "Observe the asterisk (*) beside the currently checked-out local branch.",
+        "Concept: Local branches and remote-tracking branches are different references. For example, main is a local branch, while origin/main records your locally known state of the remote main branch."
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Example 1 - Create a Feature Branch",
+      "steps": [
+        "Ensure you are on main:",
+        "git checkout main",
+        "Retrieve the latest main branch changes:",
+        "git pull origin main",
+        "Create and switch to the first feature branch:",
+        "git branch feature/branching-guide",
+        "git checkout feature/branching-guide",
+        "Verify the current branch:",
+        "git branch --show-current",
+        "Expected branch: feature/branching-guide",
+        "Concept: git branch <branch_name> creates a new local branch and git checkout <branch_name> switch to it. Starting from an updated main branch reduces avoidable integration problems."
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Example 1 - Add the Branching Guide",
+      "steps": [
+        "Create a directory named docs if it does not already exist.",
+        "Create a file named docs/branching-guide.md.",
+        "Add these exact lines to the file, in this order:",
+        "# Git Branching Guide",
+        "A branch provides an isolated line of development.",
+        "A feature branch keeps work separate from main until it is reviewed.",
+        "A merge request asks teammates to review changes before they are merged.",
+        "Append this exact line to README.md:",
+        "Branching changes are developed on feature branches and reviewed through merge requests.",
+        "Verify the file and README.md contents.",
+        "Check the working tree:",
+        "git status",
+        "Concept: Files can be changed while working on a branch, but the changes are not part of Git history until they are staged and committed."
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Example 1 - Review, Stage, and Commit Changes",
+      "steps": [
+        "Review unstaged changes:",
+        "git diff",
+        "Stage the two intended files:",
+        "git add README.md docs/branching-guide.md",
+        "Review staged changes:",
+        "git diff --cached",
+        "Check status:",
+        "git status",
+        "Commit the changes on feature/branching-guide:",
+        "git commit -m \"Add Git branching guide\"",
+        "Review the latest five commits:",
+        "git log -5",
+        "Verify that the working tree is clean:",
+        "git status",
+        "Concept: The commit is recorded on the currently checked-out branch. It has not yet been sent to GitLab."
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "Example 1 - Push the Feature Branch",
+      "steps": [
+        "Push the new branch to GitLab and set its upstream:",
+        "git push -u origin feature/branching-guide",
+        "List local and remote-tracking branches:",
+        "git branch -a",
+        "Verify the upstream configuration:",
+        "git branch -vv",
+        "Open the local-project project in GitLab:",
+        "https://gitlab.corp.linoop.us",
+        "Verify that feature/branching-guide is visible in the project's branches.",
+        "Concept: git push publishes the branch's commits to GitLab. The -u option records the upstream relationship, so later pushes from this branch can normally use git push."
+      ]
+    },
+    {
+      "task_number": 8,
+      "title": "Example 1 - Compare the Feature Branch with main",
+      "steps": [
+        "Show the files changed on the feature branch compared with main:",
+        "git diff --name-status main...feature/branching-guide",
+        "Review the full changes:",
+        "git diff main...feature/branching-guide",
+        "List commits on the feature branch that are not on main:",
+        "git log --oneline main..feature/branching-guide",
+        "Confirm that the new guide and README.md change appear in the comparison.",
+        "Concept: The three-dot comparison main...feature/branching-guide shows changes introduced on the feature branch since it diverged from main. These commands compare changes; they do not merge branches."
+      ]
+    },
+    {
+      "task_number": 9,
+      "title": "Example 1 - Create a GitLab Merge Request",
+      "steps": [
+        "Open your local-project project in GitLab:",
+        "https://gitlab.corp.linoop.us",
+        "Navigate to Merge Requests and choose New merge request. If GitLab offers a prompt after the branch push, you may use that prompt instead.",
+        "Set the source branch to feature/branching-guide.",
+        "Set the target branch to main.",
+        "Use the title: Add Git branching guide.",
+        "Add a description:",
+        "The change documents branch basics and adds a README.md note.",
+        "Merge options:",
+        "Uncheck - Delete source branch when merge request is accepted.",
+        "Review the changes shown in the merge request. Confirm that only the intended README.md and docs/branching-guide.md changes are included.",
+        "Submit or create the merge request.",
+        "Concept: The source branch contains the proposed changes. The target branch is where those changes are intended to be integrated. A merge request is a review and collaboration workflow, not a Git commit command."
+      ]
+    },
+    {
+      "task_number": 10,
+      "title": "Example 1 - Review and Merge the Merge Request",
+      "steps": [
+        "In GitLab, inspect the merge request's Changes tab and commit list.",
+        "Confirm the source is feature/branching-guide and the target is main.",
+        "If your role permits merging and all project checks or required approvals are satisfied, merge the request using the GitLab interface. Otherwise, request an authorized reviewer to complete the merge.",
+        "Verify in GitLab that the merge request is marked as merged.",
+        "Return to the Linux VM and switch to main:",
+        "git checkout main",
+        "Update local main from GitLab:",
+        "git pull origin main",
+        "Verify that docs/branching-guide.md exists and that README.md contains the new branching sentence.",
+        "Review the latest five commit history:",
+        "git log -5",
+        "Concept: Merging integrates the reviewed branch changes into the target branch. Pulling updates your local main after the merge has been completed on GitLab."
+      ]
+    },
+    {
+      "task_number": 11,
+      "title": "Example 2 - Create a Second Feature Branch",
+      "steps": [
+        "Confirm that you are on main and the working tree is clean:",
+        "git switch main",
+        "git status",
+        "Retrieve the latest main branch:",
+        "git pull origin main",
+        "Create and switch to the second feature branch:",
+        "git switch -c feature/maintenance-checklist",
+        "Verify the current branch:",
+        "git branch --show-current",
+        "Expected branch: feature/maintenance-checklist",
+        "Concept: Start a separate feature branch from the updated main branch so Example 2 contains the merged baseline from Example 1 plus only the new checklist work."
+      ]
+    },
+    {
+      "task_number": 12,
+      "title": "Example 2 - Create a Maintenance Checklist",
+      "steps": [
+        "Create a file named docs/maintenance-checklist.md.",
+        "Add these exact lines to the file, in this order:",
+        "# Linux Maintenance Checklist",
+        "Check filesystem capacity with df -h.",
+        "Review memory usage with free -h.",
+        "Review block devices with lsblk.",
+        "Check required service status with systemctl status.",
+        "Record findings and follow the team's change-management process.",
+        "Append this exact line to README.md:",
+        "The project also includes a basic Linux maintenance checklist.",
+        "Review the changes:",
+        "git status",
+        "git diff",
+        "Concept: This is a separate change from Example 1. Because you created the branch from the updated main branch, it includes the previously merged branching guide."
+      ]
+    },
+    {
+      "task_number": 13,
+      "title": "Example 2 - Stage, Commit, and Push",
+      "steps": [
+        "Stage the intended files:",
+        "git add README.md docs/maintenance-checklist.md",
+        "Review staged changes:",
+        "git diff --cached",
+        "Commit the changes:",
+        "git commit -m \"Add Linux maintenance checklist\"",
+        "Push the feature branch and set its upstream:",
+        "git push -u origin feature/maintenance-checklist",
+        "Verify the branch and upstream:",
+        "git branch -vv",
+        "Concept: Each feature branch should contain a focused, understandable set of changes. A clear commit message and reviewable diff make collaboration easier."
+      ]
+    },
+    {
+      "task_number": 14,
+      "title": "Example 2 - Create and Merge a Second Merge Request",
+      "steps": [
+        "Open the local-project project in GitLab:",
+        "https://gitlab.corp.linoop.us",
+        "Create a new merge request with source feature/maintenance-checklist and target main.",
+        "Use the title: Add Linux maintenance checklist.",
+        "Add description",
+        "The new checklist and README.md update.",
+        "Review the Changes tab and confirm that the intended checklist and README.md changes are included.",
+        "Merge options:",
+        "Uncheck - Delete source branch when merge request is accepted.",
+        "Submit the merge request.",
+        "After review and any required approvals or checks, merge it through GitLab if your permissions allow. Otherwise, request an authorized reviewer to merge it.",
+        "Verify that the merge request is marked as merged.",
+        "Concept: Each merge request should have a specific purpose and a clear target branch. The second merge request is independent of the first, but its branch starts from the main branch that already includes Example 1."
+      ]
+    },
+    {
+      "task_number": 15,
+      "title": "Update main and Verify Both Examples",
+      "steps": [
+        "Switch back to main:",
+        "git switch main",
+        "Pull the latest merged changes:",
+        "git pull origin main",
+        "Verify that both files exist:",
+        "docs/branching-guide.md",
+        "docs/maintenance-checklist.md",
+        "Review README.md and confirm that both feature notes are present.",
+        "Review recent history:",
+        "git log -10",
+        "Check the working tree:",
+        "git status",
+        "In GitLab, verify that both merge requests are marked as merged and that both files are present on main.",
+        "Concept: Your local main branch does not automatically update when a merge request is merged in GitLab. Use git pull to retrieve the latest target-branch history."
+      ]
+    },
+    {
+      "task_number": 16,
+      "title": "Clean Up Merged Feature Branches",
+      "steps": [
+        "Ensure you are on main and that the working tree is clean:",
+        "git switch main",
+        "git status",
+        "Delete the local branch from Example 1:",
+        "git branch -d feature/branching-guide",
+        "Delete the local branch from Example 2:",
+        "git branch -d feature/maintenance-checklist",
+        "If GitLab still has the remote feature branches and your team's policy allows deletion, delete the merged source branches in GitLab or use the following commands:",
+        "git push origin --delete feature/branching-guide",
+        "git push origin --delete feature/maintenance-checklist",
+        "List remaining local and remote-tracking branches:",
+        "git branch -a",
+        "Concept: Delete a feature branch only after its changes have been merged and you no longer need the branch. The -d option checks that the branch is merged; avoid using -D to force-delete work you may still need."
+      ]
+    },
+    {
+      "task_number": 17,
+      "title": "Final Verification",
+      "steps": [
+        "Confirm that main is the current branch:",
+        "git branch --show-current",
+        "Verify the working tree is clean:",
+        "git status",
+        "Confirm that both documents exist:",
+        "docs/branching-guide.md",
+        "docs/maintenance-checklist.md",
+        "Review the recent commit history:",
+        "git log -10",
+        "Open the GitLab project and confirm that both documents are present on main and both merge requests were merged.",
+        "Concept: A successful workflow moves from a local feature branch to a remote feature branch, through merge request review, and into the target branch."
+      ]
+    }
+  ],
+  "completion_message": "Excellent work! You have completed Lab 303 - Git and GitLab - Branching, Pushing, and Merge Requests. You created two feature branches, made and committed focused changes, pushed both branches to GitLab, compared branch changes, created and reviewed merge requests, merged changes into main, updated your local repository, and cleaned up merged branches. These are core collaboration skills used in Linux administration, infrastructure automation, and DevOps teams."
+}
+

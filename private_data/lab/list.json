@@ -137,6 +137,91 @@
      "file": "lab222.json"
     },
     {
+     "category": "Linux",
+     "name": "lab 223 - Apache Web Server Configuration",
+     "file": "lab223.json"
+    },
+    {
+     "category": "Linux",
+     "name": "lab 224 - Managing Static IP Address - Using NMTUI",
+     "file": "lab224.json"
+    },
+    {
+     "category": "Linux",
+     "name": "lab 225 - Managing Static IP Address - using NMCLI",
+     "file": "lab225.json"
+    },
+    {
+     "category": "Linux",
+     "name": "lab 226 - Remote Command Execution and File Transfer Using SSH and SCP",
+     "file": "lab226.json"
+    },
+    {
+     "category": "Linux",
+     "name": "lab 227 - SSH Remote Command Execution and SCP File Transfer - Advance",
+     "file": "lab227.json"
+    },
+    {
+     "category": "Linux",
+     "name": "Lab 228 - Linux Disk Partitioning - Using gdisk",
+     "file": "lab228.json"
+    },
+    {
+     "category": "Linux",
+     "name": "Lab 229 - Linux Logical Volume Management - LVM",
+     "file": "lab229.json"
+    },
+    {
+     "category": "Linux",
+     "name": "lab 230 - Technical Screening Round 3 (TSR3)",
+     "file": "lab230.json"
+    },
+    {
+     "category": "Linux",
+     "name": "lab 231 - NIC Teaming Using Active-Backup",
+     "file": "lab231.json"
+    },
+    {
+     "category": "Linux",
+     "name": "lab 232 - NIC Teaming Using Active-Backup - Advanced",
+     "file": "lab232.json"
+    },
+    {
+     "category": "Linux",
+     "name": "lab 233 - Linux Logical Volume Management (LVM) - Advanced",
+     "file": "lab233.json"
+    },
+    {
+     "category": "Linux",
+     "name": "lab 234 - Network File System (NFS)",
+     "file": "lab234.json"
+    },
+    {
+     "category": "Linux",
+     "name": "lab 235 - Linux Systems Administration - Assessment",
+     "file": "lab235.json"
+    },
+    {
+     "category": "DevOps",
+     "name": "lab 301 - Git and Gitlab",
+     "file": "lab301.json"
+    },
+    {
+     "category": "DevOps",
+     "name": "lab 302 — Git and GitLab – Local repo & push - Advanced",
+     "file": "lab302.json"
+    },
+    {
+     "category": "DevOps",
+     "name": "lab 303 — Git and GitLab - Branching, Pushing, and Merge Requests",
+     "file": "lab303.json"
+    },
+    {
+     "category": "DevOps",
+     "name": "lab 304 — Git and GitLab - Diff, Fetch, Merge and Pull",
+     "file": "lab304.json"
+    },
+    {
         "category": "Technical Screening",
         "name": "Technical Screening Round - 1",
         "file": "lab901.json"

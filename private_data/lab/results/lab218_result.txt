@@ -388,3 +388,5 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 384   nakhal.iqbal              2026-10-08 23:28:19    11     7      64%       
 385   nakhal.iqbal              2026-10-08 23:32:55    11     8      73%       
 386   nakhal.iqbal              2026-10-08 23:36:34    11     11     100%      
+387   sammy.saleh               2026-10-15 20:28:06    11     0      0%        
+388   raza.ali                  2026-10-15 23:14:35    11     11     100%      

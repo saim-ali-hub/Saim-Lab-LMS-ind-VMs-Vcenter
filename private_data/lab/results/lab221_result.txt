@@ -361,3 +361,4 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 357   mahnoor.ali               2026-10-11 01:10:45    8      0      0%        
 358   zeeshan.ali               2026-10-11 01:35:37    8      7      88%       
 359   mahnoor.ali               2026-10-11 01:54:54    8      0      0%        
+360   raza.ali                  2026-10-16 00:49:52    8      8      100%      

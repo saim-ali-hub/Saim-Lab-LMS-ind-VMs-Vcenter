@@ -1,0 +1,219 @@
+{
+  "lab_id": "lab302",
+  "title": "Lab 302 - Git and GitLab - Local Repository and Push - Advanced",
+  "lab_objective": {
+    "description": "By the end of this lab, you should be able to:",
+    "objectives": [
+      "Create a Git repository from scratch on a Linux VM.",
+      "Create a repository locally.",
+      "Create directories and files with content or code.",
+      "Track files and commit changes.",
+      "Understand the working directory, staging area, commits, and remote repository.",
+      "Use git status, git diff, git diff --cached, git log, and git show.",
+      "Connect a local repository to a new GitLab project.",
+      "Push the repository to GitLab.",
+      "Explain and demonstrate git pull.",
+      "Create and work with a basic Git branch."
+    ],
+  "scenario": [
+    "You are working as a Linux Systems Administrator who needs to manage project files using Git and GitLab.",
+    "In this lab, you will create a Git repository from scratch on your assigned Linux VM rather than cloning an existing repository.",
+    "You will create project files, initialize the local repository, stage changes, create commits, and review the commit history.",
+    "You will then connect the local repository to a new blank GitLab project and push your local commits.",
+    "You will also practice reviewing unstaged and staged changes and demonstrate the differences between git fetch, git merge, and git pull.",
+    "GitLab URL: https://gitlab.corp.linoop.us",
+    "GitLab SSH host: gitlab-01.corp.linoop.us",
+    "GitLab SSH port: 2222",
+    "Local project directory: ~/git-labs/local-project",
+    "GitLab project name: local-project",
+    "Remote name: origin",
+    "Branch name: main",
+    "Important: Create the GitLab project as a blank project without initializing it with a README. Use your actual GitLab username or namespace in the SSH remote URL."
+   ]
+  },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Create a Local Project Directory",
+      "steps": [
+        "Move to your Git labs directory:",
+        "cd ~/git-labs",
+        "Create a new project directory named 'local-project'",
+        "Change into the 'local-project' directory:",
+        "Verify your current location.",
+        "Expected directory: /home/your_username/git-labs/local-project",
+        "Concept: At this point, local-project is an ordinary directory. It is not yet a Git repository."
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Create Files and Add Content",
+      "steps": [
+        "Create a file named README.md in the current project directory.",
+        "Add the following exact content to README.md:",
+        "This repository was created locally.",
+        "Create a directory named 'reports'",
+        "Inside the reports directory, create a file named system-report.",
+        "The system-report file must contain system information obtained using hostnamectl, memory information obtained using free -h, and block device information obtained using lsblk, in that exact order.",
+        "Verify that README.md and reports/system-report exist in their correct locations.",
+        "Display the contents of both files.",
+        "Confirm that the README.md content is correct and that system-report contains the three command outputs in the required order."
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Initialize the Git Repository",
+      "steps": [
+        "Initialize a Git repository in the current project directory:",
+        "git init",
+        "Check the repository status:",
+        "git status",
+        "List all files, including hidden files:",
+        "ls -la",
+        "Identify the hidden .git directory.",
+        "Concept: git init creates the local repository metadata inside .git. It does not upload files to GitLab or connect the repository to a remote server."
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Stage the Files",
+      "steps": [
+        "Add both project files to the staging area:",
+        "git add README.md reports/system-report",
+        "Check the repository status:",
+        "git status",
+        "Review the staged changes:",
+        "git diff --cached",
+        "Verify that both files and their contents appear in the staged diff.",
+        "Concept: The staging area contains the changes you intend to include in your next commit."
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Create the First Commit",
+      "steps": [
+        "Create the initial commit:",
+        "git commit -m \"Initial local project commit\"",
+        "Verify the commit using the compact history:",
+        "git log --oneline",
+        "Display the full commit history:",
+        "git log",
+        "Inspect the latest commit:",
+        "git show",
+        "Concept: Your files are now saved in the local Git history, but they have not yet been uploaded to GitLab."
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Rename the Default Branch to main",
+      "steps": [
+        "Rename the current branch to main:",
+        "git branch -M main",
+        "Verify the branch name:",
+        "git branch",
+        "Expected output:",
+        "* main",
+        "Concept: git branch -M main renames the current branch to main. This helps keep the lab consistent with the branch name commonly used in GitLab projects."
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "Connect the Local Repository to GitLab",
+      "steps": [
+        "Create a blank GitLab project named 'local-project' without initializing it with a README.",
+        "Open the project in GitLab and locate its SSH clone URL.",
+        "Add the GitLab repository as a remote named origin:",
+        "git remote add origin ssh://git@gitlab-01.corp.linoop.us:2222/your-username/local-project.git",
+        "Replace your-username with your actual GitLab username or namespace, and use the exact SSH URL shown by your GitLab instance.",
+        "Verify the remote configuration:",
+        "git remote -v",
+        "Expected output will resemble:",
+        "origin  ssh://git@gitlab-01.corp.linoop.us:2222/your-username/local-project.git (fetch)",
+        "origin  ssh://git@gitlab-01.corp.linoop.us:2222/your-username/local-project.git (push)",
+        "Concept: git remote add origin associates the local repository with a remote repository using the convenient name origin. It does not upload any commits."
+      ]
+    },
+    {
+      "task_number": 8,
+      "title": "Push the Local Repository to GitLab",
+      "steps": [
+        "Push the local main branch to GitLab and configure its upstream:",
+        "git push -u origin main",
+        "Verify that the push completes successfully.",
+        "For subsequent pushes from the same branch, you can normally use:",
+        "git push",
+        "Concept: git push transfers local commits to the remote repository. The -u option establishes the upstream relationship between the local branch and its remote-tracking branch."
+      ]
+    },
+    {
+      "task_number": 9,
+      "title": "Verify the Repository in GitLab",
+      "steps": [
+        "Check the repository status on your Linux VM:",
+        "git status",
+        "Display the commit history:",
+        "git log --oneline",
+        "Verify the remote configuration:",
+        "git remote -v",
+        "Open the local-project project in GitLab:",
+        "https://gitlab.corp.linoop.us",
+        "Verify that README.md is present.",
+        "Verify that reports/system-report is present.",
+        "Verify that the initial commit appears in the commit history.",
+        "Concept: The repository has now been created locally and published to GitLab."
+      ]
+    },
+    {
+      "task_number": 10,
+      "title": "Make Another Change and Push It",
+      "steps": [
+        "Append the following line to README.md:",
+        "This is my second commit.",
+        "Review the unstaged change:",
+        "git diff",
+        "Stage the modified file:",
+        "git add README.md",
+        "Review the staged change:",
+        "git diff --cached",
+        "Create a commit:",
+        "git commit -m \"Update README\"",
+        "Push the new commit to GitLab:",
+        "git push",
+        "Refresh the GitLab project page and verify that the updated README.md and new commit appear."
+      ]
+    },
+    {
+      "task_number": 11,
+      "title": "Prepare a Remote Change for git pull",
+      "steps": [
+        "Open the local-project project in GitLab:",
+        "https://gitlab.corp.linoop.us",
+        "Open your ‘local-project’ project in GitLab.",
+        "Edit README.md in the GitLab choosing Edit Single file.",
+        "Add the following exact line:",
+        "This line was added directly from GitLab to understand git pull concept.",
+        "Commit the change through the GitLab interface.",
+        "Return to your Linux VM.",
+        "You now have a new commit on the remote repository that your local branch has not yet incorporated.",
+        "Concept: This new remote commit will be used to demonstrate how git pull retrieves and integrates changes into the local branch."
+      ]
+    },
+    {
+      "task_number": 12,
+      "title": "Use git pull",
+      "steps": [
+        "Retrieve and integrate the changes from the remote main branch:",
+        "git pull origin main",
+        "Display the updated file:",
+        "cat README.md",
+        "Check the repository status:",
+        "git status",
+        "Review the recent five commit history:",
+        "git log -5",
+        "Expected observation: The line committed through GitLab in Task 14 should now appear in the local README.md.",
+        "Concept: git pull fetches changes from the remote repository and integrates them into the current local branch. It normally performs a fetch followed by a merge, although configuration can cause it to rebase instead. In contrast, git push sends local commits to the remote repository."
+      ]
+    }
+  ],
+  "completion_message": "Excellent work! You have completed Lab 302 - Git and GitLab - Local Repository and Push - Advanced. You created a Git repository from scratch, managed files and commits, connected your local repository to GitLab, pushed changes, inspected staged and unstaged differences, and practiced git pull. You now have practical experience with local version control and remote repository synchronization. Keep practicing these workflows to strengthen your Linux and DevOps skills."
+}

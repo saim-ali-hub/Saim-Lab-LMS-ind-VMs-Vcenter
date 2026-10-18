@@ -96,6 +96,10 @@ ssh \
         lab233) validate_lab233_lvm ;;
         lab234) validate_lab234_nfs ;;
         lab235) validate_lab235_assessment ;;
+        lab301) validate_lab301_gitlab_remoterepo ;;
+        lab302) validate_lab302_gitlab_localrepo ;;
+        lab303) validate_lab303_gitlab_branching ;;
+        lab304) validate_lab304_gitlab_diff_fetch_merge_pull ;;
 
         *) echo 'Invalid lab'; exit 1 ;;
      esac"

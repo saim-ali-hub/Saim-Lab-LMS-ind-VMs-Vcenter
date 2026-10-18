@@ -795,3 +795,6 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 791   babli.mehta               2026-10-11 20:16:02    0      0      0%        
 792   awais.sattar              2026-10-12 13:59:05    20     19     95%       
 793   awais.sattar              2026-10-12 14:00:40    20     20     100%      
+794   raza.ali                  2026-10-14 18:38:36    20     20     100%      
+795   sumara.abbas              2026-10-16 05:49:34    20     10     50%       
+796   sumara.abbas              2026-10-16 05:51:47    20     10     50%       

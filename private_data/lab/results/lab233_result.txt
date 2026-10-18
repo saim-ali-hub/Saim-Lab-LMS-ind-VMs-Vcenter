@@ -164,3 +164,10 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 160   ayesha.abdullah           2026-10-12 01:48:39    17     13     76%       
 161   ayesha.abdullah           2026-10-12 02:14:14    17     17     100%      
 162   muhammad.shoaib           2026-10-12 12:27:27    17     0      0%        
+163   nimrah.nawaz              2026-10-14 22:24:02    17     14     82%       
+164   amna.bajwa                2026-10-15 03:44:11    17     17     100%      
+165   david.salame              2026-10-15 05:29:36    17     17     100%      
+166   david.salame              2026-10-15 17:44:36    17     17     100%      
+167   hajra.iftikhar            2026-10-17 08:41:42    17     3      18%       
+168   raza.ali                  2026-10-18 06:39:21    17     16     94%       
+169   raza.ali                  2026-10-18 06:40:17    17     17     100%      

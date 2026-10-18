@@ -1,0 +1,286 @@
+{
+  "lab_id": "lab301",
+  "title": "Lab 301 - Git and GitLab",
+  "lab_objective": {
+    "description": "By the end of this lab, you should be able to:",
+    "objectives": [
+      "Install Git and configure their identity.",
+      "Generate an SSH key pair and register the public key with GitLab.",
+      "Create a GitLab project and clone it into a Linux VM.",
+      "Create files, directories, and content and track changes with Git.",
+      "Understand the working directory, staging area, commits, and remote repository.",
+      "Use git status, git diff, git diff --cached, git log, and git show.",
+      "Push changes to GitLab."
+    ],
+  "scenario": [
+    "You are working as a Linux Systems Administrator who needs to manage project files using Git and GitLab.",
+    "Your organization uses an internal GitLab instance to host private repositories and manage source code.",
+    "You must configure Git on your assigned Linux VM, authenticate to GitLab using SSH, create a project, and practice the Git workflow.",
+    "GitLab URL: https://gitlab.corp.linoop.us",
+    "GitLab SSH host: gitlab-01.corp.linoop.us",
+    "GitLab SSH port: 2222",
+    "Project name: lab236-git-basics",
+    "Project visibility: Private",
+    "Your task is to create and clone the project, create and track files, stage and commit changes, review commit history, and push your changes to GitLab.",
+    "You will also learn the purpose of the working directory, staging area, local repository, remote repository, and basic branch operations."
+   ]
+  },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Install Git",
+      "steps": [
+        "Check whether Git is already installed:",
+        "git --version",
+        "If Git is not installed, use the package manager appropriate for your Linux distribution to install it.",
+        "Verify the installation:",
+        "git --version",
+        "Concept: Git is a version control system that records changes to files over time. GitLab hosts Git repositories and provides a web interface for managing projects."
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Generate an SSH Key Pair",
+      "steps": [
+        "Check whether you already have an SSH key pair before generating another one.",
+        "List the contents of your SSH directory:",
+        "ls -l ~/.ssh/",
+        "If you do not already have the intended key pair, generate a rsa key pair:",
+        "ssh-keygen -t rsa",
+        "Follow the prompts to select the key file location and configure a passphrase if desired.",
+        "Verify the generated files:",
+        "ls -l ~/.ssh/",
+        "Identify the private key named id_rsa and the public key named id_rsa.pub.",
+        "Do not overwrite an existing private key unless you intend to replace it.",
+        "Important: Never share or upload your private key. Only the public key should be registered with GitLab."
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Display and Copy the Public Key",
+      "steps": [
+        "Display your SSH public key:",
+        "cat ~/.ssh/id_rsa.pub",
+        "Copy the complete output, beginning with ssh-rsa.",
+        "Verify that you are copying the public key with the .pub extension.",
+        "Do not copy or share the private key named id_rsa.",
+        "Concept: The public key can be registered with GitLab, while the private key remains securely on your Linux VM."
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Add the Public Key to GitLab",
+      "steps": [
+        "Open the internal GitLab website:",
+        "https://gitlab.corp.linoop.us",
+        "Sign in using SSO with your assigned account.",
+        "Open your avatar or profile menu and select Edit profile.",
+        "In the left panel, select Access and then SSH Keys.",
+        "Select Add new key.",
+        "Paste your complete SSH public key into the key field.",
+        "Save the key.",
+        "Verify that the key appears in your GitLab SSH Keys settings.",
+        "Concept: Registering your public key allows GitLab to authenticate your SSH connection using the corresponding private key."
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Test SSH Authentication",
+      "steps": [
+        "Test SSH authentication from your Linux VM:",
+        "ssh -T -p 2222 git@gitlab-01.corp.linoop.us",
+        "If SSH asks whether you trust the host fingerprint, verify the fingerprint with your GitLab administrator before accepting it.",
+        "A successful connection should return a GitLab welcome message or authentication confirmation.",
+        "An example successful response is:",
+        "Welcome to GitLab, @<Your_user_name>!",
+        "Concept: SSH keys authenticate your Linux VM to GitLab. Your GitLab account permissions still determine which repositories you can access."
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Create a New GitLab Project",
+      "steps": [
+        "Sign in to the internal GitLab website:",
+        "https://gitlab.corp.linoop.us",
+        "Select New project or Create new project.",
+        "Choose Create blank project.",
+        "Enter the following project details:",
+        "Project name: lab236-git-basics",
+        "Visibility: Private",
+        "Initialize repository with README: Leave unchecked",
+        "Create the project.",
+        "Open the newly created project and locate the Code menu.",
+        "Copy the Clone with SSH URL.",
+        "The URL should resemble this pattern:",
+        "ssh://git@gitlab-01.corp.linoop.us:2222/your-username/lab236-git-basics.git",
+        "Use the exact SSH URL displayed by your GitLab instance. Your namespace may be a username or a group.",
+        "Concept: A GitLab project provides a remote repository where authorized users can store and collaborate on Git-managed files."
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "Clone the GitLab Repository into Your VM",
+      "steps": [
+        "Create a directory named git-labs in your home directory:",
+        "Change into the directory:",
+        "Clone the repository using the exact SSH URL copied from GitLab:",
+        "git clone ssh://git@gitlab-01.corp.linoop.us:2222/your-username/lab236-git-basics.git",
+        "Expected message: warning: You appear to have cloned an empty repository.",
+        "This warning is expected because you created the GitLab project without initializing it with a README file. It does not indicate a cloning failure.",
+        "Continue with the remaining steps after the clone command completes successfully.",
+        "List the contents of your current directory using a long listing.",
+        "Identify the lab236-git-basics repository.",
+        "Change into the ‘lab236-git-basics’ repository.",
+        "Concept: git clone downloads a repository and its available history and configures a remote connection, normally named origin.An empty repository has no commits or tracked files yet."
+      ]
+    },
+    {
+      "task_number": 8,
+      "title": "Check the Initial Repository Status",
+      "steps": [
+        "Display the repository status:",
+        "git status",
+        "Check the repository branches:",
+        "git branch --show",
+        "Display the configured remotes:",
+        "git remote -v",
+        "Verify that origin points to the expected GitLab project.",
+        "Expected result: The working tree should be clean when the repository has no uncommitted changes.",
+        "Because the GitLab project was created without a README, it may not yet contain a commit or a branch with committed history.",
+        "Concept: git status reports the state of the working directory and staging area. git branch --show displays local branches, and git remote -v displays configured remote URLs."
+      ]
+    },
+    {
+      "task_number": 9,
+      "title": "Create Your First File",
+      "steps": [
+        "Create a file named file1.txt with the following exact content:",
+        "echo \"This is my first file\" > file1.txt",
+        "Verify that the file exists and contains the expected content:",
+        "Check the repository status:",
+        "Observe that file1.txt appears as an untracked file.",
+        "Concept: A file can exist on disk without being tracked by Git. Git has not yet been instructed to include this file in a commit."
+      ]
+    },
+    {
+      "task_number": 10,
+      "title": "Stage Your First File",
+      "steps": [
+        "Stage the file:",
+        "git add file1.txt",
+        "Check the repository status:",
+        "git status",
+        "Observe that file1.txt appears under Changes to be committed.",
+        "Display the staged changes:",
+        "git diff --cached",
+        "Verify that the staged diff contains the new file content:",
+        "+This is my first file",
+        "Concept: The staging area lets you choose which changes will be included in the next commit. git diff --cached displays staged changes that are ready to commit."
+      ]
+    },
+    {
+      "task_number": 11,
+      "title": "Commit Your First File",
+      "steps": [
+        "Configure your Git identity if it has not already been configured:",
+        "git config --global user.name \"Your Name\"",
+        "git config --global user.email \"your-email@example.com\"",
+        "Replace the example values with your intended name and email address.",
+        "Create your first commit:",
+        "git commit -m \"Add first file\"",
+        "Review the commit history:",
+        "git log",
+        "Inspect the latest commit:",
+        "git show",
+        "Check the repository status:",
+        "git status",
+        "Concept: A commit records a snapshot of staged changes in the local repository. It does not automatically send anything to GitLab."
+      ]
+    },
+    {
+      "task_number": 12,
+      "title": "Create a Directory with a File and Content",
+      "steps": [
+        "Create a directory named documents.",
+        "Create a file named notes.txt inside the documents directory.",
+        "Add the following exact first line:",
+        "Git tracks changes to project files.",
+        "Add the following exact second line:",
+        "This directory contains project documentation.",
+        "Verify the contents the file should contain exactly these two lines, in the specified order.",
+        "Verify the contents of the file 'documents/notes.txt'",
+        "Concept: Git tracks files rather than empty directories by themselves. A directory is represented in the repository through the tracked files it contains."
+      ]
+    },
+    {
+      "task_number": 13,
+      "title": "Review Untracked Files",
+      "steps": [
+        "Check the repository status:",
+        "Observe that documents/notes.txt is an untracked file.",
+        "Stage the file:",
+        "git add documents/notes.txt",
+        "Check the repository status again:",
+        "git status",
+        "Display the staged changes:",
+        "git diff --cached",
+        "Verify that the staged diff contains the two expected lines from documents/notes.txt.",
+        "Concept: Git does not include untracked files in commits until they are staged. Empty directories are normally not stored in Git."
+      ]
+    },
+    {
+      "task_number": 14,
+      "title": "Stage and Commit Project Changes",
+      "steps": [
+        "Stage all intended changes in the current repository:",
+        "git add --all",
+        "Review the staged changes:",
+        "git diff --cached",
+        "Verify that all intended files and changes are included.",
+        "Commit the changes:",
+        "git commit -m \"Add project documentation\"",
+        "Check the repository status:",
+        "git status",
+        "Concept: git add --all stages intended additions, modifications, and deletions. Review the staging area before committing so the commit contains the expected changes."
+      ]
+    },
+    {
+      "task_number": 15,
+      "title": "Push the Repository to GitLab",
+      "steps": [
+        "Check the current local branch:",
+        "git branch",
+        "Display the current branch name:",
+        "git branch --show-current",
+        "If the current branch is main, push it and configure its upstream:",
+        "git push -u origin main",
+        "If the current branch has a different name, substitute that branch name in the push command.",
+        "For subsequent pushes, you can generally use:",
+        "git push",
+        "Concept: git add stages changes, git commit records staged changes locally, and git push transfers committed changes to the remote repository. The -u option sets the upstream relationship between the local branch and its remote-tracking branch."
+      ]
+    },
+    {
+      "task_number": 16,
+      "title": "Verify the Push to GitLab",
+      "steps": [
+        "Check the repository status:",
+        "git status",
+        "Display the commit history in a compact format:",
+        "git log --oneline",
+        "Verify the configured remote:",
+        "git remote -v",
+        "Open the GitLab website:",
+        "https://gitlab.corp.linoop.us",
+        "Navigate to your lab236-git-basics project.",
+        "Verify that file1.txt is present.",
+        "Verify that documents/notes.txt is present.",
+        "Verify that the commit history is visible.",
+        "Confirm that your local changes have been pushed to the intended remote branch.",
+        "Concept: git push publishes local commits to the remote repository. GitLab can display the committed files and their history to authorized project users."
+      ]
+    }
+  ],
+  "completion_message": "Excellent work! You have completed Lab 301 - Git and GitLab. You practiced Git installation, SSH key authentication, GitLab project creation, repository cloning, file tracking, staging, commits, diff inspection, commit history review, and pushing changes to a remote repository. You now have a foundation for managing project files with version control and collaborating through GitLab. Keep practicing these commands to build confidence in your daily Linux and DevOps workflow."
+}
+

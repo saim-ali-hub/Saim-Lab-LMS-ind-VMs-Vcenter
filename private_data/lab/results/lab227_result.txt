@@ -110,3 +110,9 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 106   muhammad.azlan            2026-10-11 20:42:08    10     9      90%       
 107   muhammad.azlan            2026-10-11 20:44:28    10     9      90%       
 108   muhammad.azlan            2026-10-11 20:45:39    10     10     100%      
+109   nakhal.iqbal              2026-10-13 19:57:57    10     9      90%       
+110   nakhal.iqbal              2026-10-13 20:02:25    10     10     100%      
+111   amna.bajwa                2026-10-14 01:00:50    10     0      0%        
+112   amna.bajwa                2026-10-14 05:16:30    10     9      90%       
+113   yuliana.cuzzi             2026-10-15 03:08:41    10     3      30%       
+114   raza.ali                  2026-10-16 04:56:31    10     10     100%      

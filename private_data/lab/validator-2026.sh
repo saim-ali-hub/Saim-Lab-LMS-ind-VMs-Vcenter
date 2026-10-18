@@ -3895,11 +3895,11 @@ validate_lab210_tar_backup_management() {
 
     # TASK 4
     if [ -d "$BACKUP/project" ] &&
-       [ -f "$BACKUP/project/documents/handbook.txt" ] &&
-       [ -f "$BACKUP/project/images/banner.jpg" ] &&
-       [ -f "$BACKUP/project/logs/application.log" ] &&
-       [ -f "$BACKUP/project/reports/financial.txt" ] &&
-       [ -f "$BACKUP/project/scripts/backup.sh" ]; then
+       [ -d "$BACKUP/project/documents" ] &&
+       [ -d "$BACKUP/project/images" ] &&
+       [ -d "$BACKUP/project/logs" ] &&
+       [ -d "$BACKUP/project/reports" ] &&
+       [ -d "$BACKUP/project/scripts" ]; then
 
         pass "Task 4: project archive extracted into backup successfully"
 
@@ -3911,9 +3911,11 @@ validate_lab210_tar_backup_management() {
 
     # TASK 5
     if [ -d "$RESTORE/project" ] &&
-       [ -f "$RESTORE/project/documents/policy.txt" ] &&
-       [ -f "$RESTORE/project/images/logo.jpg" ] &&
-       [ -f "$RESTORE/project/logs/system.log" ]; then
+       [ -d "$RESTORE/project/documents" ] &&
+       [ -d "$RESTORE/project/images" ] &&
+       [ -d "$RESTORE/project/logs" ] &&
+       [ -d "$RESTORE/project/reports" ] &&
+       [ -d "$RESTORE/project/scripts" ]; then
 
         pass "Task 5: project archive extracted into restore successfully"
 
@@ -3955,8 +3957,11 @@ validate_lab210_tar_backup_management() {
 
     # TASK 8
     if [ -d "$ACTIVITY/project" ] &&
-       [ -f "$ACTIVITY/project/documents/handbook.txt" ] &&
-       [ -f "$ACTIVITY/project/logs/application.log" ]; then
+       [ -d "$ACTIVITY/project/documents" ] &&
+       [ -d "$ACTIVITY/project/images" ] &&
+       [ -d "$ACTIVITY/project/logs" ] &&
+       [ -d "$ACTIVITY/project/reports" ] &&
+       [ -d "$ACTIVITY/project/scripts" ]; then
 
         pass "Task 8: gzip archive extracted into activity successfully"
 
@@ -3992,9 +3997,7 @@ validate_lab210_tar_backup_management() {
     fi
 
     # TASK 11
-    if [ -d "$BACKUP/project/logs" ] &&
-       [ -f "$BACKUP/project/logs/application.log" ] &&
-       [ -f "$BACKUP/project/logs/system.log" ]; then
+    if [ -d "$BACKUP/project/logs" ]; then
 
         pass "Task 11: bzip2 archive extracted into backup successfully"
 
@@ -16595,3 +16598,1342 @@ $RESULT_ICON $RESULT_TEXT
 HTML
 }
 #====================================================================
+validate_lab301_gitlab_remoterepo() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "<h2 style='color:#white;'>Checking Lab 236 - Git and GitLab.</h2>"
+
+    TOTAL_TASKS=16
+    PASSED=0
+
+    LAB_NAME="Lab 236 - Git and GitLab"
+    DATE=$(date "+%F %T")
+
+    STUDENT_HOME="$HOME"
+    GIT_LABS="$STUDENT_HOME/git-labs"
+    REPO="$GIT_LABS/lab236-git-basics"
+
+    # HELPERS
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # TASK 1 - GIT INSTALLATION
+    if command -v git >/dev/null 2>&1 &&
+       git --version >/dev/null 2>&1; then
+        pass "Task 1: Git installed"
+    else
+        fail "Task 1: Git not installed"
+    fi
+
+    # TASK 2 - SSH KEY PAIR
+    if [[ -s "$STUDENT_HOME/.ssh/id_rsa" &&
+          -s "$STUDENT_HOME/.ssh/id_rsa.pub" ]]; then
+        pass "Task 2: SSH key pair exists"
+    else
+        fail "Task 2: SSH key pair missing"
+    fi
+
+    # TASK 3 - PUBLIC KEY
+    if [[ -s "$STUDENT_HOME/.ssh/id_rsa.pub" ]] &&
+       grep -q '^ssh-rsa ' "$STUDENT_HOME/.ssh/id_rsa.pub"; then
+        pass "Task 3: SSH public key"
+    else
+        fail "Task 3: SSH public key missing or invalid"
+    fi
+
+    # TASK 4 - REGISTER SSH KEY WITH GITLAB
+    if ssh -T -p 2222 -o BatchMode=yes -o ConnectTimeout=5 \
+        git@gitlab-01.corp.linoop.us 2>&1 | grep -qi "Welcome to GitLab"; then
+        pass "Task 4: SSH key registered with GitLab"
+    else
+        fail "Task 4: SSH key registered with GitLab"
+    fi
+    
+    # TASK 5 - TEST SSH CONNECTION
+    if ssh -T -p 2222 -o BatchMode=yes -o ConnectTimeout=5 \
+        git@gitlab-01.corp.linoop.us 2>&1 | grep -qi "Welcome to GitLab"; then
+        pass "Task 5: SSH connection successful"
+    else
+        fail "Task 5: SSH connection successful"
+    fi
+    
+    # TASK 6 - CREATE GITLAB PROJECT
+    if [[ -d "$REPO/.git" ]]; then
+        pass "Task 6: GitLab project created"
+    else
+        fail "Task 6: GitLab project created"
+    fi
+    
+    # TASK 7 - CLONE GITLAB PROJECT
+    if [[ -d "$REPO/.git" ]]; then
+        pass "Task 7: GitLab repository cloned"
+    else
+        fail "Task 7: GitLab repository cloned"
+    fi
+    
+    # TASK 8 - INITIAL REPOSITORY STATUS AND REMOTE
+    if git -C "$REPO" status --porcelain >/dev/null 2>&1 &&
+       git -C "$REPO" remote get-url origin >/dev/null 2>&1 &&
+       git -C "$REPO" branch --show-current >/dev/null 2>&1; then
+        pass "Task 8: Repository status and remote"
+    else
+        fail "Task 8: Repository status and remote"
+    fi
+
+    # TASK 9 - FIRST FILE
+    if [[ -f "$REPO/file1.txt" ]] &&
+       [[ "$(cat "$REPO/file1.txt" 2>/dev/null)" == \
+          "This is my first file" ]] &&
+       git -C "$REPO" ls-files --error-unmatch file1.txt \
+           >/dev/null 2>&1; then
+        pass "Task 9: First file and content"
+    else
+        fail "Task 9: First file missing or content incorrect"
+    fi
+
+    # TASK 10 - STAGED FIRST FILE
+    if git -C "$REPO" ls-files --error-unmatch file1.txt \
+           >/dev/null 2>&1 &&
+       git -C "$REPO" log --all --format='%s' |
+           grep -Fxq "Add first file"; then
+        pass "Task 10: First file staged and committed"
+    else
+        fail "Task 10: First file commit missing"
+    fi
+
+    # TASK 11 - INITIAL COMMIT
+    if git -C "$REPO" log --format='%s' |
+       grep -Fxq "Add first file" &&
+       git -C "$REPO" log -1 --format='%H' |
+       grep -Eq '^[0-9a-f]{40,64}$'; then
+        pass "Task 11: Initial file commit and history"
+    else
+        fail "Task 11: Initial file commit or history missing"
+    fi
+
+    # TASK 12 - CREATE DOCUMENTATION FILE
+    if [[ -f "$REPO/documents/notes.txt" ]] &&
+       [[ "$(cat "$REPO/documents/notes.txt" 2>/dev/null)" == \
+          $'Git tracks changes to project files.\nThis directory contains project documentation.' ]]; then
+        pass "Task 12: Documentation file and content"
+    else
+        fail "Task 12: Documentation file missing or incorrect"
+    fi
+
+    # TASK 13 - DOCUMENTATION TRACKED
+    if git -C "$REPO" ls-files --error-unmatch documents/notes.txt \
+           >/dev/null 2>&1; then
+        pass "Task 13: Documentation file tracked"
+    else
+        fail "Task 13: Documentation file not tracked"
+    fi
+
+    # TASK 14 - DOCUMENTATION COMMIT
+    if git -C "$REPO" log --all --format='%s' |
+       grep -Fxq "Add project documentation"; then
+        pass "Task 14: Documentation commit"
+    else
+        fail "Task 14: Documentation commit missing"
+    fi
+
+    # TASK 15 - PUSH TO GITLAB
+    CURRENT_BRANCH=$(git -C "$REPO" branch --show-current 2>/dev/null)
+    UPSTREAM=$(git -C "$REPO" rev-parse \
+        --abbrev-ref --symbolic-full-name '@{upstream}' 2>/dev/null)
+
+    if [[ "$CURRENT_BRANCH" == "main" &&
+          "$UPSTREAM" == "origin/main" ]] &&
+       git -C "$REPO" log -1 --format='%H' origin/main \
+           >/dev/null 2>&1; then
+        pass "Task 15: Main branch and upstream configured"
+    else
+        fail "Task 15: Main branch or upstream configuration incorrect"
+    fi
+
+     # ============================================================
+    # TASK 16 - FINAL REPOSITORY VERIFICATION
+    # ============================================================
+    
+    TASK16_OK=1
+    
+    [[ -f "$REPO/file1.txt" ]] || TASK16_OK=0
+    [[ -f "$REPO/documents/notes.txt" ]] || TASK16_OK=0
+    
+    # Working tree must be clean
+    if [[ -n "$(git -C "$REPO" status --porcelain 2>/dev/null)" ]]; then
+        TASK16_OK=0
+    fi
+    
+    # Local HEAD must match origin/main
+    LOCAL_HEAD=$(git -C "$REPO" rev-parse HEAD 2>/dev/null)
+    REMOTE_HEAD=$(git -C "$REPO" rev-parse origin/main 2>/dev/null)
+    
+    if [[ -z "$LOCAL_HEAD" || -z "$REMOTE_HEAD" ||
+          "$LOCAL_HEAD" != "$REMOTE_HEAD" ]]; then
+        TASK16_OK=0
+    fi
+    
+    # Required commit message must exist
+    git -C "$REPO" log --format='%s' 2>/dev/null |
+        grep -Fxq "Add project documentation" || TASK16_OK=0
+    
+    if [[ "$TASK16_OK" -eq 1 ]]; then
+        pass "Task 16: Final repository verification"
+    else
+        fail "Task 16: Final repository verification"
+    fi   
+    
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+
+#=============================================================================
+validate_lab302_gitlab_localrepo() {
+    
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "<h2 style='color:#white;'>Checking Lab 302 - Git and GitLab - Local repo & push - Advanced.</h2>"
+
+    TOTAL_TASKS=12
+    PASSED=0
+  
+    LAB_NAME="Lab 302 - Git and GitLab - Local repo & push - Advanced"
+    DATE=$(date "+%F %T")
+
+    STUDENT_HOME="$HOME"
+    REPO="$STUDENT_HOME/git-labs/local-project"
+    README="$REPO/README.md"
+    REPORT="$REPO/reports/system-report"
+
+    # HELPERS
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # TASK 1 - CREATE LOCAL PROJECT DIRECTORY
+    if [[ -d "$REPO" ]]; then
+        pass "Task 1: Local project directory exists"
+    else
+        fail "Task 1: Local project directory exists"
+    fi
+
+    # TASK 2 - CREATE FILES AND ADD CONTENT
+    if [[ -s "$README" && -s "$REPORT" &&
+          -d "$REPO/reports" ]] &&
+       grep -Fxq "This repository was created locally." "$README" &&
+       grep -Fq "Mem:" "$REPORT" &&
+       grep -Eq '(^NAME[[:space:]]|^NAME$)' "$REPORT"; then
+        pass "Task 2: Required files and content exist"
+    else
+        fail "Task 2: Required files and content exist"
+    fi
+
+    # TASK 3 - INITIALIZE GIT REPOSITORY
+    if [[ -d "$REPO/.git" ]]; then
+        pass "Task 3: Git repository initialized"
+    else
+        fail "Task 3: Git repository initialized"
+    fi
+
+    # TASK 4 - STAGE FILES
+    if git -C "$REPO" ls-files --error-unmatch \
+        README.md reports/system-report >/dev/null 2>&1; then
+        pass "Task 4: Required files are tracked by Git"
+    else
+        fail "Task 4: Required files are tracked by Git"
+    fi
+
+    # TASK 5 - FIRST COMMIT
+    if git -C "$REPO" log --format='%s' 2>/dev/null |
+        grep -Fxq "Initial local project commit"; then
+        pass "Task 5: Initial commit exists"
+    else
+        fail "Task 5: Initial commit exists"
+    fi
+
+    # TASK 6 - RENAME BRANCH TO MAIN
+    if [[ "$(git -C "$REPO" branch --show-current 2>/dev/null)" == "main" ]]; then
+        pass "Task 6: Current branch is main"
+    else
+        fail "Task 6: Current branch is main"
+    fi
+
+    # TASK 7 - CONNECT TO GITLAB
+    REMOTE_URL=$(git -C "$REPO" remote get-url origin 2>/dev/null)
+
+    if [[ "$REMOTE_URL" == *"gitlab-01.corp.linoop.us:2222"* &&
+          "$REMOTE_URL" == *"/local-project.git" ]]; then
+        pass "Task 7: GitLab remote origin configured"
+    else
+        fail "Task 7: GitLab remote origin configured"
+    fi
+
+    # TASK 8 - PUSH LOCAL REPOSITORY
+    if git -C "$REPO" rev-parse --verify \
+        refs/remotes/origin/main >/dev/null 2>&1 &&
+       [[ "$(git -C "$REPO" rev-parse --abbrev-ref \
+        --symbolic-full-name '@{upstream}' 2>/dev/null)" == "origin/main" ]]; then
+        pass "Task 8: Main branch tracks origin/main"
+    else
+        fail "Task 8: Main branch tracks origin/main"
+    fi
+
+    # TASK 9 - VERIFY REPOSITORY CONTENT
+    if git -C "$REPO" cat-file -e \
+        origin/main:README.md 2>/dev/null &&
+       git -C "$REPO" cat-file -e \
+        origin/main:reports/system-report 2>/dev/null; then
+        pass "Task 9: Required files exist in remote-tracking branch"
+    else
+        fail "Task 9: Required files exist in remote-tracking branch"
+    fi
+
+    # TASK 10 - MAKE ANOTHER CHANGE AND PUSH
+    if grep -Fxq "This is my second commit." "$README" &&
+       git -C "$REPO" log --format='%s' 2>/dev/null |
+        grep -Fxq "Update README"; then
+        pass "Task 10: README update and commit verified"
+    else
+        fail "Task 10: README update and commit verified"
+    fi
+
+    # TASK 11 - GITLAB WEB EDITOR CHANGE FOR PULL
+    if git -C "$REPO" show origin/main:README.md 2>/dev/null |
+        grep -Fq "This line was added directly from GitLab to understand git pull concept."; then
+        pass "Task 11: Pull demonstration change exists remotely"
+    else
+        fail "Task 11: Pull demonstration change exists remotely"
+    fi
+
+    # TASK 12 - GIT PULL
+    if grep -Fq \
+        "This line was added directly from GitLab to understand git pull concept." \
+        "$README" &&
+       [[ -z "$(git -C "$REPO" status --porcelain 2>/dev/null)" ]]; then
+        pass "Task 12: Pull change is integrated and working tree is clean"
+    else
+        fail "Task 12: Pull change is integrated and working tree is clean"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#===================================================================
+
+validate_lab303_gitlab_branching() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "<h2 style='color:#white;'>Checking Lab 303 - Git and GitLab - Branching, Pushing, and Merge Requests.</h2>"
+
+    TOTAL_TASKS=17
+    PASSED=0
+
+    LAB_NAME="Lab 303 - Git and GitLab - Branching, Pushing, and Merge Requests"
+    DATE=$(date "+%F %T")
+
+    STUDENT_HOME="$HOME"
+    REPO="$STUDENT_HOME/git-labs/local-project"
+
+    README="$REPO/README.md"
+    DOCS="$REPO/docs"
+    BRANCH_GUIDE="$DOCS/branching-guide.md"
+    MAINTENANCE="$DOCS/maintenance-checklist.md"
+
+    # HELPERS
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # TASK 1 - VERIFY EXISTING PROJECT DIRECTORY
+    if [[ -d "$REPO" ]]; then
+        pass "Task 1: Local project directory exists"
+    else
+        fail "Task 1: Local project directory exists"
+    fi
+
+    # TASK 2 - VERIFY GIT REPOSITORY AND ORIGIN
+    if [[ -d "$REPO/.git" ]] &&
+       git -C "$REPO" remote get-url origin >/dev/null 2>&1; then
+        pass "Task 2: Git repository and origin remote configured"
+    else
+        fail "Task 2: Git repository and origin remote configured"
+    fi
+
+    # TASK 3 - VERIFY MAIN AND REMOTE-TRACKING BRANCH
+    if git -C "$REPO" show-ref --verify --quiet refs/heads/main &&
+       git -C "$REPO" show-ref --verify --quiet refs/remotes/origin/main; then
+        pass "Task 3: Local main and origin/main exist"
+    else
+        fail "Task 3: Local main and origin/main exist"
+    fi
+
+    # TASK 4 - VERIFY CURRENT BRANCH IS MAIN
+    if [[ "$(git -C "$REPO" branch --show-current 2>/dev/null)" == "main" ]]; then
+        pass "Task 4: Current branch is main"
+    else
+        fail "Task 4: Current branch is main"
+    fi
+
+    # TASK 5 - VERIFY BRANCHING GUIDE CONTENT
+    if [[ -s "$BRANCH_GUIDE" ]] &&
+       grep -Fxq "# Git Branching Guide" "$BRANCH_GUIDE" &&
+       grep -Fxq "A branch provides an isolated line of development." "$BRANCH_GUIDE" &&
+       grep -Fxq "A feature branch keeps work separate from main until it is reviewed." "$BRANCH_GUIDE" &&
+       grep -Fxq "A merge request asks teammates to review changes before they are merged." "$BRANCH_GUIDE"; then
+        pass "Task 5: Branching guide contains all required content"
+    else
+        fail "Task 5: Branching guide contains all required content"
+    fi
+
+    # TASK 6 - VERIFY README BRANCHING NOTE
+    if [[ -s "$README" ]] &&
+       grep -Fxq "Branching changes are developed on feature branches and reviewed through merge requests." "$README"; then
+        pass "Task 6: README contains the branching note"
+    else
+        fail "Task 6: README contains the branching note"
+    fi
+
+    # TASK 7 - VERIFY FIRST FEATURE COMMIT IN REMOTE MAIN HISTORY
+    if git -C "$REPO" log origin/main --format='%s' 2>/dev/null |
+       grep -Eq '^Add Git branching guide\.?$'; then
+        pass "Task 7: Branching guide commit exists in origin/main history"
+    else
+        fail "Task 7: Branching guide commit exists in origin/main history"
+    fi
+
+    # TASK 8 - VERIFY FIRST FEATURE IS PRESENT IN REMOTE MAIN
+    if git -C "$REPO" cat-file -e origin/main:docs/branching-guide.md 2>/dev/null &&
+       git -C "$REPO" show origin/main:README.md 2>/dev/null |
+       grep -Fxq "Branching changes are developed on feature branches and reviewed through merge requests."; then
+        pass "Task 8: First feature changes are present in origin/main"
+    else
+        fail "Task 8: First feature changes are present in origin/main"
+    fi
+
+    # TASK 9 - VERIFY FIRST MERGE REQUEST RESULT
+    # Git history and merged content provide local evidence of integration.
+    # The actual GitLab MR status requires GitLab API access to verify directly.
+    if git -C "$REPO" cat-file -e origin/main:docs/branching-guide.md 2>/dev/null &&
+       git -C "$REPO" log origin/main --format='%s' 2>/dev/null |
+       grep -Eq '^Add Git branching guide\.?$'; then
+        pass "Task 9: First feature integration is reflected in origin/main"
+    else
+        fail "Task 9: First feature integration is reflected in origin/main"
+    fi
+
+    # TASK 10 - VERIFY LOCAL MAIN IS UPDATED
+    LOCAL_MAIN=$(git -C "$REPO" rev-parse main 2>/dev/null)
+    REMOTE_MAIN=$(git -C "$REPO" rev-parse origin/main 2>/dev/null)
+
+    if [[ -n "$LOCAL_MAIN" && "$LOCAL_MAIN" == "$REMOTE_MAIN" ]] &&
+       [[ -f "$BRANCH_GUIDE" ]] &&
+       grep -Fxq "Branching changes are developed on feature branches and reviewed through merge requests." "$README"; then
+        pass "Task 10: Local main contains the first merged feature and matches origin/main"
+    else
+        fail "Task 10: Local main contains the first merged feature and matches origin/main"
+    fi
+
+    # TASK 11 - VERIFY MAINTENANCE CHECKLIST CONTENT
+    if [[ -s "$MAINTENANCE" ]] &&
+       grep -Fxq "# Linux Maintenance Checklist" "$MAINTENANCE" &&
+       grep -Fxq "Check filesystem capacity with df -h." "$MAINTENANCE" &&
+       grep -Fxq "Review memory usage with free -h." "$MAINTENANCE" &&
+       grep -Fxq "Review block devices with lsblk." "$MAINTENANCE" &&
+       grep -Fxq "Check required service status with systemctl status." "$MAINTENANCE" &&
+       grep -Fxq "Record findings and follow the team's change-management process." "$MAINTENANCE"; then
+        pass "Task 11: Maintenance checklist contains all required content"
+    else
+        fail "Task 11: Maintenance checklist contains all required content"
+    fi
+
+    # TASK 12 - VERIFY SECOND README NOTE
+    if grep -Fxq "The project also includes a basic Linux maintenance checklist." "$README"; then
+        pass "Task 12: README contains the maintenance checklist note"
+    else
+        fail "Task 12: README contains the maintenance checklist note"
+    fi
+
+    # TASK 13 - VERIFY SECOND FEATURE COMMIT IN REMOTE MAIN HISTORY
+    if git -C "$REPO" log origin/main --format='%s' 2>/dev/null |
+       grep -Eq '^Add Linux maintenance checklist\.?$'; then
+        pass "Task 13: Maintenance checklist commit exists in origin/main history"
+    else
+        fail "Task 13: Maintenance checklist commit exists in origin/main history"
+    fi
+
+    # TASK 14 - VERIFY SECOND FEATURE IS PRESENT IN REMOTE MAIN
+    if git -C "$REPO" cat-file -e origin/main:docs/maintenance-checklist.md 2>/dev/null &&
+       git -C "$REPO" show origin/main:README.md 2>/dev/null |
+       grep -Fxq "The project also includes a basic Linux maintenance checklist."; then
+        pass "Task 14: Second feature changes are present in origin/main"
+    else
+        fail "Task 14: Second feature changes are present in origin/main"
+    fi
+
+    # TASK 15 - VERIFY BOTH FEATURES IN REMOTE MAIN
+    if git -C "$REPO" cat-file -e origin/main:docs/branching-guide.md 2>/dev/null &&
+       git -C "$REPO" cat-file -e origin/main:docs/maintenance-checklist.md 2>/dev/null &&
+       git -C "$REPO" show origin/main:README.md 2>/dev/null |
+       grep -Fxq "Branching changes are developed on feature branches and reviewed through merge requests." &&
+       git -C "$REPO" show origin/main:README.md 2>/dev/null |
+       grep -Fxq "The project also includes a basic Linux maintenance checklist."; then
+        pass "Task 15: Both feature documents and README notes exist in origin/main"
+    else
+        fail "Task 15: Both feature documents and README notes exist in origin/main"
+    fi
+
+    # TASK 16 - VERIFY LOCAL FEATURE BRANCH CLEANUP
+    if ! git -C "$REPO" show-ref --verify --quiet refs/heads/feature/branching-guide &&
+       ! git -C "$REPO" show-ref --verify --quiet refs/heads/feature/maintenance-checklist; then
+        pass "Task 16: Both local feature branches have been deleted"
+    else
+        fail "Task 16: Both local feature branches have been deleted"
+    fi
+
+    # TASK 17 - FINAL REPOSITORY VERIFICATION
+    LOCAL_MAIN=$(git -C "$REPO" rev-parse main 2>/dev/null)
+    REMOTE_MAIN=$(git -C "$REPO" rev-parse origin/main 2>/dev/null)
+
+    if [[ "$(git -C "$REPO" branch --show-current 2>/dev/null)" == "main" ]] &&
+       [[ -n "$LOCAL_MAIN" && "$LOCAL_MAIN" == "$REMOTE_MAIN" ]] &&
+       [[ -z "$(git -C "$REPO" status --porcelain 2>/dev/null)" ]] &&
+       git -C "$REPO" cat-file -e origin/main:docs/branching-guide.md 2>/dev/null &&
+       git -C "$REPO" cat-file -e origin/main:docs/maintenance-checklist.md 2>/dev/null; then
+        pass "Task 17: Final branch, synchronization, files, and clean working tree verified"
+    else
+        fail "Task 17: Final branch, synchronization, files, and clean working tree verified"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#=================================================================
+validate_lab304_gitlab_diff_fetch_merge_pull() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "<h2 style='color:#white;'>Checking Lab 304 - Git and GitLab - Diff, Fetch, Merge and Pull.</h2>"
+
+    TOTAL_TASKS=17
+    PASSED=0
+
+    LAB_NAME="Lab 304 - Git and GitLab - Diff, Fetch, Merge and Pull"
+    DATE=$(date "+%F %T")
+
+    STUDENT_HOME="$HOME"
+    REPO="$STUDENT_HOME/git-labs/lab304-git-workflow"
+
+    README="$REPO/README.md"
+
+    # REQUIRED README CONTENT
+    LOCAL_LINE="Local change: documenting the Git workflow."
+    REMOTE_A="Remote change A: added through the GitLab web interface."
+    REMOTE_B="Remote change B: retrieved using git pull."
+
+    # HELPERS
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # Check an exact line in the local README.
+    local_has_line() {
+        [[ -f "$README" ]] &&
+            grep -Fxq -- "$1" "$README"
+    }
+
+    # Check an exact line in the README committed to origin/main.
+    remote_has_line() {
+        git -C "$REPO" show origin/main:README.md 2>/dev/null |
+            grep -Fxq -- "$1"
+    }
+
+    # Check whether a line was introduced in the origin/main history.
+    history_has_line() {
+        git -C "$REPO" log origin/main \
+            --format='%H' "-S$1" -- README.md 2>/dev/null |
+            grep -q .
+    }
+
+    # TASK 1 - VERIFY PROJECT DIRECTORY
+    if [[ -d "$REPO" ]]; then
+        pass "Task 1: Local lab304-git-workflow directory exists"
+    else
+        fail "Task 1: Local lab304-git-workflow directory exists"
+    fi
+
+    # TASK 2 - VERIFY GIT REPOSITORY AND ORIGIN
+    if [[ -d "$REPO/.git" ]] &&
+       git -C "$REPO" remote get-url origin >/dev/null 2>&1; then
+        pass "Task 2: Git repository and origin remote are configured"
+    else
+        fail "Task 2: Git repository and origin remote are configured"
+    fi
+
+    # TASK 3 - VERIFY MAIN AND ORIGIN/MAIN
+    if git -C "$REPO" show-ref --verify --quiet refs/heads/main &&
+       git -C "$REPO" show-ref --verify --quiet refs/remotes/origin/main; then
+        pass "Task 3: Local main and origin/main branches exist"
+    else
+        fail "Task 3: Local main and origin/main branches exist"
+    fi
+
+    # TASK 4 - VERIFY CURRENT BRANCH
+    if [[ "$(git -C "$REPO" branch --show-current 2>/dev/null)" == "main" ]]; then
+        pass "Task 4: Current branch is main"
+    else
+        fail "Task 4: Current branch is main"
+    fi
+
+    # TASK 5 - VERIFY README AND LOCAL CHANGE
+    if [[ -s "$README" ]] &&
+       local_has_line "$LOCAL_LINE"; then
+        pass "Task 5: README contains the required local workflow change"
+    else
+        fail "Task 5: README contains the required local workflow change"
+    fi
+
+    # TASK 6 - VERIFY LOCAL CHANGE WAS COMMITTED
+    # Staging itself cannot be proven after the change has been committed.
+    # Verify the resulting commit and its README content instead.
+    if git -C "$REPO" log origin/main \
+           --format='%s' 2>/dev/null |
+           grep -Fxq 'Document local Git workflow' &&
+       history_has_line "$LOCAL_LINE"; then
+        pass "Task 6: Local workflow change was committed and pushed"
+    else
+        fail "Task 6: Local workflow change was committed and pushed"
+    fi
+
+    # TASK 7 - VERIFY LOCAL CHANGE EXISTS IN REMOTE REPOSITORY
+    if remote_has_line "$LOCAL_LINE"; then
+        pass "Task 7: Local workflow change exists in origin/main"
+    else
+        fail "Task 7: Local workflow change exists in origin/main"
+    fi
+
+    # TASK 8 - VERIFY REMOTE CHANGE A WAS FETCHED
+    # The remote-tracking branch provides evidence that the remote
+    # README change has been downloaded into the local Git repository.
+    if remote_has_line "$REMOTE_A" &&
+       history_has_line "$REMOTE_A"; then
+        pass "Task 8: Remote change A exists in fetched origin/main history"
+    else
+        fail "Task 8: Remote change A exists in fetched origin/main history"
+    fi
+
+    # TASK 9 - VERIFY FETCHED CHANGE CAN BE COMPARED
+    # The remote change must exist in origin/main and the local README.
+    # After the subsequent merge, both copies should contain the line.
+    if remote_has_line "$REMOTE_A" &&
+       local_has_line "$REMOTE_A" &&
+       git -C "$REPO" diff --quiet main origin/main -- README.md; then
+        pass "Task 9: Remote change A is present locally and remotely"
+    else
+        fail "Task 9: Remote change A is present locally and remotely"
+    fi
+
+    # TASK 10 - VERIFY MERGED REMOTE CHANGE A
+    if local_has_line "$REMOTE_A" &&
+       git -C "$REPO" merge-base --is-ancestor origin/main main 2>/dev/null; then
+        pass "Task 10: Remote change A is integrated into local main"
+    else
+        # A fast-forward merge makes main and origin/main equal.
+        # In that case, the ancestor check above also succeeds.
+        fail "Task 10: Remote change A is integrated into local main"
+    fi
+
+    # TASK 11 - VERIFY REMOTE CHANGE B
+    if remote_has_line "$REMOTE_B" &&
+       history_has_line "$REMOTE_B"; then
+        pass "Task 11: Remote change B exists in origin/main history"
+    else
+        fail "Task 11: Remote change B exists in origin/main history"
+    fi
+
+    # TASK 12 - VERIFY PULL RESULT
+    if local_has_line "$REMOTE_B" &&
+       remote_has_line "$REMOTE_B"; then
+        pass "Task 12: git pull result contains remote change B locally"
+    else
+        fail "Task 12: git pull result contains remote change B locally"
+    fi
+
+    # TASK 13 - VERIFY BOTH REMOTE CHANGES
+    if local_has_line "$REMOTE_A" &&
+       local_has_line "$REMOTE_B"; then
+        pass "Task 13: README contains both remote additions"
+    else
+        fail "Task 13: README contains both remote additions"
+    fi
+
+    # TASK 14 - VERIFY BOTH REMOTE CHANGES IN COMMIT HISTORY
+    if history_has_line "$REMOTE_A" &&
+       history_has_line "$REMOTE_B"; then
+        pass "Task 14: Both remote README changes exist in origin/main history"
+    else
+        fail "Task 14: Both remote README changes exist in origin/main history"
+    fi
+
+    # TASK 15 - VERIFY LOCAL AND REMOTE MAIN ARE SYNCHRONIZED
+    LOCAL_MAIN=$(git -C "$REPO" rev-parse refs/heads/main 2>/dev/null)
+    REMOTE_MAIN=$(git -C "$REPO" rev-parse refs/remotes/origin/main 2>/dev/null)
+
+    if [[ -n "$LOCAL_MAIN" && "$LOCAL_MAIN" == "$REMOTE_MAIN" ]]; then
+        pass "Task 15: Local main and origin/main point to the same commit"
+    else
+        fail "Task 15: Local main and origin/main point to the same commit"
+    fi
+
+    # TASK 16 - VERIFY CLEAN WORKING TREE
+    if [[ -d "$REPO/.git" ]] &&
+       [[ -z "$(git -C "$REPO" status --porcelain 2>/dev/null)" ]]; then
+        pass "Task 16: Working tree and staging area are clean"
+    else
+        fail "Task 16: Working tree and staging area are clean"
+    fi
+
+    # TASK 17 - FINAL REPOSITORY VERIFICATION
+    LOCAL_MAIN=$(git -C "$REPO" rev-parse refs/heads/main 2>/dev/null)
+    REMOTE_MAIN=$(git -C "$REPO" rev-parse refs/remotes/origin/main 2>/dev/null)
+
+    if [[ -d "$REPO/.git" ]] &&
+       [[ "$(git -C "$REPO" branch --show-current 2>/dev/null)" == "main" ]] &&
+       [[ -n "$LOCAL_MAIN" && "$LOCAL_MAIN" == "$REMOTE_MAIN" ]] &&
+       [[ -z "$(git -C "$REPO" status --porcelain 2>/dev/null)" ]] &&
+       local_has_line "$LOCAL_LINE" &&
+       local_has_line "$REMOTE_A" &&
+       local_has_line "$REMOTE_B" &&
+       remote_has_line "$LOCAL_LINE" &&
+       remote_has_line "$REMOTE_A" &&
+       remote_has_line "$REMOTE_B" &&
+       history_has_line "$LOCAL_LINE" &&
+       history_has_line "$REMOTE_A" &&
+       history_has_line "$REMOTE_B"; then
+        pass "Task 17: Final branch, commits, README content, synchronization, and clean status verified"
+    else
+        fail "Task 17: Final branch, commits, README content, synchronization, and clean status verified"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#================================================================

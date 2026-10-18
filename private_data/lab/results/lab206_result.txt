@@ -791,3 +791,4 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 787   sana.abbasi               2026-10-09 14:41:20    7      7      100%      
 788   muhammad.shoaib           2026-10-12 11:08:49    7      7      100%      
 789   awais.sattar              2026-10-12 14:53:33    7      7      100%      
+790   raza.ali                  2026-10-14 19:00:53    7      7      100%      

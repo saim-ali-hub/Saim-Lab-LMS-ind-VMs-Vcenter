@@ -128,3 +128,4 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 124   khawar.abbas              2026-10-12 02:09:14    15     10     67%       
 125   khawar.abbas              2026-10-12 02:09:31    15     10     67%       
 126   khawar.abbas              2026-10-12 14:01:09    15     14     93%       
+127   raza.ali                  2026-10-17 06:40:04    15     15     100%      

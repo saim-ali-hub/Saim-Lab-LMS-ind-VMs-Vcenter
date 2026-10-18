@@ -1,0 +1,243 @@
+{
+  "lab_id": "lab304",
+  "title": "Lab 304 - Git and GitLab - Diff, Fetch, Merge and Pull",
+  "lab_objective": {
+    "description": "By the end of this lab, you should be able to:",
+    "objectives": [
+      "Create a GitLab project initialized with a README and clone it to a Linux VM.",
+      "Explain the difference between the working directory, staging area, local repository, and remote repository.",
+      "Use git status and git diff to inspect unstaged changes.",
+      "Use git add and git diff --cached to inspect staged changes.",
+      "Commit and push local changes to GitLab.",
+      "Use git fetch to download remote updates without integrating them into the current branch.",
+      "Inspect remote-tracking branches such as origin/main.",
+      "Use git merge to integrate fetched changes into the current branch.",
+      "Use git pull to fetch and integrate remote changes.",
+      "Verify file contents, commit history, and repository status after synchronization."
+     ],
+  "scenario": [
+    "You are a Linux Systems Administrator collaborating on project documentation stored in GitLab.",
+    "You will create a new private GitLab project and initialize it with a README file.",
+    "You will clone the project to your Linux VM and practice reviewing local changes before staging and committing them.",
+    "You will then make separate changes through the GitLab web interface to simulate a teammate updating the remote repository.",
+    "You will use git fetch and git merge as separate operations, then use git pull to retrieve and integrate another remote change.",
+    "GitLab URL: https://gitlab.corp.linoop.us",
+    "GitLab SSH host: gitlab-01.corp.linoop.us",
+    "GitLab SSH port: 2222",
+    "Project name: lab304-git-workflow",
+    "Project visibility: Private",
+    "Initialize repository with README: Enabled",
+    "Local project directory: ~/git-labs/lab304-git-workflow",
+    "Remote name: origin",
+    "Default branch used in this lab: main",
+    "Use the exact SSH clone URL displayed by your GitLab instance. Your namespace may be a username or a group."
+    ]
+   },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Verify Git and Your Identity",
+      "steps": [
+        "Verify that Git is installed:",
+        "git --version",
+        "Check your configured Git name and email:",
+        "git config --global user.name",
+        "git config --global user.email",
+        "If either value is missing, configure your intended name and email address using git config --global.",
+        "concept: Git records the configured author identity in commits. GitLab hosts the remote repository; Git is the version control tool used locally."
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Create a New GitLab Project",
+      "steps": [
+        "Open https://gitlab.corp.linoop.us and sign in with your assigned account.",
+        "Create a blank project named lab304-git-workflow.",
+        "Set the project visibility to Private.",
+        "Enable the option to initialize the repository with a README.",
+        "Create the project.",
+        "Open the project and copy its SSH clone URL from the Code menu.",
+        "Use the exact URL displayed by your GitLab instance.",
+        "concept: Initializing the project with a README creates an initial commit and a default branch, giving you a tracked file to modify immediately after cloning."
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Clone the Repository to Your Linux VM",
+      "steps": [
+        "Create the git-labs directory in your home directory if it does not already exist:",
+        "Change into the directory:",
+        "cd ~/git-labs",
+        "Clone the project using the SSH URL copied from GitLab:",
+        "git clone ssh://git@gitlab-01.corp.linoop.us:2222/your-username/lab304-git-workflow.git",
+        "Change into the cloned repository:",
+        "cd ~/git-labs/lab304-git-workflow",
+        "Verify your current directory and list the files.",
+        "Use the actual SSH URL from GitLab, replacing the example namespace.",
+        "concept: git clone creates a local copy of the repository and its history and normally configures the remote repository under the name origin."
+      ]
+    }, 
+    {
+      "task_number": 4,
+      "title": "Inspect the Initial Repository",
+      "steps": [
+        "Check the working-tree status:",
+        "git status",
+        "Display the current branch:",
+        "git branch --show-current",
+        "Display the remote URL:",
+        "git remote -v",
+        "Review the latest commit:",
+        "git log -1 --oneline",
+        "Display the README contents:",
+        "cat README.md",
+        "Confirm that the working tree is clean and that origin points to your lab304-git-workflow project.",
+        "concept: The working directory contains the files you edit. The local repository stores commits, and origin identifies the configured remote repository."
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Make an Unstaged Change and Use git diff",
+      "steps": [
+        "Append the following line to README.md:",
+        "Local change: documenting the Git workflow.",
+        "Check the repository status:",
+        "git status",
+        "Display changes that have not been staged:",
+        "git diff",
+        "Observe the added line in the diff output, including the plus sign at the start of the added line.",
+        "Run git diff again before staging and confirm that it displays the unstaged change.",
+        "concept: git diff compares the working directory with the staging area. It shows changes that have not yet been staged; it does not show staged changes by default."
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Stage the Change and Use git diff --cached",
+      "steps": [
+        "Stage README.md:",
+        "git add README.md",
+        "Check the repository status:",
+        "git status",
+        "Display staged changes:",
+        "git diff --cached",
+        "Run git diff again:",
+        "git diff",
+        "Compare the results: after staging, the staged change should appear in git diff --cached, while git diff should be empty if no further edits were made.",
+        "concept: git diff --cached, also called git diff --staged, compares the staging area with the latest commit. It shows what would be included in the next commit."
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "Commit and Push Your Local Change",
+      "steps": [
+        "Commit the staged change:",
+        "git commit -m \"Document local Git workflow\"",
+        "Review the latest commit:",
+        "git show --stat --oneline HEAD",
+        "Push the current branch to origin. If your branch is main and upstream tracking is already configured, use:",
+        "git push",
+        "If upstream tracking is not configured, use git push -u origin main, substituting your actual branch name if needed.",
+        "Refresh the GitLab project page and verify that the README change and commit appear.",
+        "Check that the working tree is clean:",
+        "git status",
+        "concept: A commit saves staged changes in the local repository. git push transfers local commits to the remote repository."
+      ]
+    },
+    {
+      "task_number": 8,
+      "title": "Create a Remote Change in GitLab",
+      "steps": [
+        "Open the lab304-git-workflow project in GitLab.",
+        "Open README.md in the GitLab web editor.",
+        "Append this exact line without removing the existing content:",
+        "Remote change A: added through the GitLab web interface.",
+        "Commit the change directly to the main branch using a clear commit message, such as Add remote change A.",
+        "Return to your Linux VM.",
+        "Do not edit README.md locally before completing the fetch and merge tasks.",
+        "concept: The remote repository now contains a commit that your local main branch has not yet incorporated. This simulates another contributor updating the shared project."
+      ]
+    },
+    {
+      "task_number": 9,
+      "title": "Use git fetch to Retrieve Remote Updates",
+      "steps": [
+        "Fetch updates from origin:",
+        "git fetch origin",
+        "Display the local README:",
+        "cat README.md",
+        "Confirm that Remote change A is not yet present in the local working file.",
+        "Review the local branch history:",
+        "git log --oneline main",
+        "Review the remote-tracking branch history:",
+        "git log --oneline origin/main",
+        "Compare the local branch with the fetched remote-tracking branch:",
+        "git diff main origin/main",
+        "Observe that the diff shows the remote change that has not yet been integrated into local main.",
+        "concept: git fetch downloads remote commits and updates remote-tracking references such as origin/main. It does not merge those commits into the current branch or update the working files."
+      ]
+    },
+    {
+      "task_number": 10,
+      "title": "Use git merge to Integrate the Fetched Change",
+      "steps": [
+        "Confirm that you are on the main branch:",
+        "git branch --show-current",
+        "Merge the fetched remote-tracking branch into your current branch:",
+        "git merge origin/main",
+        "Display README.md:",
+        "cat README.md",
+        "Confirm that Remote change A is now present.",
+        "Review the latest commit history:",
+        "git log --oneline -5",
+        "Check the repository status:",
+        "git status",
+        "concept: git merge integrates changes from the specified branch into the current branch. In this exercise, Git may fast-forward main because the local branch has no new commits beyond the shared commit; a separate merge commit is not required."
+       ]
+    },
+    {
+      "task_number": 11,
+      "title": "Create a Second Remote Change",
+      "steps": [
+        "Open README.md in the GitLab web editor again.",
+        "Append this exact line without removing existing content:",
+        "Remote change B: retrieved using git pull.",
+        "Commit the change directly to the main branch with a clear commit message, such as Add remote change B.",
+        "Return to your Linux VM.",
+        "Do not run git fetch or git merge for this second change; the next task will demonstrate git pull.",
+        "concept: The remote main branch has advanced again. Your local branch has not yet incorporated Remote change B."
+      ]
+    },
+    {
+      "task_number": 12,
+      "title": "Use git pull to Retrieve and Integrate Remote Changes",
+      "steps": [
+        "Retrieve and integrate changes from the remote main branch:",
+        "git pull origin main",
+        "Display README.md:",
+        "cat README.md",
+        "Confirm that both Remote change A and Remote change B are present.",
+        "Check the repository status:",
+        "git status",
+        "Review the latest five commits:",
+        "git log -5 --oneline",
+        "Confirm that the working tree is clean.",
+        "concept: git pull fetches remote changes and integrates them into the current branch. Depending on the branch history and configuration, integration may be a fast-forward, a merge, or a rebase. In this lab, the local branch is behind the remote branch, so a fast-forward is normally expected."
+       ]
+    },
+    {
+      "task_number": 13,
+      "title": "Compare the Git Commands",
+      "steps": [
+        "Explain the purpose of git diff.",
+        "Explain the purpose of git diff --cached.",
+        "Explain what changes after git fetch and what does not change.",
+        "Explain what git merge origin/main does after a fetch.",
+        "Explain how git pull differs from running git fetch and git merge as separate commands.",
+        "Verify that the local README contains the original content and both remote additions.",
+        "concept: git diff reviews unstaged changes; git diff --cached reviews staged changes; git fetch downloads remote updates without integrating them; git merge integrates a specified branch; git pull fetches and then integrates remote changes."
+      ]
+    }
+  ],
+  "completion_message": "Excellent work! You have completed Lab 304 - Git and GitLab: Diff, Fetch, Merge and Pull. You practiced reviewing unstaged and staged changes, committing and pushing local work, fetching remote updates, inspecting origin/main, merging fetched changes, and using git pull. These workflows help you understand what Git changes locally and what it retrieves from a shared repository. Keep practicing to strengthen your Linux and DevOps skills."
+}
+

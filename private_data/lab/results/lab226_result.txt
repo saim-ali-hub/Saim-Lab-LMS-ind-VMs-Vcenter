@@ -361,3 +361,7 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 357   zeeshan.ali               2026-10-09 22:38:18    10     0      0%        
 358   zeeshan.ali               2026-10-09 22:43:44    10     10     100%      
 359   nimrah.nawaz              2026-10-10 03:16:16    10     8      80%       
+360   amna.bajwa                2026-10-14 00:32:52    10     10     100%      
+361   zara.khan                 2026-10-15 03:23:36    10     10     100%      
+362   raza.ali                  2026-10-16 04:45:55    10     10     100%      
+363   muhammad.jahanzaib        2026-10-16 23:54:05    0      0      0%        

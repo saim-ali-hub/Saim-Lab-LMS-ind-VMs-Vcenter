@@ -1,7 +1,7 @@
 
 #!/bin/bash
 
-INPUT="lab235_result_sorted.txt"
+INPUT="lab235_result_sorted_name.txt"
 OUTPUT="lab235_result_sorted_percentage.txt"
 
 {
