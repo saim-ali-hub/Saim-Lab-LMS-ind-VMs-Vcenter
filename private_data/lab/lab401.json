@@ -113,7 +113,7 @@
 "Check the hostname.",
 "Check the current uptime.",
 "List attached block devices.",
-"Display the /etc/passwd file and use grep to search for 'polikitd'.",
+"Display the /etc/passwd file and use grep to search for 'polkitd'.",
 "Notice the distinction: command is appropriate for simple commands, while shell is needed here for the pipe operator.",
 "concept: The command module executes commands without a shell. The shell module runs commands through a shell and supports shell features such as pipes and redirection."
 ]
