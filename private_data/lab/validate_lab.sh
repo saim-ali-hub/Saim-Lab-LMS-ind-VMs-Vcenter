@@ -100,6 +100,7 @@ ssh \
         lab302) validate_lab302_gitlab_localrepo ;;
         lab303) validate_lab303_gitlab_branching ;;
         lab304) validate_lab304_gitlab_diff_fetch_merge_pull ;;
+        lab401) validate_lab401_ansible_adhoc ;;
 
         *) echo 'Invalid lab'; exit 1 ;;
      esac"

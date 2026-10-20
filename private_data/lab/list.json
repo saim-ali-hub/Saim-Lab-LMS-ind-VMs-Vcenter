@@ -222,6 +222,11 @@
      "file": "lab304.json"
     },
     {
+     "category": "DevOps",
+     "name": "lab 401 — Ansible Ad-Hoc Commands",
+     "file": "lab401.json"
+    },
+    {
         "category": "Technical Screening",
         "name": "Technical Screening Round - 1",
         "file": "lab901.json"

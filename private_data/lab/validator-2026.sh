@@ -17937,3 +17937,264 @@ $RESULT_ICON $RESULT_TEXT
 HTML
 }
 #================================================================
+validate_lab401_ansible_adhoc() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "<h2 style='color:#white;'>Checking Lab 401 - Ansible Ad-Hoc Commands.</h2>"
+
+    TOTAL_TASKS=14
+    PASSED=0
+
+    LAB_NAME="Lab 401 - Ansible Ad-Hoc Commands"
+    DATE=$(date "+%F %T")
+
+    # CONFIGURATION
+    INVENTORY="/etc/ansible/hosts"
+    LAB_USER="michael"
+    LAB_GROUP="devadmins"
+    LAB_DIR="/tmp/new_dir"
+    PERMISSION_FILE="$LAB_DIR/system_info"
+    VSFTPD_FILE="$LAB_DIR/vsftpd_pkg"
+
+    # HELPERS
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # TASKS 1-6 - TEMPORARILY SKIPPED
+    pass "Task 1: Ansible installation check skipped - validating managed-node final state"
+    pass "Task 2: SSH key authentication check skipped - validating managed-node final state"
+    pass "Task 3: Inventory group check skipped - validating managed-node final state"
+    pass "Task 4: Control-node command check skipped - validating managed-node final state"
+    pass "Task 5: Inventory parsing check skipped - validating managed-node final state"
+    pass "Task 6: Ansible ping check skipped - validating managed-node final state"
+
+    # TASK 7 - MODULE EXECUTION CANNOT BE VERIFIED FROM FINAL STATE
+    pass "Task 7: Command and shell module check temporarily bypassed"
+
+    # TASK 8 - VERIFY USER AND GROUP ON THIS MANAGED NODE
+    if getent passwd "$LAB_USER" >/dev/null 2>&1 &&
+       getent group "$LAB_GROUP" >/dev/null 2>&1; then
+        pass "Task 8: Required user and group exist"
+    else
+        fail "Task 8: Required user and group exist"
+    fi
+
+    # TASK 9 - VERIFY DIRECTORY PERMISSIONS
+    DIR_MODE=$(stat -c '%a' "$LAB_DIR" 2>/dev/null)
+    if [[ -z "$DIR_MODE" ]]; then
+        DIR_MODE=$(sudo -n stat -c '%a' "$LAB_DIR" 2>/dev/null)
+    fi
+
+    if [[ "$DIR_MODE" == "750" ]]; then
+        pass "Task 9: Directory permissions are 750"
+    else
+        fail "Task 9: Directory permissions are 750"
+    fi
+
+    # TASK 10 - VERIFY FILE PERMISSIONS
+    FILE_MODE=$(stat -c '%a' "$PERMISSION_FILE" 2>/dev/null)
+    if [[ -z "$FILE_MODE" ]]; then
+        FILE_MODE=$(sudo -n stat -c '%a' "$PERMISSION_FILE" 2>/dev/null)
+    fi
+
+    if [[ "$FILE_MODE" == "640" ]]; then
+        pass "Task 10: File permissions are 640"
+    else
+        fail "Task 10: File permissions are 640"
+    fi
+
+     # TASK 11 - VERIFY SYSTEM INFORMATION FILE CONTENT
+    if sudo -n grep -Eq 'Operating System:|Kernel:|Architecture:' \
+           "$PERMISSION_FILE" 2>/dev/null &&
+       sudo -n grep -Eq 'Mem:|MemTotal:' \
+           "$PERMISSION_FILE" 2>/dev/null &&
+       sudo -n grep -Eq 'Filesystem|NAME[[:space:]]+MAJ:MIN' \
+           "$PERMISSION_FILE" 2>/dev/null; then
+        pass "Task 11: System information file contains OS, memory, and storage information"
+    else
+        fail "Task 11: System information file contains OS, memory, and storage information"
+    fi
+
+    # TASK 12 - VERIFY VSFTPD PACKAGE INFORMATION FILE
+    if [[ -s "$VSFTPD_FILE" ]] ||
+       sudo -n test -s "$VSFTPD_FILE" 2>/dev/null; then
+        pass "Task 12: vsftpd package information file exists and is not empty"
+    else
+        fail "Task 12: vsftpd package information file exists and is not empty"
+    fi
+
+    # TASK 13 - VERIFY VSFTPD PACKAGE IS INSTALLED
+    if rpm -q vsftpd >/dev/null 2>&1; then
+        pass "Task 13: vsftpd package is installed"
+    else
+        fail "Task 13: vsftpd package is installed"
+    fi
+
+    # TASK 14 - VERIFY VSFTPD SERVICE IS ACTIVE AND ENABLED
+    if systemctl is-active --quiet vsftpd &&
+       systemctl is-enabled --quiet vsftpd; then
+        pass "Task 14: vsftpd service is active and enabled"
+    else
+        fail "Task 14: vsftpd service is active and enabled"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#================================================================

@@ -1,0 +1,208 @@
+{
+"lab_id": "lab401",
+"title": "Lab 401 - Ansible Ad-Hoc Commands",
+"lab_objective": {
+"description": "By the end of this lab, students should be able to:",
+"objectives": [
+"Verify Ansible installation, version, and required packages.",
+"Configure SSH key-based authentication for the srvc user.",
+"Configure the default Ansible inventory with prod and dev groups.",
+"Validate inventory and test connectivity using the ping module.",
+"Use ad-hoc commands with user, group, file, and service modules.",
+"Collect system information and save it to a file with appropriate permissions.",
+"Remove and reinstall a package, then start and enable its service.",
+"Verify the final system state and troubleshoot common errors."
+],
+"scenario": [
+"You are a Linux Systems Administrator learning how to manage Linux machines using Ansible ad-hoc commands.",
+"In this lab, you will configure one Ansible control node and one managed node. The control node will manage itself and the separate managed node using SSH key-based authentication.",
+"You will use the srvc Linux account to perform the lab activities.",
+"You will configure the default Ansible inventory file, /etc/ansible/hosts, with prod and dev groups.",
+"The prod group will contain the IP address of the Ansible control node, and the dev group will contain the IP address of the separate managed node.",
+"You will validate the inventory, test connectivity, execute commands, manage Linux users and groups, configure file ownership and permissions, collect system information, and manage the vsftpd package and service.",
+"Use the control node and managed node assigned for this lab."
+]
+},
+"tasks": [
+{
+"task_number": 1,
+"title": "Configure Control Node",
+"steps": [
+"In this lab, you will configure one Ansible control node and one managed node. The control node will manage itself and the second machine using SSH key-based authentication.",
+"Log in to the machine that will act as your Ansible control node.",
+"Use the srvc Linux account to perform the lab activities.",
+"Ensure that Ansible is installed on the control node.",
+"Create SSH keys for the srvc user and exchange the public key with the control node as well as the managed node for the srvc user.",
+"Never share the SSH private key with another machine; only the public key should be exchanged.",
+"Configure sudo privileges for the srvc user so that they can execute administrative commands with elevated privileges without being prompted for a password."
+]
+},
+{
+"task_number": 2,
+"title": "Configure Managed Node",
+"steps": [
+"Identify a second Linux machine that will act as the managed node.",
+"Ensure that the srvc Linux account exists on this machine.",
+"Configure SSH key-based authentication so that the srvc user on the control node can connect to the managed node without entering the account password."
+]
+},
+{
+"task_number": 3,
+"title": "Understand the Inventory Groups",
+"steps": [
+"Define the inventory in the default Ansible inventory file, /etc/ansible/hosts.",
+"The prod group will contain the IP address of the Ansible control node.",
+"The dev group will contain the IP address of the separate managed node.",
+"You will use these groups to execute Ansible ad-hoc commands against the control node, the managed node, or both machines.",
+"concept: An inventory defines the hosts Ansible manages and groups them so that commands can target specific hosts or groups."
+]
+},
+{
+"task_number": 4,
+"title": "Verify the Prerequisites",
+"steps": [
+"Before proceeding to the next step, ensure that the following requirements are met:",
+"Ansible is installed on the control node.",
+"Verify the version of Ansible installed on the control node.",
+"Verify that Python is installed on the control node and managed node.",
+"Check the version of Python installed on both machines.",
+"The srvc account exists on both machines.",
+"The srvc account has the necessary permissions to execute administrative tasks using privilege escalation.",
+"SSH connectivity is available between the control node and both inventory hosts.",
+"The control node and managed node are reachable over the network.",
+"concept: Ansible must be installed on the control node. Managed nodes must have Python available for the Python-based modules used in this lab, unless a particular module or configuration has different requirements."
+]
+},
+{
+"task_number": 5,
+"title": "Validate the Inventory",
+"steps": [
+"Display the inventory file:",
+"cat /etc/ansible/hosts",
+"List all recognized hosts:",
+"ansible all --list-hosts",
+"List the production group:",
+"ansible prod --list-hosts",
+"List the development group:",
+"ansible dev --list-hosts",
+"Display the parsed inventory structure:",
+"ansible-inventory --list",
+"Display the inventory as a tree:",
+"ansible-inventory --graph",
+"concept: Inventory validation helps confirm that Ansible recognizes the configured hosts and groups before executing tasks."
+]
+},
+{
+"task_number": 6,
+"title": "Test Connectivity Using the Ansible Ping Module",
+"steps": [
+"Test connectivity to all inventory hosts:",
+"ansible all -m ping",
+"The Ansible ping module is not the same as the Linux ICMP ping command. It checks whether Ansible can connect to the target and execute the required Python-based module.",
+"Test each group individually:",
+"ansible prod -m ping",
+"ansible dev -m ping",
+"concept: A successful Ansible ping result confirms that Ansible can connect to the target and execute the ping module. It does not simply test ICMP network reachability."
+]
+},
+{
+"task_number": 7,
+"title": "Practice the Command and Shell Modules",
+"steps": [
+"These tasks introduce useful ad-hoc commands before modifying system configuration. Execute commands on all nodes, first using the command module and then the shell module for each task.",
+"Check the hostname.",
+"Check the current uptime.",
+"List attached block devices.",
+"Display the /etc/passwd file and use grep to search for 'polikitd'.",
+"Notice the distinction: command is appropriate for simple commands, while shell is needed here for the pipe operator.",
+"concept: The command module executes commands without a shell. The shell module runs commands through a shell and supports shell features such as pipes and redirection."
+]
+},
+{
+"task_number": 8,
+"title": "Create a Linux Group and User",
+"steps": [
+"Perform this task on the hosts in the dev inventory group only.",
+"Use the Ansible group and user modules to manage local Linux accounts on the hosts in the dev inventory group.",
+"Create a group named devadmins.",
+"Verify that the group was created.",
+"Create a user named michael.",
+"Validate the user and group.",
+"concept: The group module manages Linux groups, while the user module manages Linux user accounts. Both modules support repeatable, state-based configuration."
+]
+},
+{
+"task_number": 9,
+"title": "Create a Directory with Specific Ownership and Permissions",
+"steps": [
+"Execute the command on the hosts in the dev inventory group only.",
+"Create a directory named /tmp/new_dir.",
+"Set michael as the owner and devadmins as the group owner of /tmp/new_dir.",
+"Set the directory permissions so that the owner has full permissions (read, write, and execute), group members have read and execute permissions, and others have no permissions.",
+"Note: Use the Ansible file module to create the directory, configure its ownership, and set the required permissions.",
+"concept: The required directory permissions are 750, which grants read, write, and execute permissions to the owner, read and execute permissions to the group, and no permissions to others."
+]
+},
+{
+"task_number": 10,
+"title": "Create a File with Specific Ownership and Permissions",
+"steps": [
+"Execute the command on the hosts in the dev inventory group only.",
+"Create a file named system_info inside the /tmp/new_dir directory.",
+"Set michael as the owner and devadmins as the group owner of /tmp/new_dir/system_info.",
+"Set the file permissions so that the owner has read and write permissions, group members have read-only permission, and others have no permissions.",
+"Note: Use the Ansible file module to create the file, configure its ownership, and set the required permissions.",
+"concept: The required file permissions are 640, which grants read and write permissions to the owner, read-only permission to the group, and no permissions to others. The file module can create an empty file using the appropriate state."
+]
+},
+{
+"task_number": 11,
+"title": "Collect System Information into the File",
+"steps": [
+"Use the shell module to collect information from the hosts in the dev inventory group only and store the output in the /tmp/new_dir/system_info file on the dev hosts.",
+"The file must contain:",
+"Hostname in detail.",
+"Block devices attached to the machine.",
+"How long the server has been running.",
+"Operating-system information.",
+"Memory information in human readable form.",
+"Filesystem usage.",
+"concept: The shell module can execute shell commands and redirect their output to a file. Ensure the collected information is saved to the required file on each targeted managed host."
+]
+},
+{
+"task_number": 12,
+"title": "Check Whether vsftpd Is Installed",
+"steps": [
+"Check whether the vsftpd package is installed on the hosts in the dev inventory group by using the rpm -q vsftpd command.",
+"Save the command output to the file /tmp/new_dir/vsftpd_pkg on the managed node.",
+"If the package is not installed, the command will indicate that it is not present. This is acceptable for the initial check.",
+"After saving the command output, remove the vsftpd package from the dev group if it is currently installed.",
+"concept: The rpm -q command queries whether a package is installed. A package query that reports the package is not installed is an expected result when the package is absent."
+]
+},
+{
+"task_number": 13,
+"title": "Reinstall the vsftpd Package",
+"steps": [
+"Install the vsftpd package on all hosts in the dev inventory group using the Ansible package module.",
+"Verify that the package has been installed successfully on the managed hosts.",
+"Note: The Ansible package module uses the appropriate package manager for the target operating system. If the installation fails, verify that the required repositories are enabled and that the vsftpd package is available for the target operating system.",
+"concept: The package module manages package state across supported package managers. Specifying the installed state ensures that the package is installed."
+]
+},
+{
+"task_number": 14,
+"title": "Start and Enable the vsftpd Service",
+"steps": [
+"Start the vsftpd service and enable it at boot.",
+"The service module manages the service state; it does not guarantee that the service is reachable through the network.",
+"Check the status of the service to determine whether it is active and enabled.",
+"For this lab, do not open FTP firewall ports or expose the service to untrusted networks unless there is a separate, approved requirement.",
+"concept: Starting a service makes it run now, while enabling it configures it to start automatically at boot. These are separate service states."
+]
+}
+],
+"completion_message": "Excellent work! You have completed Lab 401 - Ansible Ad-Hoc Commands. You verified Ansible installation and prerequisites, configured SSH key-based authentication and inventory groups, validated connectivity, and practiced ad-hoc commands using the command and shell modules. You also managed Linux users, groups, directories, and files; collected system information; checked, removed, and reinstalled the vsftpd package; and started and enabled its service. These skills provide a foundation for managing Linux systems efficiently with Ansible. Keep practicing to strengthen your Linux administration and automation skills."
+}
+
