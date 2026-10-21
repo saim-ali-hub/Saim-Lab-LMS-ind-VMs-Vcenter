@@ -877,3 +877,4 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 873   sana.abbasi               2026-10-15 14:09:56    16     16     100%      
 874   awais.sattar              2026-10-15 14:20:29    16     15     94%       
 875   awais.sattar              2026-10-15 14:25:24    16     16     100%      
+876   muhammad.azlan            2026-10-21 18:25:40    16     7      44%       

@@ -1033,3 +1033,4 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 1029  jawad.hassan              2026-10-12 22:51:57    0      0      0%        
 1030  raza.ali                  2026-10-14 05:51:50    21     0      0%        
 1031  raza.ali                  2026-10-14 18:10:11    21     21     100%      
+1032  raza.ali                  2026-10-20 04:14:48    21     21     100%      

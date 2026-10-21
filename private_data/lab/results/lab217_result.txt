@@ -446,3 +446,4 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 442   sumara.abbas              2026-10-17 02:46:49    11     2      18%       
 443   sumara.abbas              2026-10-17 02:49:18    11     2      18%       
 444   sumara.abbas              2026-10-17 02:59:37    11     6      55%       
+445   awais.afzal               2026-10-18 15:35:46    11     11     100%      

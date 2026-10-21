@@ -528,3 +528,6 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 524   sana.abbasi               2026-10-14 22:05:00    13     13     100%      
 525   raza.ali                  2026-10-14 23:48:25    13     13     100%      
 526   awais.sattar              2026-10-15 04:03:33    13     13     100%      
+527   sammy.saleh               2026-10-21 18:55:13    13     12     92%       
+528   sammy.saleh               2026-10-21 18:55:31    13     12     92%       
+529   sammy.saleh               2026-10-21 18:57:10    13     13     100%      

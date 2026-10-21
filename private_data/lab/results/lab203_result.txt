@@ -658,3 +658,5 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 654   jawad.hassan              2026-10-12 23:51:48    0      0      0%        
 655   raza.ali                  2026-10-14 18:18:23    14     14     100%      
 656   muhammad.mateen           2026-10-15 13:17:26    14     14     100%      
+657   raza.ali                  2026-10-20 04:21:48    14     14     100%      
+658   awais.sattar              2026-10-20 13:35:05    0      0      0%        

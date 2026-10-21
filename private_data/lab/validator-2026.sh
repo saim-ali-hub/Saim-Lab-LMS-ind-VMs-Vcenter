@@ -18198,3 +18198,331 @@ $RESULT_ICON $RESULT_TEXT
 HTML
 }
 #================================================================
+validate_lab402_ansible_adhoc() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "<h2 style='color:#white;'>Checking Lab 402 - Ansible Ad-Hoc Commands - System Administration and File Management.</h2>"
+
+    TOTAL_TASKS=15
+    PASSED=0
+
+    LAB_NAME="Lab 402 - Ansible Ad-Hoc Commands - System Administration and File Management"
+    DATE=$(date "+%F %T")
+
+    # CONFIGURATION
+    LAB_USER="deployer"
+    LAB_GROUP="devsecops"
+    LAB_DIR="/opt/ansible-lab"
+    SYSTEM_INFO="/tmp/ansible-system-info.txt"
+
+    ANNOUNCEMENT="$LAB_DIR/announcement.txt"
+    ANNOUNCEMENT_BACKUP="$LAB_DIR/announcement-backup.txt"
+
+    NESTED_DIR="$LAB_DIR/reports/weekly/archive"
+    SOURCE_DIR="$LAB_DIR/source-dir"
+    COPIED_DIR="$LAB_DIR/source-dir-copy"
+
+    ANNOUNCEMENT_CONTENT="Ansible ad-hoc commands can automate routine Linux administration tasks."
+    SOURCE_CONTENT="This file is used to practice directory copying"
+
+    # HELPERS
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # TASK 1 - VERIFY MANAGED NODE REACHABILITY
+    # The validator is already running on the managed node.
+    if hostname >/dev/null 2>&1; then
+        pass "Task 1: Managed node is reachable for validation"
+    else
+        fail "Task 1: Managed node is reachable for validation"
+    fi
+
+    # TASK 2 - VERIFY DEVSECOPS GROUP
+    if getent group "$LAB_GROUP" >/dev/null 2>&1; then
+        pass "Task 2: Group devsecops exists"
+    else
+        fail "Task 2: Group devsecops exists"
+    fi
+
+    # TASK 3 - VERIFY DEPLOYER USER
+    if getent passwd "$LAB_USER" >/dev/null 2>&1; then
+        pass "Task 3: User deployer exists"
+    else
+        fail "Task 3: User deployer exists"
+    fi
+
+    # TASK 4 - VERIFY USER MEMBERSHIP
+    if id -nG "$LAB_USER" 2>/dev/null |
+       tr ' ' '\n' |
+       grep -Fxq "$LAB_GROUP"; then
+        pass "Task 4: User deployer belongs to devsecops"
+    else
+        fail "Task 4: User deployer belongs to devsecops"
+    fi
+
+    # TASK 5 - VERIFY HTTPD PACKAGE
+    if rpm -q httpd >/dev/null 2>&1; then
+        pass "Task 5: httpd package is installed"
+    else
+        fail "Task 5: httpd package is installed"
+    fi
+
+    # TASK 6 - VERIFY APACHE SERVICE IS RUNNING
+    if sudo -n systemctl is-active --quiet httpd; then
+        pass "Task 6: httpd service is running"
+    else
+        fail "Task 6: httpd service is running"
+    fi
+
+    # TASK 7 - VERIFY APACHE SERVICE IS ENABLED AT BOOT
+    if sudo -n systemctl is-enabled --quiet httpd; then
+        pass "Task 7: httpd service is enabled at boot"
+    else
+        fail "Task 7: httpd service is enabled at boot"
+    fi
+
+    # TASK 8  VERIFY SYSTEM INFORMATION FILE CONTENT
+    INFO_FILE="/tmp/ansible-system-info.txt"
+
+    if sudo -n test -s "$INFO_FILE" &&
+       sudo -n grep -Eq 'Linux|[0-9]+\.[0-9]+' "$INFO_FILE" 2>/dev/null &&
+       sudo -n grep -Eq 'Mem:|MemTotal:|total[[:space:]]+used[[:space:]]+free' \
+           "$INFO_FILE" 2>/dev/null &&
+       sudo -n grep -Eq 'Filesystem|/dev/|tmpfs|overlay' \
+           "$INFO_FILE" 2>/dev/null; then
+        pass "Task 8: System information file contains kernel, memory, and filesystem information"
+    else
+        fail "Task 8: System information file contains kernel, memory, and filesystem information"
+    fi
+
+    # TASK 9 - VERIFY WORKING DIRECTORY
+    if sudo -n test -d "$LAB_DIR" 2>/dev/null; then
+        pass "Task 9: /opt/ansible-lab directory exists"
+    else
+        fail "Task 9: /opt/ansible-lab directory exists"
+    fi
+
+    # TASK 10 - VERIFY EMPTY NOTES FILE
+    NOTES_FILE="$LAB_DIR/notes.txt"
+
+    if sudo -n test -f "$NOTES_FILE" 2>/dev/null &&
+       [[ "$(sudo stat -c '%s' "$NOTES_FILE" 2>/dev/null)" == "0" ]]; then
+        pass "Task 10: notes.txt exists as an empty regular file"
+    else
+        fail "Task 10: notes.txt exists as an empty regular file"
+    fi
+
+    # TASK 11 - VERIFY ANNOUNCEMENT CONTENT
+    if sudo -n test -f "$ANNOUNCEMENT" 2>/dev/null &&
+       sudo -n grep -Fxq "$ANNOUNCEMENT_CONTENT" "$ANNOUNCEMENT" 2>/dev/null; then
+        pass "Task 11: announcement.txt contains the required text"
+    else
+        fail "Task 11: announcement.txt contains the required text"
+    fi
+
+    # TASK 12 - VERIFY COPIED FILE CONTENT
+    if sudo -n test -f "$ANNOUNCEMENT" 2>/dev/null &&
+       sudo -n test -f "$ANNOUNCEMENT_BACKUP" 2>/dev/null &&
+       sudo -n cmp -s "$ANNOUNCEMENT" "$ANNOUNCEMENT_BACKUP" 2>/dev/null; then
+        pass "Task 12: announcement-backup.txt matches announcement.txt"
+    else
+        fail "Task 12: announcement-backup.txt matches announcement.txt"
+    fi
+
+    # TASK 13 - VERIFY NESTED DIRECTORY STRUCTURE
+    if sudo -n test -d "$NESTED_DIR" 2>/dev/null; then
+        pass "Task 13: Nested reports/weekly/archive directory structure exists"
+    else
+        fail "Task 13: Nested reports/weekly/archive directory structure exists"
+    fi
+    
+    # TASK 14 - VERIFY SOURCE DIRECTORY AND FILE
+    SOURCE_DIR="/opt/ansible-lab/source-dir"
+    SOURCE_FILE="$SOURCE_DIR/source.txt"
+
+    if sudo -n test -d "$SOURCE_DIR" &&
+       sudo -n test -f "$SOURCE_FILE" &&
+       sudo -n grep -Fxq \
+           "This file is used to practice directory copying" \
+           "$SOURCE_FILE" 2>/dev/null; then
+        pass "Task 14: Source directory and source.txt file are created with the correct content"
+    else
+        fail "Task 14: Source directory and source.txt file are created with the correct content"
+    fi
+
+    # TASK 15 - VERIFY DIRECTORY COPY
+    SOURCE_COPY_DIR="/opt/ansible-lab/source-dir-copy"
+    COPIED_SOURCE_FILE="$SOURCE_COPY_DIR/source.txt"
+
+    if sudo -n test -d "$SOURCE_COPY_DIR" &&
+       sudo -n test -d "$SOURCE_COPY_DIR/source-dir" &&
+       sudo -n test -f "$SOURCE_COPY_DIR/source-dir/source.txt" &&
+       sudo -n grep -Fxq \
+           "This file is used to practice directory copying" \
+           "$SOURCE_COPY_DIR/source-dir/source.txt" 2>/dev/null; then
+        pass "Task 15: Source directory is copied recursively, including the directory itself"
+    else
+        fail "Task 15: Source directory is copied recursively, including the directory itself"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#==============================================================
+

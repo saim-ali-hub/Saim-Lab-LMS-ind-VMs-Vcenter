@@ -1,0 +1,150 @@
+{
+  "lab_id": "lab402",
+  "title": "Ansible Ad-Hoc Commands - System Administration and File Management",
+  "lab_objective": {
+    "description": "By the end of this lab, students should be able to:",
+    "objectives": [
+      "Create a group with the group module.",
+      "Create a user with the user module, then add that user to the group in a separate task.",
+      "Install a package with the dnf module.",
+      "Start a service and enable it at boot in separate tasks.",
+      "Add a firewall rule to allow the service.",
+      "Use the shell module to collect system information and save it to a file.",
+      "Create directories and files with the file module.",
+      "Create a file with content using the copy module and copy it to a different filename.",
+      "Create a nested directory structure and copy a directory."
+    ],
+  "scenario": "You are a Linux administrator using an Ansible control node to configure one or more RHEL-family managed nodes. Complete each task with an Ansible ad-hoc command. Unless a task says otherwise, run the command against the dev inventory group. Use privilege escalation where required.",
+  "prerequisites": [
+    "An Ansible control node is configured and can connect to the managed nodes.",
+    "The inventory file is /etc/ansible/hosts and contains a [dev] group with at least one reachable RHEL-family managed node.",
+    "The remote account can use sudo, and the ad-hoc commands can use --become when administrative privileges are required.",
+    "Managed nodes use DNF and systemd, and firewalld is installed and running.",
+    "The managed nodes can access configured package repositories."
+    ]
+  },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Verify connectivity to managed nodes",
+      "steps": [
+        "Use the ping module to verify that Ansible can connect to every host in the dev group.",
+        "Make sure you will Perform all tasks on dev host group only."
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Create the devsecops group",
+      "steps": [
+        "Use the group module to create a group named devsecops on the managed nodes.",
+        "Ensure the group exists with the appropriate state."
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Create the user",
+      "steps": [
+        "Use the user module to create a user named deployer.",
+        "Create the user without assigning any secondary group in this task.",
+        "Ensure the user account exists."
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Add the user to the group",
+      "steps": [
+        "In a separate ad-hoc command, use the user module to add deployer to the devsecops supplementary group.",
+        "Use append behavior so that existing supplementary group memberships are preserved."
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Install the Apache web server package",
+      "steps": [
+        "Use the dnf module to install the httpd package.",
+        "Ensure the package is present on the managed nodes."
+      ] 
+    },
+    {
+      "task_number": 6,
+      "title": "Start the Apache service",
+      "steps": [
+        "Use the service module to start the httpd service.",
+        "Keep this as a separate task from enabling the service."
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "Enable Apache at boot",
+      "steps": [
+        "Use the service module to enable the httpd service so it starts automatically at boot."
+      ]
+    },
+    {
+      "task_number": 8,
+      "title": "Collect system information with the shell module and save to a file",
+      "steps": [
+        "Use the shell module to collect the managed node kernel version, mounted file systems, and memory in human readable form.",
+        "Redirect the information into /tmp/ansible-system-info.txt on each managed node."
+      ]
+    },
+    {
+      "task_number": 9,
+      "title": "Create a working directory",
+      "steps": [
+        "Use the file module to create the directory /opt/ansible-lab.",
+        "Ensure it is a directory and that it exists."
+      ]
+    },
+    {
+      "task_number": 10,
+      "title": "Create an empty file in the directory",
+      "steps": [
+        "Use the file module to create an empty file named notes.txt inside /opt/ansible-lab.",
+        "Ensure the file exists and is a regular file."
+      ]
+    },
+    {
+      "task_number": 11,
+      "title": "Create a file with content using the copy module",
+      "steps": [
+        "Use the copy module to create /opt/ansible-lab/announcement.txt.",
+        "Set the file content to: Ansible ad-hoc commands can automate routine Linux administration tasks."
+      ]
+    },
+    {
+      "task_number": 12,
+      "title": "Copy a file with a different name",
+      "steps": [
+        "Use the copy module to copy /opt/ansible-lab/announcement.txt to /opt/ansible-lab/announcement-backup.txt.",
+        "Preserve the file content in the destination file."
+      ]
+    },
+    {
+      "task_number": 13,
+      "title": "Create a nested directory structure",
+      "steps": [
+        "Use the file module to create /opt/ansible-lab/reports/weekly/archive.",
+        "Create the full directory structure in one ad-hoc command."
+      ]
+    },
+    {
+      "task_number": 14,
+      "title": "Create a source directory and files",
+      "steps": [
+        "Use the file module to create /opt/ansible-lab/source-dir.",
+        "Use the copy module to create a file named source.txt inside that directory with the content: This file is used to practice directory copying"
+      ]
+    },
+    {
+      "task_number": 15,
+      "title": "Copy a directory",
+      "steps": [
+        "Use the copy module to copy the directory /opt/ansible-lab/source-dir to /opt/ansible-lab/source-dir-copy.",
+        "Specify the source directory without a trailing slash so the source-dir directory itself is copied into the destination.",
+        "Remember that the copy module copies directory contents recursively by default; it does not require a recursive parameter."
+      ]
+    }
+  ],
+  "completion_message": "Lab 402 completed. You practiced Ansible ad-hoc commands for user and group management, package and service administration, firewall configuration, system information collection, and file and directory operations."
+}

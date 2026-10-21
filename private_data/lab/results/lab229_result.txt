@@ -219,3 +219,5 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 215   raza.ali                  2026-10-16 05:44:13    11     11     100%      
 216   abdullah.anjum            2026-10-17 01:22:26    11     11     100%      
 217   hajra.iftikhar            2026-10-17 08:40:27    11     2      18%       
+218   sammy.saleh               2026-10-20 18:52:13    11     1      9%        
+219   sammy.saleh               2026-10-20 20:55:20    11     11     100%      

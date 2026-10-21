@@ -227,6 +227,11 @@
      "file": "lab401.json"
     },
     {
+     "category": "DevOps",
+     "name": "lab 402 — Ansible Ad-Hoc Commands - System Administration and File Management",
+     "file": "lab402.json"
+    },
+    {
         "category": "Technical Screening",
         "name": "Technical Screening Round - 1",
         "file": "lab901.json"

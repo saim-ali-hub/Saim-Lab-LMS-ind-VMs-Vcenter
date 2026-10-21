@@ -798,3 +798,4 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 794   raza.ali                  2026-10-14 18:38:36    20     20     100%      
 795   sumara.abbas              2026-10-16 05:49:34    20     10     50%       
 796   sumara.abbas              2026-10-16 05:51:47    20     10     50%       
+797   raza.ali                  2026-10-20 04:44:53    20     20     100%      

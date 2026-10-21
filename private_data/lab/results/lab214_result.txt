@@ -1002,3 +1002,4 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 998   raza.ali                  2026-10-15 04:53:54    29     27     93%       
 999   raza.ali                  2026-10-15 06:25:13    29     27     93%       
 1000  raza.ali                  2026-10-15 06:27:52    29     29     100%      
+1001  awais.afzal               2026-10-18 14:31:50    29     29     100%      
