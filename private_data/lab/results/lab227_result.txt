@@ -116,3 +116,7 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 112   amna.bajwa                2026-10-14 05:16:30    10     9      90%       
 113   yuliana.cuzzi             2026-10-15 03:08:41    10     3      30%       
 114   raza.ali                  2026-10-16 04:56:31    10     10     100%      
+115   yuliana.cuzzi             2026-10-22 03:55:03    10     9      90%       
+116   kamaljeet.kaur            2026-10-22 11:50:08    10     2      20%       
+117   raza.ali                  2026-10-23 00:01:06    10     10     100%      
+118   hammas.salam              2026-10-23 07:42:41    10     0      0%        

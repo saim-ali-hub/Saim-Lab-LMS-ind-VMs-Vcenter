@@ -585,3 +585,8 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 581   nakhal.iqbal              2026-10-20 17:26:48    8      6      75%       
 582   nakhal.iqbal              2026-10-20 17:27:59    8      6      75%       
 583   nakhal.iqbal              2026-10-20 17:30:32    8      6      75%       
+584   raza.ali                  2026-10-21 23:24:26    8      8      100%      
+585   muhammad.azlan            2026-10-22 18:16:19    8      7      88%       
+586   muhammad.azlan            2026-10-22 18:18:46    8      6      75%       
+587   muhammad.azlan            2026-10-22 18:21:03    8      7      88%       
+588   hammas.salam              2026-10-23 07:42:16    8      7      88%       

@@ -32,3 +32,15 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 28    hajra.iftikhar            2026-10-21 14:02:53    17     6      35%       
 29    hajra.iftikhar            2026-10-21 15:10:26    17     17     100%      
 30    hajra.iftikhar            2026-10-21 15:11:23    17     17     100%      
+31    mohammad.muneeb           2026-10-21 21:33:25    17     17     100%      
+32    talha.zubair              2026-10-22 00:23:51    17     17     100%      
+33    muhammad.danial           2026-10-22 00:28:21    17     17     100%      
+34    muhammad.sulaman          2026-10-22 03:09:46    17     17     100%      
+35    raza.ali                  2026-10-22 04:30:22    17     0      0%        
+36    raza.ali                  2026-10-22 04:48:55    17     17     100%      
+37    muhammad.shoaib           2026-10-22 20:34:13    17     0      0%        
+38    asfiya.umair              2026-10-22 22:31:34    17     17     100%      
+39    danyal.khan               2026-10-23 01:11:56    17     17     100%      
+40    amna.bajwa                2026-10-23 03:25:36    17     17     100%      
+41    aqsa.mian                 2026-10-23 22:50:23    17     17     100%      
+42    muhammad.khan             2026-10-24 03:46:33    17     17     100%      

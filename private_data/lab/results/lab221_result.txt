@@ -369,3 +369,6 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 365   sammy.saleh               2026-10-19 22:16:52    8      6      75%       
 366   sammy.saleh               2026-10-19 22:18:24    8      6      75%       
 367   sammy.saleh               2026-10-19 22:22:27    8      8      100%      
+368   raza.ali                  2026-10-22 05:53:51    8      8      100%      
+369   hammas.salam              2026-10-23 07:43:27    8      7      88%       
+370   hammas.salam              2026-10-23 07:47:30    8      8      100%      

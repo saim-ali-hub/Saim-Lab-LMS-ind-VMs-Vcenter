@@ -1,0 +1,223 @@
+{
+  "lab_id": "lab404",
+  "title": "Lab 404 - Ansible Variables and tags in a Multitasking Playbook",
+  "lab_objective": {
+    "description": "Create and execute an Ansible playbook that uses variables to manage multiple Linux administration tasks on managed hosts in the dev inventory group.",
+    "objectives": [
+      "Create a playbook using valid YAML syntax and proper indentation.",
+      "Define variables for values used throughout the playbook and assign the required values.",
+      "Reference variables in play-level settings and task parameters instead of hard-coding repeated values.",
+      "Target the dev host group and connect using the service_name account.",
+      "Use privilege escalation for tasks that require elevated permissions.",
+      "Manage users and groups using Ansible modules and variables.",
+      "Create directories and files with the required ownership and permissions using variables.",
+      "Copy files between managed-node locations and retrieve files to the control node using variables.",
+      "Modify file content using the lineinfile module and variables.",
+      "Remove and reinstall a package using the package module and variables.",
+      "Start and enable services using the service module and variables.",
+      "Configure the firewall using the firewalld module and variables.",
+      "Configure SELinux to operate in permissive mode.",
+      "Understand how Ansible tags control task execution.",
+      "Assign meaningful tags to tasks and execute selected tasks using --tags.",
+      "Understand how task dependencies affect execution when using tags.",
+      "Understand how to assign tags to Ansible tasks and execute selected tasks using the --tags option."
+    ],
+    "scenario": [
+      "You are a Linux administrator responsible for configuring development servers. Create a single Ansible playbook that automates user and group management, filesystem operations, package management, service configuration, firewall access, and SELinux settings. Ansible is installed on the control node. The managed hosts are configured in /etc/ansible/hosts under the dev group. The service_name account can connect to the managed hosts using SSH keys and has sudo privileges on managed hosts. The managed hosts run a supported RHEL-family Linux distribution. The ansible.posix collection and required firewalld dependencies are installed. The firewalld service is available on the managed hosts. In this lab, define the required variables in the playbook and reference them in task parameters; do not hard-code the corresponding values directly into each task. Assign meaningful tags to the playbook tasks so that related operations can be executed selectively. Test the playbook using --tags as well as running the complete playbook."
+    ]
+  },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Create the Ansible playbook and define variables",
+      "steps": [
+        "Log in to the Ansible control node as the srvc user.",
+        "Navigate to the srvc user's home directory.",
+        "Create an ansible directory if it does not already exist, then change into that directory.",
+        "Create a playbook named lab404_variables.yml inside the ansible directory.",
+        "Ensure your custom inventory file exists in the ansible directory.",
+        "Ensure your custom inventory file contains a [dev] group with at least one reachable managed node and a [prod] group containing the Ansible control node.",
+        "Configure the playbook to target the dev inventory group using the hosts directive and connect as service_name using remote_user.",
+        "Enable privilege escalation using become: true.",
+        "Add a vars section to the play. Define variables and assign the required values for the user [user_name: sandy], group [group_name: support], directory [base_dir: /opt/ansible-lab404], source file [source_file_name: lab404-source.txt], source file path [source_path: /opt/lab404-source.txt] source file content [src_content: 'This file was created by the lab 404 variables playbook.'], fetched file name [fetch_file_name: lab404-fetch.txt], fetch filepath [fetch_path: /tmp/lab404-fetch.txt], destination of file copied form control node [fetched_destination: /opt/ansible-lab404/lab404-fetch.txt], appending line in file [append_line: 'This line was added using the Ansible variables lab.'], package name [package_name: httpd], service name [service_name: httpd], firewalld firewall_service for httpd service [firewall_service: http], SELinux state [se_state: permissive] and SElinux policy [se_policy: targeted].",
+        "Use variable references in the playbook's task parameters wherever those values are needed instead of repeating literal values.",
+        "Introduce tags in the playbook to categorize tasks according to their purpose.",
+        "Use meaningful tags such as user, group, filesystem, package, service, firewall, and selinux.",
+        "Assign appropriate tags to each task so that related tasks can be executed selectively.",
+        "A task may have more than one tag when it belongs to multiple categories."
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Create a user using variables",
+      "steps": [
+        "Use the user module and the user_name variable to create the user sandy on the managed hosts.",
+        "Ensure the user has a home directory.",
+        "Set the user's login shell to /bin/bash.",
+        "Assign tags user and users.",
+        "When creating user use user tag and when adding user to group user users tags"
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Create a group using variables",
+      "steps": [
+        "Use the group module and the group_name variable to create the group support.",
+        "Ensure the group exists on the managed hosts.",
+        "Assign tags group and groups.", 
+        "When you will create group use group and for adding user to group use groups tags"
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Add the user to the new group using variables",
+      "steps": [
+        "Use the user module with the user_name and group_name variables to add sandy to the supplementary group support.",
+        "Preserve any existing supplementary group memberships by using the appropriate parameter.",
+        "Ensure the user remains present after the playbook runs.",
+        "Assign tags users."
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Create a directory using variables",
+      "steps": [
+        "Use the file module and the base_dir variable to create /opt/ansible-lab404.",
+        "Ensure the path is a directory.",
+        "Set the directory permissions to 0750 and the owner and group to root.",
+        "Assign tags filesystem."
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Create a source file using variables",
+      "steps": [
+        "Use the copy module and variable source_file_name to create /opt/lab404-source.txt on the managed hosts.",
+        "Use the src_content variable for the content: This file was created by the lab 404 variables playbook.",
+        "Set the file permissions to 0640 and the owner and group to root.",
+        "Assign tags filesystem."
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "Fetch the source file to the control node using variables",
+      "steps": [
+        "Use the fetch module to retrieve the source file from each managed host to the control node.",
+        "Use variables for the source path and destination path.",
+        "Store the retrieved file as /tmp/lab404-fetch.txt on the control node.",
+        "Use flat: true so the fetched file is placed directly in /tmp rather than inside a hostname-based directory structure.",
+        "Assign tags filesystem."
+      ]
+    },
+    {
+      "task_number": 8,
+      "title": "Copy the file from the control node to managed nodes using variables",
+      "steps": [
+        "Use the copy module to copy /tmp/lab404-fetch.txt from the control node to the appropriate file inside /opt/ansible-lab404 on each managed host.",
+        "Use variables for the source and destination paths.",
+        "Use variables to set the destination file permissions to 0640 and the owner and group to root.",
+        "Assign tags filesystem."
+      ]
+    },
+    {
+      "task_number": 9,
+      "title": "Copy the source file into the new directory using variables",
+      "steps": [
+        "Use the copy module to copy /opt/lab404-source.txt to /opt/ansible-lab404/lab404-source.txt on the same managed host.",
+        "Use variables for the source and destination paths.",
+        "Use the appropriate parameter to indicate that the source file already exists on the managed host.",
+        "Use variables to set the destination file permissions and ownership.",
+        "Assign tags filesystem."
+      ]
+    },
+    {
+      "task_number": 10,
+      "title": "Add a new line using variables",
+      "steps": [
+        "Use the lineinfile module to add the line stored in the append_line variable to the copied source file.",
+        "The required line is: This line was added using the Ansible variables lab.",
+        "Use variables for the file path and required ownership and permissions.",
+        "Ensure the line is present only once, even when the playbook is executed repeatedly.",
+        "Assign tags filesystem."
+      ]
+    },
+    {
+      "task_number": 11,
+      "title": "Remove the package using variables",
+      "steps": [
+        "Use the package module and the package_name variable to ensure the httpd package is absent from the managed hosts.",
+        "Assign tags package."
+      ]
+    },
+    {
+      "task_number": 12,
+      "title": "Install the package using variables",
+      "steps": [
+        "Use the package module and the package_name variable to install httpd.",
+        "Ensure the package is present on the managed hosts.",
+        "Assign tags service."
+      ]
+    },
+    {
+      "task_number": 13,
+      "title": "Start and enable the service using variables",
+      "steps": [
+        "Use the service_name variable with the service module to start the httpd service.",
+        "Configure the service to start automatically at boot.",
+        "Ensure the service is running after the playbook completes.",
+        "Assign tags service."
+      ]
+    },
+    {
+      "task_number": 14,
+      "title": "Configure the firewall using variables",
+      "steps": [
+        "Ensure the firewalld service is running and enabled.",
+        "Use the appropriate Ansible firewall module and the firewall_service variable to allow the http service through the firewall.",
+        "Use the appropriate parameters to apply the firewall change immediately and make it persistent across reboots.",
+        "Note: Firewalld uses predefined service definitions. The http definition specifies the network ports associated with HTTP traffic, typically TCP port 80. The httpd name identifies the software implementing the Apache HTTP Server.",
+        "Assign tags firewall."
+      ]
+    },
+    {
+      "task_number": 15,
+      "title": "Set SELinux to permissive mode using a variable",
+      "steps": [
+        "Use the appropriate Ansible SELinux module and the se_state and se_policy variables.",
+        "Set the se_state variable to permissive.",
+        "Set the se_policy variable to the SELinux policy used by the managed hosts, such as targeted.",
+        "Ensure the SELinux configuration persists across reboots.",
+        "Verify that SELinux is operating in permissive mode after the playbook completes.",
+        "Assign tags selinux."
+      ]
+    },
+    {
+      "task_number": 16,
+      "title": "Execute and verify the playbook",
+      "steps": [
+        "Execute lab404_variables.yml from the control node as srvc user",
+        "Ensure the playbook targets the dev host group in your custom inventory file and uses privilege escalation.",
+        "Ensure the required values are defined in the play's vars section and referenced in task parameters rather than repeatedly hard-coded.",
+        "Use the --list-tasks option with --tags to preview which tasks will run for a selected tag.",
+        "Execute only user-related task using the --tags user option.",
+        "Execute only group-related task using the --tags group option.",
+        "Execute only user and group related task using the --tags \"users,groups\" option.",
+        "Execute only filesystem-related tasks using the --tags filesystem option.",
+        "Execute package-management tasks using the --tags package option.",
+        "Execute service-management tasks using the --tags service option.",
+        "Execute firewall tasks using the --tags firewall option.",
+        "Execute SELinux tasks using the --tags selinux option.",
+        "Run the complete playbook without specifying any tags and verify that all tasks execute successfully.",
+        "Verify that all tasks complete successfully on the managed hosts.",
+        "Verify the user and group configuration.",
+        "Verify the directory and file permissions.",
+        "Verify that the fetched file exists as /tmp/lab404-fetch.txt on the control node.",
+        "Verify that the copied file contains both required lines.",
+        "Verify that httpd is installed, running, and enabled.",
+        "Verify that the firewall allows the http service.",
+        "Verify that SELinux is in permissive mode."
+      ]
+    }
+  ],
+  "completion_message": "Lab 404 completed successfully! You have created and executed an Ansible multitasking playbook that uses variables for user and group management, file operations, package management, services, firewall configuration, and SELinux. You have also learned how to assign tags to tasks and execute selected tasks using the --tags option."
+}

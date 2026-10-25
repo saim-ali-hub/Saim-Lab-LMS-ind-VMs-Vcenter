@@ -878,3 +878,9 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 874   awais.sattar              2026-10-15 14:20:29    16     15     94%       
 875   awais.sattar              2026-10-15 14:25:24    16     16     100%      
 876   muhammad.azlan            2026-10-21 18:25:40    16     7      44%       
+877   muhammad.azlan            2026-10-21 22:40:34    16     15     94%       
+878   muhammad.azlan            2026-10-21 22:44:55    16     15     94%       
+879   raza.ali                  2026-10-21 23:03:29    16     15     94%       
+880   raza.ali                  2026-10-21 23:04:27    16     15     94%       
+881   raza.ali                  2026-10-21 23:05:04    16     16     100%      
+882   muhammad.azlan            2026-10-22 18:15:15    16     16     100%      

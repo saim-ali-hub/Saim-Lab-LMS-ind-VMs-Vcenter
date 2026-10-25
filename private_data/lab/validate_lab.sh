@@ -102,6 +102,8 @@ ssh \
         lab304) validate_lab304_gitlab_diff_fetch_merge_pull ;;
         lab401) validate_lab401_ansible_adhoc ;;
         lab402) validate_lab402_ansible_adhoc ;;
+        lab403) validate_lab403_ansible_multitasking ;;
+        lab404) validate_lab404_ansible_variables_tags ;;
 
         *) echo 'Invalid lab'; exit 1 ;;
      esac"

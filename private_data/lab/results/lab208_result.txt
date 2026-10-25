@@ -1023,3 +1023,4 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 1019  awais.sattar              2026-10-14 19:24:18    17     17     100%      
 1020  raza.ali                  2026-10-14 21:08:07    17     17     100%      
 1021  sumara.abbas              2026-10-16 06:55:41    17     15     88%       
+1022  raza.ali                  2026-10-21 20:59:22    17     17     100%      

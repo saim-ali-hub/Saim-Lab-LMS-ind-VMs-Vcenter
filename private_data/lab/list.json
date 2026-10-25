@@ -232,6 +232,16 @@
      "file": "lab402.json"
     },
     {
+     "category": "DevOps",
+     "name": "lab 403 — Ansible Multitasking Playbook",
+     "file": "lab403.json"
+    },
+    {
+     "category": "DevOps",
+     "name": "lab 404 — Ansible Variables and tags in a Multitasking Playbook",
+     "file": "lab404.json"
+    },
+    {
         "category": "Technical Screening",
         "name": "Technical Screening Round - 1",
         "file": "lab901.json"
@@ -245,5 +255,10 @@
         "category": "Technical Screening",
         "name": "Technical Screening Round - 3",
         "file": "lab903.json"
+    },
+    {
+        "category": "Technical Screening",
+        "name": "Technical Screening Round - 5",
+        "file": "lab904.json"
     }
 ]

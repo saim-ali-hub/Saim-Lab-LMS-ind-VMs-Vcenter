@@ -520,3 +520,5 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 516   sammy.saleh               2026-10-19 20:48:40    13     13     100%      
 517   sammy.saleh               2026-10-19 20:49:00    13     13     100%      
 518   sammy.saleh               2026-10-19 21:36:26    13     13     100%      
+519   raza.ali                  2026-10-21 23:16:34    13     13     100%      
+520   muhammad.azlan            2026-10-22 18:16:08    13     13     100%      

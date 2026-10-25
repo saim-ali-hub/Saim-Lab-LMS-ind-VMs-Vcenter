@@ -18525,4 +18525,701 @@ $RESULT_ICON $RESULT_TEXT
 HTML
 }
 #==============================================================
+validate_lab403_ansible_multitasking() {
 
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "<h2 style='color:#white;'>Checking Lab 403 - Ansible Multitasking Playbook.</h2>"
+
+    TOTAL_TASKS=16
+    PASSED=0
+
+    LAB_NAME="Lab 403 - Ansible Multitasking Playbook"
+    DATE=$(date "+%F %T")
+
+    # CONFIGURATION
+    LAB_USER="marry"
+    LAB_GROUP="dbadmins"
+
+    LAB_DIR="/opt/ansible-lab403"
+
+    SOURCE_FILE="/opt/lab403-source.txt"
+    FETCHED_FILE="$LAB_DIR/lab403-fetch.txt"
+    COPIED_SOURCE_FILE="$LAB_DIR/lab403-source.txt"
+
+    SOURCE_CONTENT="This file was created by the lab 403 Ansible multitasking playbook."
+    ADDED_LINE="This line was added using the Ansible lineinfile module."
+
+    # HELPERS
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # TASK 1 - VERIFY MANAGED NODE REACHABILITY
+    if hostname >/dev/null 2>&1; then
+        pass "Task 1: Managed node is reachable for validation"
+    else
+        fail "Task 1: Managed node is reachable for validation"
+    fi
+
+    # TASK 2 - VERIFY USER, HOME DIRECTORY, AND LOGIN SHELL
+    USER_ENTRY=$(getent passwd "$LAB_USER" 2>/dev/null)
+
+    if [[ -n "$USER_ENTRY" ]] &&
+       [[ "$(echo "$USER_ENTRY" | cut -d: -f6)" == "/home/$LAB_USER" ]] &&
+       [[ "$(echo "$USER_ENTRY" | cut -d: -f7)" == "/bin/bash" ]] &&
+       sudo -n test -d "/home/$LAB_USER" 2>/dev/null; then
+        pass "Task 2: User marry exists with a home directory and /bin/bash shell"
+    else
+        fail "Task 2: User marry exists with a home directory and /bin/bash shell"
+    fi
+
+    # TASK 3 - VERIFY DBADMINS GROUP
+    if getent group "$LAB_GROUP" >/dev/null 2>&1; then
+        pass "Task 3: Group dbadmins exists"
+    else
+        fail "Task 3: Group dbadmins exists"
+    fi
+
+    # TASK 4 - VERIFY USER GROUP MEMBERSHIP
+    if id -nG "$LAB_USER" 2>/dev/null |
+       tr ' ' '\n' |
+       grep -Fxq "$LAB_GROUP"; then
+        pass "Task 4: User marry belongs to supplementary group dbadmins"
+    else
+        fail "Task 4: User marry belongs to supplementary group dbadmins"
+    fi
+
+    # TASK 5 - VERIFY DIRECTORY
+    DIR_META=$(sudo -n stat -c '%a:%U:%G' "$LAB_DIR" 2>/dev/null)
+
+    if sudo -n test -d "$LAB_DIR" 2>/dev/null &&
+       [[ "$DIR_META" == "750:root:root" ]]; then
+        pass "Task 5: /opt/ansible-lab403 exists with root ownership and mode 0750"
+    else
+        fail "Task 5: /opt/ansible-lab403 exists with root ownership and mode 0750"
+    fi
+
+    # TASK 6 - VERIFY SOURCE FILE CONTENT, PERMISSIONS, AND OWNERSHIP
+    SOURCE_META=$(sudo -n stat -c '%a:%U:%G' "$SOURCE_FILE" 2>/dev/null)
+
+    if sudo -n test -f "$SOURCE_FILE" 2>/dev/null &&
+       sudo -n grep -Fxq "$SOURCE_CONTENT" "$SOURCE_FILE" 2>/dev/null &&
+       [[ "$SOURCE_META" == "640:root:root" ]]; then
+        pass "Task 6: Source file has the required content, mode 0640, and root ownership"
+    else
+        fail "Task 6: Source file has the required content, mode 0640, and root ownership"
+    fi
+
+    # TASK 7 - VERIFY FETCHED FILE COPY ON MANAGED NODE
+    # The control-node copy at /tmp/lab403-fetch.txt cannot be
+    # verified by this managed-node validator alone.
+    FETCHED_META=$(sudo -n stat -c '%a:%U:%G' "$FETCHED_FILE" 2>/dev/null)
+
+    if sudo -n test -f "$FETCHED_FILE" 2>/dev/null &&
+       sudo -n grep -Fxq "$SOURCE_CONTENT" "$FETCHED_FILE" 2>/dev/null &&
+       [[ "$FETCHED_META" == "640:root:root" ]]; then
+        pass "Task 7: lab403-fetch.txt exists in the lab directory with correct content, mode, and ownership"
+    else
+        fail "Task 7: lab403-fetch.txt exists in the lab directory with correct content, mode, and ownership"
+    fi
+
+    # TASK 8 - VERIFY COPIED SOURCE FILE
+    COPIED_META=$(sudo -n stat -c '%a:%U:%G' "$COPIED_SOURCE_FILE" 2>/dev/null)
+
+    if sudo -n test -f "$COPIED_SOURCE_FILE" 2>/dev/null &&
+       sudo -n grep -Fxq "$SOURCE_CONTENT" "$COPIED_SOURCE_FILE" 2>/dev/null &&
+       [[ "$COPIED_META" == "640:root:root" ]]; then
+        pass "Task 8: lab403-source.txt is copied into the lab directory with correct content, mode, and ownership"
+    else
+        fail "Task 8: lab403-source.txt is copied into the lab directory with correct content, mode, and ownership"
+    fi
+
+    # TASK 9 - VERIFY LINEINFILE CONTENT
+    if sudo -n test -f "$COPIED_SOURCE_FILE" 2>/dev/null &&
+       sudo -n grep -Fxq "$ADDED_LINE" "$COPIED_SOURCE_FILE" 2>/dev/null; then
+        pass "Task 9: The required line is present in lab403-source.txt"
+    else
+        fail "Task 9: The required line is present in lab403-source.txt"
+    fi
+
+    # TASK 10 - VERIFY VSFTPD PACKAGE
+    if rpm -q vsftpd >/dev/null 2>&1; then
+        pass "Task 10: vsftpd package is installed"
+    else
+        fail "Task 10: vsftpd package is installed"
+    fi
+
+    # TASK 11 - VERIFY VSFTPD SERVICE IS RUNNING
+    if sudo -n systemctl is-active --quiet vsftpd 2>/dev/null; then
+        pass "Task 11: vsftpd service is running"
+    else
+        fail "Task 11: vsftpd service is running"
+    fi
+
+    # TASK 12 - VERIFY VSFTPD SERVICE IS ENABLED
+    if sudo -n systemctl is-enabled --quiet vsftpd 2>/dev/null; then
+        pass "Task 12: vsftpd service is enabled at boot"
+    else
+        fail "Task 12: vsftpd service is enabled at boot"
+    fi
+
+    # TASK 13 - VERIFY FIREWALLD IS RUNNING AND ENABLED
+    if sudo -n systemctl is-active --quiet firewalld 2>/dev/null &&
+       sudo -n systemctl is-enabled --quiet firewalld 2>/dev/null; then
+        pass "Task 13: firewalld is running and enabled at boot"
+    else
+        fail "Task 13: firewalld is running and enabled at boot"
+    fi
+
+    # TASK 14 - VERIFY FTP FIREWALL RULE
+    # The standard firewalld service name for FTP is "ftp",
+    # not "vsftpd".
+    if sudo -n firewall-cmd --quiet --query-service=ftp 2>/dev/null &&
+       sudo -n firewall-cmd --permanent --quiet --query-service=ftp 2>/dev/null; then
+        pass "Task 14: FTP service is allowed in runtime and permanent firewall configurations"
+    else
+        fail "Task 14: FTP service is allowed in runtime and permanent firewall configurations"
+    fi
+
+    # TASK 15 - VERIFY CURRENT SELINUX MODE
+    if command -v getenforce >/dev/null 2>&1 &&
+       [[ "$(getenforce 2>/dev/null)" == "Permissive" ]] &&
+       sudo -n test -f /etc/selinux/config 2>/dev/null &&
+       sudo -n grep -Eq '^[[:space:]]*SELINUX=permissive([[:space:]]*(#.*)?)?$' \
+           /etc/selinux/config 2>/dev/null; then
+        pass "Task 15: SELinux is currently in permissive mode"
+    else
+        fail "Task 15: SELinux is currently in permissive mode"
+    fi
+
+    # TASK 16 - VERIFY OVERALL LAB COMPLETION
+    if [[ "$PASSED" -eq 15 ]]; then
+        pass "Task 16: All 15 previous tasks passed successfully"
+    else
+        fail "Task 16: Not all previous tasks passed"
+    fi
+ 
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#=================================================================
+
+validate_lab404_ansible_variables_tags() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "<h2>Checking Lab 404 - Ansible Variables in a Multitasking Playbook.</h2>"
+
+    TOTAL_TASKS=16
+    PASSED=0
+
+    LAB_NAME="Lab 404 - Ansible Variables in a Multitasking Playbook"
+    DATE=$(date "+%F %T")
+
+    # CONFIGURATION
+    LAB_USER="sandy"
+    LAB_GROUP="support"
+
+    LAB_DIR="/opt/ansible-lab404"
+
+    SOURCE_FILE="/opt/lab404-source.txt"
+    FETCHED_FILE="$LAB_DIR/lab404-fetch.txt"
+    COPIED_SOURCE_FILE="$LAB_DIR/lab404-source.txt"
+
+    SOURCE_CONTENT="This file was created by the lab 404 variables playbook."
+    ADDED_LINE="This line was added using the Ansible variables lab."
+
+    PACKAGE_NAME="httpd"
+    SERVICE_NAME="httpd"
+    FIREWALL_SERVICE="http"
+
+    # HELPERS
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # TASK 1 - VERIFY MANAGED NODE REACHABILITY
+    if hostname >/dev/null 2>&1; then
+        pass "Task 1: Managed node is reachable for validation"
+    else
+        fail "Task 1: Managed node is reachable for validation"
+    fi
+
+    # TASK 2 - VERIFY USER, HOME DIRECTORY, AND LOGIN SHELL
+    USER_ENTRY=$(getent passwd "$LAB_USER" 2>/dev/null)
+
+    if [[ -n "$USER_ENTRY" ]] &&
+       [[ "$(echo "$USER_ENTRY" | cut -d: -f6)" == "/home/$LAB_USER" ]] &&
+       [[ "$(echo "$USER_ENTRY" | cut -d: -f7)" == "/bin/bash" ]] &&
+       sudo -n test -d "/home/$LAB_USER" 2>/dev/null; then
+        pass "Task 2: User sandy exists with a home directory and /bin/bash shell"
+    else
+        fail "Task 2: User sandy exists with a home directory and /bin/bash shell"
+    fi
+
+    # TASK 3 - VERIFY SUPPORT GROUP
+    if getent group "$LAB_GROUP" >/dev/null 2>&1; then
+        pass "Task 3: Group support exists"
+    else
+        fail "Task 3: Group support exists"
+    fi
+
+    # TASK 4 - VERIFY USER SUPPLEMENTARY GROUP MEMBERSHIP
+    if id -nG "$LAB_USER" 2>/dev/null |
+       tr ' ' '\n' |
+       grep -Fxq "$LAB_GROUP"; then
+        pass "Task 4: User sandy belongs to supplementary group support"
+    else
+        fail "Task 4: User sandy belongs to supplementary group support"
+    fi
+
+    # TASK 5 - VERIFY DIRECTORY, OWNERSHIP, AND PERMISSIONS
+    DIR_META=$(sudo -n stat -c '%a:%U:%G' "$LAB_DIR" 2>/dev/null)
+
+    if sudo -n test -d "$LAB_DIR" 2>/dev/null &&
+       [[ "$DIR_META" == "750:root:root" ]]; then
+        pass "Task 5: Lab directory exists with root ownership and mode 0750"
+    else
+        fail "Task 5: Lab directory exists with root ownership and mode 0750"
+    fi
+
+    # TASK 6 - VERIFY SOURCE FILE CONTENT, OWNERSHIP, AND PERMISSIONS
+    SOURCE_META=$(sudo -n stat -c '%a:%U:%G' "$SOURCE_FILE" 2>/dev/null)
+
+    if sudo -n test -f "$SOURCE_FILE" 2>/dev/null &&
+       sudo -n grep -Fxq "$SOURCE_CONTENT" "$SOURCE_FILE" 2>/dev/null &&
+       [[ "$SOURCE_META" == "640:root:root" ]]; then
+        pass "Task 6: Source file has the required content, mode 0640, and root ownership"
+    else
+        fail "Task 6: Source file has the required content, mode 0640, and root ownership"
+    fi
+
+    # TASK 7 - VERIFY FETCHED FILE COPIED BACK TO MANAGED NODE
+    # The control-node file /tmp/lab404-fetch.txt cannot be checked
+    # directly by this managed-node validator.
+    FETCHED_META=$(sudo -n stat -c '%a:%U:%G' "$FETCHED_FILE" 2>/dev/null)
+
+    if sudo -n test -f "$FETCHED_FILE" 2>/dev/null &&
+       sudo -n grep -Fxq "$SOURCE_CONTENT" "$FETCHED_FILE" 2>/dev/null &&
+       [[ "$FETCHED_META" == "640:root:root" ]]; then
+        pass "Task 7: Fetched file copy exists in the lab directory with correct content, mode, and ownership"
+    else
+        fail "Task 7: Fetched file copy exists in the lab directory with correct content, mode, and ownership"
+    fi
+
+    # TASK 8 - VERIFY SOURCE FILE COPIED INTO LAB DIRECTORY
+    COPIED_META=$(sudo -n stat -c '%a:%U:%G' "$COPIED_SOURCE_FILE" 2>/dev/null)
+
+    if sudo -n test -f "$COPIED_SOURCE_FILE" 2>/dev/null &&
+       sudo -n grep -Fxq "$SOURCE_CONTENT" "$COPIED_SOURCE_FILE" 2>/dev/null &&
+       [[ "$COPIED_META" == "640:root:root" ]]; then
+        pass "Task 8: lab404-source.txt exists in the lab directory with correct content, mode, and ownership"
+    else
+        fail "Task 8: lab404-source.txt exists in the lab directory with correct content, mode, and ownership"
+    fi
+
+    # TASK 9 - VERIFY LINEINFILE CONTENT AND UNIQUENESS
+    ADDED_LINE_COUNT=$(
+        sudo -n grep -Fxc -- "$ADDED_LINE" "$COPIED_SOURCE_FILE" 2>/dev/null
+    )
+    ADDED_LINE_COUNT=${ADDED_LINE_COUNT:-0}
+
+    if sudo -n test -f "$COPIED_SOURCE_FILE" 2>/dev/null &&
+       [[ "$ADDED_LINE_COUNT" -eq 1 ]] &&
+       [[ "$COPIED_META" == "640:root:root" ]]; then
+        pass "Task 9: Required line appears exactly once with correct file permissions and ownership"
+    else
+        fail "Task 9: Required line appears exactly once with correct file permissions and ownership"
+    fi
+
+    # TASK 10 - VERIFY HTTPD PACKAGE
+    # The final state must have httpd installed because Task 12
+    # reinstalls it after Task 11 removes it.
+    if rpm -q "$PACKAGE_NAME" >/dev/null 2>&1; then
+        pass "Task 10: httpd package is installed"
+    else
+        fail "Task 10: httpd package is installed"
+    fi
+
+    # TASK 11 - VERIFY HTTPD SERVICE IS RUNNING
+    if sudo -n systemctl is-active --quiet "$SERVICE_NAME" 2>/dev/null; then
+        pass "Task 11: httpd service is running"
+    else
+        fail "Task 11: httpd service is running"
+    fi
+
+    # TASK 12 - VERIFY HTTPD SERVICE IS ENABLED
+    if sudo -n systemctl is-enabled --quiet "$SERVICE_NAME" 2>/dev/null; then
+        pass "Task 12: httpd service is enabled at boot"
+    else
+        fail "Task 12: httpd service is enabled at boot"
+    fi
+
+    # TASK 13 - VERIFY FIREWALLD IS RUNNING AND ENABLED
+    if sudo -n systemctl is-active --quiet firewalld 2>/dev/null &&
+       sudo -n systemctl is-enabled --quiet firewalld 2>/dev/null; then
+        pass "Task 13: firewalld is running and enabled at boot"
+    else
+        fail "Task 13: firewalld is running and enabled at boot"
+    fi
+
+    # TASK 14 - VERIFY HTTP FIREWALL RULE
+    # Check both the runtime and permanent firewall configurations.
+    if sudo -n firewall-cmd --quiet --query-service="$FIREWALL_SERVICE" 2>/dev/null &&
+       sudo -n firewall-cmd --permanent --quiet --query-service="$FIREWALL_SERVICE" 2>/dev/null; then
+        pass "Task 14: HTTP service is allowed in runtime and permanent firewall configurations"
+    else
+        fail "Task 14: HTTP service is allowed in runtime and permanent firewall configurations"
+    fi
+
+    # TASK 15 - VERIFY SELINUX MODE, PERSISTENCE, AND POLICY
+    SELINUX_MODE=$(getenforce 2>/dev/null)
+    SELINUX_CONFIG_STATE=$(
+        sudo -n awk -F= '
+            /^[[:space:]]*SELINUX[[:space:]]*=/ {
+                gsub(/[[:space:]]/, "", $1)
+                gsub(/[[:space:]#].*/, "", $2)
+                value = $2
+            }
+            END { print value }
+        ' /etc/selinux/config 2>/dev/null
+    )
+    SELINUX_POLICY=$(
+        sudo -n awk -F= '
+            /^[[:space:]]*SELINUXTYPE[[:space:]]*=/ {
+                gsub(/[[:space:]]/, "", $1)
+                gsub(/[[:space:]#].*/, "", $2)
+                value = $2
+            }
+            END { print value }
+        ' /etc/selinux/config 2>/dev/null
+    )
+
+    if [[ "$SELINUX_MODE" == "Permissive" ]] &&
+       [[ "$SELINUX_CONFIG_STATE" == "permissive" ]] &&
+       [[ "$SELINUX_POLICY" == "targeted" ]]; then
+        pass "Task 15: SELinux is permissive, persists across reboots, and uses the targeted policy"
+    else
+        fail "Task 15: SELinux is permissive, persists across reboots, and uses the targeted policy"
+    fi
+
+    # TASK 16 - VERIFY OVERALL LAB COMPLETION
+    if [[ "$PASSED" -eq 15 ]]; then
+        pass "Task 16: All 15 previous validation checks passed successfully"
+    else
+        fail "Task 16: Only $PASSED of the previous 15 validation checks passed"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#==================================================================

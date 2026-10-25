@@ -409,3 +409,5 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 405   yuliana.cuzzi             2026-10-07 02:49:00    11     9      82%       
 406   muhammad.bilal            2026-10-07 14:35:18    11     11     100%      
 407   raza.ali                  2026-10-15 23:54:29    11     11     100%      
+408   awais.afzal               2026-10-22 02:03:51    11     11     100%      
+409   raza.ali                  2026-10-22 05:42:58    11     11     100%      
