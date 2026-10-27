@@ -1,0 +1,184 @@
+{
+  "lab_id": "lab403",
+  "title": "Lab 403 - Ansible Multitasking Playbook",
+  "lab_objective": {
+    "description": "By the end of this lab, you should be able to:",
+    "objectives": [
+      "Create a playbook using valid YAML syntax and proper indentation.",
+      "Target the dev host group and connect using the srvc account.",
+      "Use privilege escalation for tasks that require elevated permissions.",
+      "Manage users and groups using Ansible modules.",
+      "Create directories and files with the required ownership and permissions.",
+      "Copy files between managed-node locations and retrieve files to the control node.",
+      "Modify file content using the lineinfile module.",
+      "Remove and reinstall a package using the package module.",
+      "Start and enable services using the service module.",
+      "Configure the firewall using the firewalld module.",
+      "Configure SELinux to operate in permissive mode."
+    ],
+    "scenario": [
+       "You are a Linux administrator responsible for configuring development servers. Create a single Ansible playbook that automates user and group management, filesystem operations, package management, service configuration, firewall access, and SELinux settings.     Ansible is installed on the control node. The managed hosts are configured in /etc/ansible/hosts under the dev group. The srvc account can connect to the managed hosts using SSH keys. The srvc account has sudo privileges on managed hosts. The managed hosts run a supported RHEL-family Linux distribution. The ansible.posix collection and required firewalld dependencies are installed. The firewalld service is available on the managed hosts."
+    ]
+  },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Create the Ansible playbook",
+      "steps": [
+        "Log in to the Ansible control node as the srvc user.",
+        "Navigate to the srvc user's home directory.",
+        "Create an ansible directory if it does not already exist, then change into that directory.",
+        "Create a playbook named lab403_multitasking.yml inside the ansible directory.",
+        "Ensure your custom inventory file exists in the ansible directory.",
+        "Ensure your custom inventory file contains a [dev] group with at least one reachable managed node and a [prod] group containing the Ansible control node.",
+        "Configure the playbook to target the dev inventory group using the hosts directive.",
+        "Configure the playbook to connect to managed nodes as the srvc user using the remote_user directive.",
+        "Enable privilege escalation using become: true so tasks can perform administrative operations when required."
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Create a user",
+      "steps": [
+        "Use the user module to create a user named ‘marry’ on the managed hosts.",
+        "Ensure the user has a home directory.",
+        "Set the user's login shell to /bin/bash."
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Create a group",
+      "steps": [
+        "Use the group module to create a group named ‘dbadmins’.",
+        "Ensure the group exists on the managed hosts."
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Add the user to the new group",
+      "steps": [
+        "Use the user module to add ‘marry’ to the supplementary group ‘dbadmins’.",
+        "Preserve any existing supplementary group memberships.",
+        "Ensure the user remains present after the playbook runs."
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Create a directory",
+      "steps": [
+        "Use the file module to create /opt/ansible-lab403.",
+        "Ensure the path is a directory.",
+        "Set the directory permissions to 0750.",
+        "Set the directory owner and group to root."
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Create a source file in /opt",
+      "steps": [
+        "Use the copy module to create /opt/lab403-source.txt on the managed hosts.",
+        "Add the following content: This file was created by the lab 403 Ansible multitasking playbook.",
+        "Set the file permissions to 0640.",
+        "Set the file owner and group to root."
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "Fetch the source file to the control node",
+      "steps": [
+        "Use the fetch module to copy /opt/lab403-source.txt from each managed host to the control node.",
+        "Store the retrieved file under /tmp on the control node and name it lab403-fetch.txt.",
+        "Use flat: true so the fetched file is placed directly in /tmp rather than inside a hostname-based directory structure."
+      ]
+    },
+    {
+      "task_number": 8,
+      "title": "Copy the file from the control node to managed node",
+      "steps": [
+        "Use the copy module to copy /tmp/lab403-fetch.txt from the control node to /opt/ansible-lab403/lab403-fetch.txt on each managed host.",
+        "Set the destination file permissions to 0640.",
+        "Set the destination file owner and group to root."
+      ]
+    },
+    {
+      "task_number": 9,
+      "title": "Copy the source file into the new directory",
+      "steps": [
+        "Use the copy module to copy /opt/lab403-source.txt to /opt/ansible-lab403/lab403-source.txt on the same managed host.",
+        "Use the appropriate parameter to indicate that the source file already exists on the managed host.",
+        "Set the destination file permissions to 0640.",
+        "Ensure the destination file has the required ownership."
+      ]
+    },
+    {
+      "task_number": 10,
+      "title": "Add a new line to the copied file",
+      "steps": [
+        "Use the lineinfile module to add the following line to /opt/ansible-lab403/lab403-source.txt: This line was added using the Ansible lineinfile module.",
+        "Ensure the line is present only once, even when the playbook is executed repeatedly.",
+        "Preserve the file's required ownership and permissions."
+      ]
+    },
+    {
+      "task_number": 11,
+      "title": "Remove the vsftpd package",
+      "steps": [
+        "Use the package module to ensure the vsftpd package is absent from the managed hosts."
+      ]
+    },
+    {
+      "task_number": 12,
+      "title": "Install the vsftpd package",
+      "steps": [
+        "Use the package module to install the vsftpd package.",
+        "Ensure the package is present on the managed hosts."
+      ]
+    },
+    {
+      "task_number": 13,
+      "title": "Start and enable the vsftpd service",
+      "steps": [
+        "Use the service module to start the vsftpd service.",
+        "Configure the service to start automatically at boot.",
+        "Ensure the service is running after the playbook completes."
+      ]
+    },
+    {
+      "task_number": 14,
+      "title": "Configure the firewall",
+      "steps": [
+        "Ensure the firewalld service is running and enabled.",
+        "Use the appropriate Ansible firewall module to allow the ftp service through the firewall.",
+        "Apply the firewall change immediately and make it persistent across reboots.",
+        "Note: Firewalld uses predefined service definitions. The ftp definition specifies the network ports associated with FTP, typically TCP port 21. The vsftpd name identifies the software implementing the FTP server."
+      ]
+    },
+    {
+      "task_number": 15,
+      "title": "Set SELinux to permissive mode",
+      "steps": [
+        "Use the appropriate Ansible SELinux module to configure SELinux in permissive mode.",
+        "Ensure the configuration persists across reboots.",
+        "Verify that SELinux is operating in permissive mode after the playbook completes."
+      ]
+    },
+    {
+      "task_number": 16,
+      "title": "Execute and verify the playbook",
+      "steps": [
+        "Execute lab403_multitasking.yml from the control node as srvc.",
+        "Ensure the playbook targets the dev host group in your custom inventory file and uses privilege escalation.",
+        "Verify that all tasks complete successfully on the managed hosts.",
+        "Verify the user and group configuration.",
+        "Verify the directory and file permissions.",
+        "Verify that the fetched file exists under /tmp on the control node.",
+        "Verify that the copied file contains both required lines.",
+        "Verify that vsftpd is installed, running, and enabled.",
+        "Verify that the firewall allows the vsftpd service.",
+        "Verify that SELinux is in permissive mode."
+      ]
+    }
+  ],
+  "completion_message": "Lab 403 completed successfully! You have created and executed an Ansible multitasking playbook covering user and group management, file operations, package management, services, firewall configuration, and SELinux."
+}
+

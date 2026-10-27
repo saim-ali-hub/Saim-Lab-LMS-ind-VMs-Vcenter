@@ -1,0 +1,135 @@
+{
+  "lab_id": "lab405",
+  "title": "Lab 405 - Ansible NFS Server and Client Configuration",
+  "lab_objective": {
+  "description": "By the end of this lab, you should be able to:",
+  "objectives": [
+    "Create an Ansible playbook containing two plays.",
+    "Target different inventory host groups using hosts: prod and hosts: dev.",
+    "Install and manage NFS packages and services using Ansible.",
+    "Create and configure an NFS export directory.",
+    "Configure /etc/exports and apply NFS export settings.",
+    "Configure firewall services and SELinux.",
+    "Configure an NFS client using Ansible.",
+    "Mount an NFS export and configure persistent mounting through /etc/fstab.",
+    "Verify NFS read/write access and persistent mounts."
+  ],
+  "scenario": [
+    "You are working as a Linux Systems Administrator responsible for configuring a centralized NFS share for application and development teams. Your Ansible inventory contains two host groups: prod, which contains the NFS server, and dev, which contains the NFS client. Create an Ansible playbook named nfs_setup.yml containing exactly two plays. The first play must configure the NFS server on prod, and the second play must configure the NFS client on dev and verify NFS read/write access."
+  ]
+ }, 
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Create the Ansible Playbook",
+      "steps": [
+        "Log in to the Ansible control node as the srvc user.",
+        "Navigate to the srvc user's home directory.",
+        "Create an ansible directory if it does not already exist, then change into that directory.",
+        "Create an Ansible playbook named nfs_setup.yml.",
+        "Configure an NFS server configuration play targeting prod.",
+        "Define reusable variables for package names, service names, directories, file paths, file contents, firewall services, and SELinux settings.",
+        "Define the following variables for the NFS server play.",
+        "nfs_share: /nfs_lab405_share",
+        "nfs_file_name: lab405-test.txt",
+        "nfs_file_path: /nfs_lab405_share/server_test.txt",
+        "test_content: 'This is my first NFS share, and I am excited to learn how to configure and manage an NFS server.'",
+        "package_name: nfs-utils",
+        "service_nfs: nfs-server",
+        "service_rpc: rpcbind",
+        "firewall_service_nfs: nfs",
+        "firewall_service_mountd: mountd",
+        "firewall_service_rpc: rpc-bind",
+        "se_state: permissive",
+        "se_policy: targeted",
+        "Use variable references in task parameters wherever applicable instead of repeating literal values.",
+        "Use become: true wherever administrative privileges are required.",
+        "Use appropriate Ansible modules instead of performing the configuration manually."
+        ]
+    },
+    {
+      "task_number": 2,
+      "title": "Play 1 - Configure the NFS Server on prod",
+      "steps": [
+        "Configure the first play to target the prod inventory group using hosts: prod.",
+        "Enable privilege escalation using become: true.",
+        "Install the nfs-utils package using an appropriate Ansible package module and the package_name variable.",
+        "Enable and start the nfs-server service using the service_nfs variable.",
+        "Enable and start the rpcbind service using the service_rpc variable.",
+        "Create the NFS export directory /nfs_lab405_share using the nfs_share variable. Set permissions '0777' on export directory",
+        "Create /nfs_lab405_share/server_test.txt using the nfs_file_path variable and the copy module. Set permissions '0666' on/nfs_lab405_share/server_test.txt.",
+        "Set the file content using the test_content variable.",
+        "Configure /etc/exports to export the NFS share to the intended dev clients with read/write access, synchronous writes, and the no_root_squash option.",
+        "Use an appropriate Ansible module, such as lineinfile or template, to manage the NFS export configuration.",
+        "Apply the NFS export configuration without rebooting the server, using an appropriate command or module.",
+        "Configure firewalld to allow the NFS service using the firewall_service_nfs variable.",
+        "Configure firewalld to allow the mountd service using the firewall_service_mountd variable.",
+        "Configure firewalld to allow the RPC service using the firewall_service_rpc variable.",
+        "Ensure the firewall configuration is applied and persistent.",
+        "Configure SELinux with the se_policy and se_state variables using an appropriate Ansible module.",
+        "Use suitable Ansible modules such as package, service, file, copy, lineinfile, command, and firewalld where supported.",
+        "Ensure the server is ready to provide the NFS export to the dev clients."
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Play 2 - Configure the NFS Client on dev",
+      "steps": [
+        "Configure the second play to target the dev inventory group using hosts: dev.",
+        "Enable privilege escalation using become: true.",
+        "Define reusable variables for the NFS package, RPC service, mount point, client test file, and file contents.",
+        "Use the following variables for the client configuration.",
+        "package_name: nfs-utils",
+        "service_name: rpcbind",
+        "nfs_server: \"{{ hostvars[groups['prod'][0]].ansible_host | default(groups['prod'][0]) }}\"",
+        "nfs_share: /nfs_lab405_share",
+        "mount_point: /nfs_lab405",
+        "test_file_name: client_test.txt",
+        "test_file_path: /nfs_lab405/client_test.txt",
+        "client_test_content: 'This file was created from the NFS client to verify write access to the NFS shared filesystem.'",
+        "server_test_content: 'This file was modified from the NFS client to verify shared filesystem access.'",
+        "Use variable references in task parameters wherever applicable instead of repeating literal values.",
+        "Use appropriate Ansible modules instead of performing the configuration manually.",
+        "Install the nfs-utils package using the appropriate package module and the package_name variable.",
+        "Enable and start the rpcbind service using service_name variable.",
+        "Create the local mount point /nfs_lab405 using the mount_point variable.",
+        "Discover or verify the NFS export provided by the prod server.",
+        "Create mount point using file module and mount_point variable.",
+        "Mount the server's /nfs_lab405_share export at /nfs_lab405 using the mount module.",
+        "Ensure the NFS source references the server defined in the prod inventory group rather than a hard-coded server address.",
+        "Configure the mount persistently through /etc/fstab or the Ansible mount module.",
+        "Ensure the filesystem is mounted and available without manually rebooting the client."
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Play 2 - Verify NFS Read and Write Access",
+      "steps": [
+        "Add the verification tasks to the second play targeting dev. Do not create a third play.",
+        "Verify that /nfs_lab405 is mounted as an NFS filesystem.",
+        "Confirm that server_test.txt is accessible from the client.",
+        "Verify that the server-side test file contains the expected initial content.",
+        "Create /nfs_lab405/client_test.txt using the test_file_path variable and the client_test_content variable.",
+        "Modify server_test.txt from the client by adding the text specified in the server_test_content variable without unintentionally removing the original content.",
+        "Verify that both files are accessible through the client mount.",
+        "Verify that the client-created file and the modification to server_test.txt are visible on the NFS server.",
+        "Verify that the client mount is configured persistently in /etc/fstab.",
+        "Use appropriate Ansible modules such as stat, command, shell, assert, copy, lineinfile, and mount where suitable."
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Execute and Validate the Playbook",
+      "steps": [
+        "Navigate to the directory containing nfs_setup.yml.",
+        "Check the playbook syntax using ansible-playbook --syntax-check nfs_setup.yml.",
+        "Execute the playbook against the configured inventory using ansible-playbook nfs_setup.yml -i <path_to_inventory_file>.",
+        "Verify that the first play runs against the prod host group.",
+        "Verify that the second play runs against the dev host group.",
+        "Confirm that the NFS server exports /nfs_lab405_share to the intended dev clients.",
+        "Confirm that the NFS client mounts the share successfully at /nfs_lab405."
+      ]
+    }
+  ],
+  "completion_message": "Excellent work! You have completed Lab 405 - Ansible NFS Server and Client Configuration. You have created and executed a two-play Ansible playbook to configure an NFS server on the prod host group and an NFS client on the dev host group. You have practiced package and service management, NFS exports, firewall configuration, SELinux management, persistent mounting, and end-to-end read/write verification using Ansible."
+}

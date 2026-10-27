@@ -2,7 +2,7 @@
   "lab_id": "lab402",
   "title": "Ansible Ad-Hoc Commands - System Administration and File Management",
   "lab_objective": {
-    "description": "By the end of this lab, students should be able to:",
+    "description": "By the end of this lab, you should be able to:",
     "objectives": [
       "Create a group with the group module.",
       "Create a user with the user module, then add that user to the group in a separate task.",

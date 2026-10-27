@@ -1,0 +1,152 @@
+{
+  "title": "Lab 406 - Ansible Handlers and Notify",
+  "lab_objective": {
+    "description": "By performing this lab, you will learn how to use Ansible handlers to perform actions when tasks make changes.",
+    "objectives": [
+      "Understand the concept and purpose of Ansible handlers.",
+      "Define and use variables in a playbook.",
+      "Create tasks to manage packages, services, configuration files, and web content.",
+      "Use the notify directive to trigger handlers.",
+      "Create handlers to restart and reload services when required.",
+      "Understand when handlers execute and why they execute only when a task reports a change.",
+      "Understand handler execution order and how Ansible avoids running the same handler multiple times in a play.",
+      "Validate the results by executing the playbook multiple times."
+    ],
+    "scenario": [
+      "You are an Ansible administrator responsible for configuring an Apache web server on a managed node in the dev host group. You must install Apache, configure it to listen on port 8585, allow the port through the firewall, configure SELinux, and use handlers to restart Apache and reload firewalld when required."
+    ]
+  },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Create a Variables File",
+      "steps": [
+        "Create a file named lab406_vars.yml in the ansible directory under the srvc user's home directory.",
+        "Define the following variables in the file:",
+        "web_package: httpd",
+        "web_service: httpd",
+        "firewall_service: firewalld",
+        "web_port: 8585/tcp",
+        "web_root: /var/www/html",
+        "web_page: /var/www/html/index.html",
+        "web_message: \"Welcome to {{ ansible_fqdn }} on {{ ansible_default_ipv4.address }}\"",
+        "se_state: permissive",
+        "se_policy: targeted",
+        "Save the file.",
+        "These variables will be used throughout the playbook instead of repeating literal values in every task."
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Create an Ansible Playbook",
+      "steps": [
+        "Log in to the Ansible control node as the srvc user.",
+        "Navigate to the srvc user's home directory.",
+        "Create an ansible directory if it does not already exist, then change into that directory.",
+        "Create a playbook named lab406_handlers.yml.",
+        "Target the dev host group using hosts: dev.",
+        "Load variables from lab406_vars.yml using vars_files.",
+        "Explicitly set gather_facts: true because web_message uses ansible_fqdn and ansible_default_ipv4.address.",
+        "Use variable references in task parameters wherever applicable instead of repeating literal values.",
+        "Use become: true for administrative operations.",
+        "Use appropriate Ansible modules to perform the required configuration."
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Install Apache",
+      "steps": [
+        "Create a task to install the httpd package using an appropriate Ansible package module.",
+        "Use the web_package variable to specify the package name."
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Start and Enable Apache and Firewalld",
+      "steps": [
+        "Create a task to start the Apache service and enable it at boot using the web_service variable.",
+        "Create a task to start the firewalld service and enable it at boot using the firewall_service variable.",
+        "Use the service module for both tasks."
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Create the Web Document Root",
+      "steps": [
+        "Use the file module to ensure that the directory specified by web_root exists.",
+        "Ensure that the path is a directory."
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Create a Web Page",
+      "steps": [
+        "Use the copy module to create the file specified by web_page.",
+        "Use the web_message variable as the file content.",
+        "Ensure that the web page displays the managed host's fully qualified domain name and default IPv4 address."
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "Change the Apache Listening Port",
+      "steps": [
+        "Use the lineinfile module to modify /etc/httpd/conf/httpd.conf.",
+        "Ensure that the Apache listening directive is set to Listen 8585.",
+        "Use the regular expression regexp: '^#?Listen\\s+' to match an active or commented Listen directive.",
+        "Use the notify directive to trigger a handler named Restart Apache whenever the configuration file changes.",
+        "Use the httpd configuration validation command with the validate parameter to check the proposed configuration before applying it."
+      ]
+    },
+    {
+      "task_number": 8,
+      "title": "Configure the Firewall",
+      "steps": [
+        "Use the ansible.posix.firewalld module to allow the TCP port specified by web_port.",
+        "Make the firewall rule permanent and set state to enabled.",
+        "Do not set the immediate argument to yes or true.",
+        "Use the notify directive to trigger a handler named Reload firewalld when the firewall rule changes."
+      ]
+    },
+    {
+      "task_number": 9,
+      "title": "Configure SELinux",
+      "steps": [
+        "Use the ansible.posix.selinux module to set SELinux to permissive mode and use the targeted policy.",
+        "Use the se_state and se_policy variables.",
+        "Ensure the task is executed with the required administrative privileges."
+      ]
+    },
+    {
+      "task_number": 10,
+      "title": "Create a Handler to Reload Firewalld",
+      "steps": [
+        "Define a handler named Reload firewalld in the handlers section of the playbook.",
+        "Use the service module to reload the firewalld service specified by the firewall_service variable."
+      ]
+    },
+    {
+      "task_number": 11,
+      "title": "Create a Handler to Restart Apache",
+      "steps": [
+        "Define a handler named Restart Apache in the handlers section of the playbook.",
+        "Use the service module to restart the Apache service specified by the web_service variable."
+      ]
+    },
+    {
+      "task_number": 12,
+      "title": "Execute and Test the Playbook",
+      "steps": [
+        "Check the playbook syntax using ansible-playbook --syntax-check.",
+        "Execute the playbook against the dev host group.",
+        "Verify that Apache is running and enabled at boot.",
+        "Verify that Apache is configured to listen on port 8585.",
+        "Verify that the firewall rule for TCP port 8585 is enabled.",
+        "Verify that the web page contains the expected message.",
+        "Execute the playbook a second time without making any changes and observe whether the handlers run.",
+        "Confirm that handlers run when notified by a task that reports changed and normally do not run when no changes occur."
+      ]
+    }
+  ],
+  "completion_message": "Lab 406 completed successfully! You have created an Ansible playbook using variables, tasks, notify directives, and handlers to configure Apache, manage the firewall, and configure SELinux on a managed node in the dev host group."
+}
+

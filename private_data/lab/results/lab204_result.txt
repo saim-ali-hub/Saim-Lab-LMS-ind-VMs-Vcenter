@@ -787,3 +787,8 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 783   sumara.abbas              2026-10-16 05:52:42    10     9      90%       
 784   raza.ali                  2026-10-20 04:27:43    10     10     100%      
 785   awais.sattar              2026-10-20 13:41:27    10     0      0%        
+786   sardar.akmal              2026-10-27 01:34:41    10     8      80%       
+787   sardar.akmal              2026-10-27 01:36:09    10     8      80%       
+788   sardar.akmal              2026-10-27 01:38:49    10     9      90%       
+789   sardar.akmal              2026-10-27 01:40:25    10     9      90%       
+790   sardar.akmal              2026-10-27 01:42:07    10     10     100%      

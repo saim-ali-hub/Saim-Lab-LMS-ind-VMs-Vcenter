@@ -19223,3 +19223,601 @@ $RESULT_ICON $RESULT_TEXT
 HTML
 }
 #==================================================================
+validate_lab405_ansible_nfs_server_client() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "<h2>Checking Lab 405 - Ansible NFS Server and Client Configuration.</h2>"
+
+    TOTAL_TASKS=19
+    PASSED=0
+
+    LAB_NAME="Lab 405 - Ansible NFS Server and Client Configuration"
+    DATE=$(date "+%F %T")
+
+    # CONFIGURATION
+    NFS_SHARE="/nfs_lab405_share"
+    MOUNT_POINT="/nfs_lab405"
+
+    SERVER_FILE="$MOUNT_POINT/server_test.txt"
+    CLIENT_FILE="$MOUNT_POINT/client_test.txt"
+
+    SERVER_INITIAL_CONTENT="This is my first NFS share, and I am excited to learn how to configure and manage an NFS server."
+    CLIENT_TEST_CONTENT="This file was created from the NFS client to verify write access to the NFS shared filesystem."
+    SERVER_ADDED_CONTENT="This file was modified from the NFS client to verify shared filesystem access."
+
+    # HELPERS
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # TASK 1 - CREATE THE ANSIBLE PLAYBOOK
+
+    if findmnt -rn -t nfs,nfs4 -M "$MOUNT_POINT" >/dev/null 2>&1; then
+        pass "Task 1a: nfs_setup.yml playbook exists"
+    else
+        fail "Task 1a: nfs_setup.yml playbook exists"
+    fi
+    
+    if findmnt -rn -t nfs,nfs4 -M "$MOUNT_POINT" >/dev/null 2>&1; then
+        pass "Task 1b: Playbook contains exactly two plays targeting prod and dev"
+    else
+        fail "Task 1b: Playbook may not contain two plays targeting prod and dev"
+    fi
+    
+    # TASK 2 - CONFIGURE THE NFS SERVER ON prod
+    
+    if findmnt -rn -t nfs,nfs4 -M "$MOUNT_POINT" >/dev/null 2>&1; then
+        pass "Task 2a: NFS server in prod is reachable"
+    else
+        fail "Task 2a: NFS server in prod is not reachable"
+    fi
+    
+    if [ -f "$SERVER_FILE" ] &&
+       [ -f "$CLIENT_FILE" ]; then
+        pass "Task 2b: Active export has rw, sync, and no_root_squash options"
+    else
+        fail "Task 2b: Active export has rw, sync, and no_root_squash options"
+    fi
+    
+    # TASK 3 - VERIFY THE NFS CLIENT MOUNT
+    
+    if rpm -q nfs-utils >/dev/null 2>&1; then
+        pass "Task 3a: NFS client package is installed"
+    else
+        fail "Task 3a: NFS client package is not installed"
+    fi 
+    
+    if systemctl is-active --quiet rpcbind; then
+        pass "Task 3b: rpcbind service is running"
+    else
+        fail "Task 3b: rpcbind service is not running"
+    fi   
+
+    if [ -d "$MOUNT_POINT" ]; then
+        pass "Task 3c: NFS mount-point directory exists"
+    else
+        fail "Task 3c: NFS mount-point directory does not exist"
+    fi
+    
+    if findmnt -rn -t nfs,nfs4 -M "$MOUNT_POINT" >/dev/null 2>&1; then
+        pass "Task 3d: NFS share is mounted"
+    else
+        fail "Task 3d: NFS share is not mounted"
+    fi
+    
+    if awk -v mp="$MOUNT_POINT" '$2 == mp && $3 ~ /^nfs4?$/ { found=1 } END { exit !found }' /etc/fstab; then
+        pass "Task 3e: NFS mount is configured in /etc/fstab"
+    else
+        fail "Task 3e: NFS mount is not configured in /etc/fstab"
+    fi
+    
+    if findmnt -rn -t nfs,nfs4 -M "$MOUNT_POINT" -o SOURCE | grep -Fq ':/nfs_lab405_share'; then
+        pass "Task 3f: Correct NFS server share is mounted"
+    else
+        fail "Task 3f: Correct NFS server share is not mounted"
+    fi
+    
+    # TASK 4 - VERIFY SERVER AND CLIENT FILE OPERATIONS
+    
+    if [ -f "$SERVER_FILE" ]; then
+        pass "Task 4a: Server test file exists"
+    else
+        fail "Task 4a: Server test file is missing"
+    fi
+    
+    if [ -f "$SERVER_FILE" ] && grep -Fq "$SERVER_INITIAL_CONTENT" "$SERVER_FILE"; then
+        pass "Task 4b: Original server file contains the expected content"
+    else
+        fail "Task 4b: Original server file is missing or its content is incorrect"
+    fi
+    
+    if [ -f "$CLIENT_FILE" ] && grep -Fq "$CLIENT_TEST_CONTENT" "$CLIENT_FILE"; then
+        pass "Task 4c: Client-created file contains the expected content"
+    else
+        fail "Task 4c: Client-created file is missing or its content is incorrect"
+    fi
+    
+    if [ -f "$SERVER_FILE" ] && grep -Fq "$SERVER_ADDED_CONTENT" "$SERVER_FILE"; then
+        pass "Task 4d: Client-added content is present in the server test file"
+    else
+        fail "Task 4d: Client-added content is missing from the server test file"
+    fi
+    
+    if [ -f "$SERVER_FILE" ] &&
+       grep -Fq "$SERVER_INITIAL_CONTENT" "$SERVER_FILE" &&
+       grep -Fq "$SERVER_ADDED_CONTENT" "$SERVER_FILE"; then
+        pass "Task 4e: Original and appended content are both preserved"
+    else
+        fail "Task 4e: Original or appended content is missing"
+    fi
+    
+    # TASK 5 - VERIFY NFS READ/WRITE ACCESS
+    
+    if findmnt -rn -t nfs,nfs4 -M "$MOUNT_POINT" >/dev/null 2>&1; then
+        pass "Task 5a: Filesystem is mounted as NFS"
+    else
+        fail "Task 5a: Filesystem is not mounted as NFS"
+    fi
+    
+    if findmnt -rn -t nfs,nfs4 -M "$MOUNT_POINT" -o OPTIONS |
+       grep -Eq '(^|,)rw(,|$)'; then
+        pass "Task 5b: NFS mount has read/write access"
+    else
+        fail "Task 5b: NFS mount does not have read/write access"
+    fi
+    
+    # TASK 6 - VERIFY CLIENT FILE ACCESS
+    
+    if [ -r "$SERVER_FILE" ]; then
+        pass "Task 6a: Server test file is readable from the client"
+    else
+        fail "Task 6a: Server test file is not readable from the client"
+    fi
+    
+    if [ -w "$MOUNT_POINT" ]; then
+        pass "Task 6b: NFS mount-point allows write access for the validator user"
+    else
+        fail "Task 6b: NFS mount-point does not allow write access for the validator user"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#===============================================================
+
+validate_lab406_ansible_handlers_notify() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "<h2>Checking Lab 406 - Ansible Handlers and Notify.</h2>"
+
+    TOTAL_TASKS=11
+    PASSED=0
+
+    LAB_NAME="Lab 406 - Ansible Handlers and Notify"
+    DATE=$(date "+%F %T")
+
+    # CONFIGURATION
+    PACKAGE_NAME="httpd"
+    SERVICE_NAME="httpd"
+    FIREWALL_SERVICE="firewalld"
+    WEB_ROOT="/var/www/html"
+    WEB_PAGE="/var/www/html/index.html"
+    APACHE_CONFIG="/etc/httpd/conf/httpd.conf"
+    WEB_PORT="8585"
+    FIREWALL_PORT="8585/tcp"
+
+    # HELPERS
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # TASK 1 - VERIFY MANAGED NODE REACHABILITY
+    if hostname >/dev/null 2>&1; then
+        pass "Task 1: Managed node is reachable for validation"
+    else
+        fail "Task 1: Managed node is reachable for validation"
+    fi
+
+    # TASK 2 - VERIFY APACHE PACKAGE
+    if rpm -q "$PACKAGE_NAME" >/dev/null 2>&1; then
+        pass "Task 2: Apache package is installed"
+    else
+        fail "Task 2: Apache package is installed"
+    fi
+
+    # TASK 3 - VERIFY APACHE SERVICE
+    if systemctl is-active --quiet "$SERVICE_NAME" &&
+       systemctl is-enabled --quiet "$SERVICE_NAME"; then
+        pass "Task 3: Apache service is running and enabled"
+    else
+        fail "Task 3: Apache service is running and enabled"
+    fi
+
+    # TASK 4 - VERIFY FIREWALL SERVICE
+    if systemctl is-active --quiet "$FIREWALL_SERVICE" &&
+       systemctl is-enabled --quiet "$FIREWALL_SERVICE"; then
+        pass "Task 4: Firewalld is running and enabled"
+    else
+        fail "Task 4: Firewalld is running and enabled"
+    fi
+
+    # TASK 5 - VERIFY WEB DOCUMENT ROOT
+    if [ -d "$WEB_ROOT" ]; then
+        pass "Task 5: Web document root exists"
+    else
+        fail "Task 5: Web document root exists"
+    fi
+
+    # TASK 6 - VERIFY WEB PAGE AND MESSAGE
+    if [ -f "$WEB_PAGE" ] &&
+       grep -q "Welcome to" "$WEB_PAGE" &&
+       grep -q "$(hostname -f)" "$WEB_PAGE"; then
+        pass "Task 6: Web page exists and contains the expected message"
+    else
+        fail "Task 6: Web page exists and contains the expected message"
+    fi
+
+    # TASK 7 - VERIFY APACHE LISTENING DIRECTIVE
+    if grep -Eq '^[[:space:]]*Listen[[:space:]]+8585([[:space:]]|$)' \
+        "$APACHE_CONFIG" 2>/dev/null; then
+        pass "Task 7: Apache Listen directive is configured for port 8585"
+    else
+        fail "Task 7: Apache Listen directive is configured for port 8585"
+    fi
+
+    # TASK 8 - VERIFY APACHE CONFIGURATION SYNTAX
+    if command -v httpd >/dev/null 2>&1 &&
+       httpd -t >/dev/null 2>&1; then
+        pass "Task 8: Apache configuration syntax is valid"
+    else
+        fail "Task 8: Apache configuration syntax is valid"
+    fi
+
+    # TASK 9 - VERIFY FIREWALL PORT
+    if systemctl is-active --quiet firewalld &&
+       sudo firewall-cmd --zone=public --permanent --query-port="$FIREWALL_PORT" >/dev/null 2>&1 &&
+       sudo firewall-cmd --zone=public --query-port="$FIREWALL_PORT" >/dev/null 2>&1; then
+        pass "Task 9: TCP port 8585 is allowed permanently and at runtime"
+    else
+        fail "Task 9: TCP port 8585 is allowed permanently and at runtime"
+    fi
+
+    # TASK 10 - VERIFY SELINUX
+    SELINUX_MODE=$(getenforce 2>/dev/null)
+    SELINUX_POLICY=$(awk -F= '
+        /^[[:space:]]*SELINUXTYPE[[:space:]]*=/ {
+            gsub(/[[:space:]]/, "", $2)
+            print $2
+            exit
+        }
+    ' /etc/selinux/config 2>/dev/null)
+
+    if [ "$SELINUX_MODE" = "Permissive" ] &&
+       [ "$SELINUX_POLICY" = "targeted" ]; then
+        pass "Task 10: SELinux is permissive and uses the targeted policy"
+    else
+        fail "Task 10: SELinux is permissive and uses the targeted policy"
+    fi
+
+    # TASK 11 - VERIFY APACHE LISTENING ON PORT 8585
+    if command -v ss >/dev/null 2>&1 &&
+       ss -lnt 2>/dev/null |
+       awk '$4 ~ /:8585$/ {found=1} END {exit !found}'; then
+        pass "Task 11: Apache listening port 8585 is open"
+    else
+        fail "Task 11: Apache listening port 8585 is open"
+    fi
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#===========================================================
