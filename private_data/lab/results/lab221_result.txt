@@ -374,3 +374,14 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 370   hammas.salam              2026-10-23 07:47:30    8      8      100%      
 371   awais.afzal               2026-10-26 02:11:32    8      8      100%      
 372   sammy.saleh               2026-10-26 19:44:18    8      8      100%      
+373   sumara.abbas              2026-10-30 18:43:40    8      0      0%        
+374   sumara.abbas              2026-10-30 19:19:03    8      5      63%       
+375   sumara.abbas              2026-10-30 19:47:51    8      6      75%       
+376   sumara.abbas              2026-10-30 19:48:30    8      6      75%       
+377   sumara.abbas              2026-10-30 19:49:55    8      6      75%       
+378   sumara.abbas              2026-10-30 19:52:21    8      6      75%       
+379   sumara.abbas              2026-10-30 19:57:11    8      6      75%       
+380   sumara.abbas              2026-10-30 22:24:12    8      0      0%        
+381   sumara.abbas              2026-10-30 22:37:32    8      7      88%       
+382   raza.ali                  2026-11-01 08:09:10    8      8      100%      
+383   muhammad.qaisar           2026-11-03 01:59:56    8      8      100%      

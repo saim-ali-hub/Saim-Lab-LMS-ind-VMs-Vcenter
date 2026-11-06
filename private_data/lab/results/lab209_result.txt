@@ -664,3 +664,4 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 660   hammas.salam              2026-10-23 07:53:27    28     26     93%       
 661   hammas.salam              2026-10-23 07:53:59    28     26     93%       
 662   hammas.salam              2026-10-23 07:54:37    28     26     93%       
+663   raza.ali                  2026-10-31 06:49:21    28     28     100%      

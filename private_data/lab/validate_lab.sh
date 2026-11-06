@@ -106,6 +106,7 @@ ssh \
         lab404) validate_lab404_ansible_variables_tags ;;
         lab405) validate_lab405_ansible_nfs_server_client ;;
         lab406) validate_lab406_ansible_handlers_notify ;;
+        lab407) validate_lab407_ansible_roles ;;
 
         *) echo 'Invalid lab'; exit 1 ;;
      esac"

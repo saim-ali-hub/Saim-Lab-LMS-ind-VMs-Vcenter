@@ -427,3 +427,5 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 423   raza.ali                  2026-10-22 04:29:08    12     12     100%      
 424   ayshsa.iqbal              2026-10-24 19:41:09    12     8      67%       
 425   sammy.saleh               2026-10-26 19:43:03    12     12     100%      
+426   raza.ali                  2026-11-01 07:42:14    12     12     100%      
+427   fouzia.sultana            2026-11-06 05:30:48    12     10     83%       

@@ -536,3 +536,9 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 532   raza.ali                  2026-10-14 20:46:42    10     10     100%      
 533   raza.ali                  2026-10-21 20:36:42    10     9      90%       
 534   raza.ali                  2026-10-21 20:37:31    10     10     100%      
+535   fouzia.sultana            2026-10-28 00:37:06    0      0      0%        
+536   fouzia.sultana            2026-10-28 02:13:03    0      0      0%        
+537   fouzia.sultana            2026-10-30 00:58:07    10     10     100%      
+538   raza.ali                  2026-10-31 06:19:29    10     10     100%      
+539   fatima.tabusum            2026-11-01 23:43:43    10     0      0%        
+540   waleed.javed              2026-11-03 22:06:00    10     10     100%      

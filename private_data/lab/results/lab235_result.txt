@@ -594,3 +594,5 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 590   raza.ali                  2026-10-23 18:53:26    40     38     95%       
 591   raza.ali                  2026-10-23 18:56:02    40     39     98%       
 592   raza.ali                  2026-10-23 18:56:49    40     40     100%      
+593   waleed.javed              2026-10-30 02:15:16    40     36     90%       
+594   muhammad.khan             2026-11-05 04:24:19    40     31     78%       

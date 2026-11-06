@@ -173,3 +173,9 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 169   mahnoor.ali               2026-10-17 00:14:36    12     7      58%       
 170   mahnoor.ali               2026-10-17 00:16:31    12     7      58%       
 171   amandar.qanoongo          2026-10-17 00:58:50    12     1      8%        
+172   erum.malik                2026-11-02 18:45:54    12     5      42%       
+173   erum.malik                2026-11-03 02:46:05    12     6      50%       
+174   awais.afzal               2026-11-03 02:51:56    12     6      50%       
+175   erum.malik                2026-11-03 02:59:29    12     10     83%       
+176   erum.malik                2026-11-03 03:15:48    12     12     100%      
+177   yuliana.cuzzi             2026-11-06 03:49:28    12     9      75%       

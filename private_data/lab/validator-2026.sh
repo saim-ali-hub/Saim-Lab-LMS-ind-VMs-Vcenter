@@ -19821,3 +19821,311 @@ $RESULT_ICON $RESULT_TEXT
 HTML
 }
 #===========================================================
+
+validate_lab407_ansible_roles() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "<h2>Checking Lab 407 - Ansible Roles.</h2>"
+
+    TOTAL_TASKS=11
+    PASSED=0
+
+    LAB_NAME="Lab 407 - Ansible Roles"
+    DATE=$(date "+%F %T")
+
+    # CONFIGURATION
+    PACKAGE_NAME="nginx"
+    SERVICE_NAME="nginx"
+    FIREWALL_SERVICE="firewalld"
+    WEB_ROOT="/usr/share/nginx/html"
+    STATIC_FILE="$WEB_ROOT/welcome.txt"
+    COPY_FILE="/usr/share/nginx/html/welcome.txt"
+    WEB_PAGE="/usr/share/nginx/html/index.html"
+    HOST_FQDN=$(hostname -f)
+    DEFAULT_IP=$(hostname -I | awk '{print $1}')
+
+    FIREWALL_SERVICE="firewalld"
+    FIREWALL_PORT="80/tcp"
+
+    # MANAGED NODE INFORMATION
+    HOST_FQDN=$(hostname -f 2>/dev/null)
+
+    DEFAULT_IP=$(ip -4 route get 1.1.1.1 2>/dev/null |
+        awk '{for(i=1;i<=NF;i++) if($i=="src"){print $(i+1); exit}}')
+
+    # HELPERS
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # TASK 1 - VERIFY MANAGED NODE REACHABILITY
+    if hostname >/dev/null 2>&1; then
+        pass "Task 1: Managed node is reachable for validation"
+    else
+        fail "Task 1: Managed node is not reachable for validation"
+    fi
+
+    # TASK 2 - VERIFY NGINX PACKAGE
+    if rpm -q "$PACKAGE_NAME" >/dev/null 2>&1; then
+        pass "Task 2: Nginx package is installed"
+    else
+        fail "Task 2: Nginx package is not installed"
+    fi
+
+    # TASK 3 - VERIFY NGINX SERVICE
+    if systemctl is-active --quiet "$SERVICE_NAME" &&
+       systemctl is-enabled --quiet "$SERVICE_NAME"; then
+        pass "Task 3: Nginx service is running and enabled"
+    else
+        fail "Task 3: Nginx service is not running and enabled"
+    fi
+
+    # TASK 4 - VERIFY FIREWALL SERVICE
+    if systemctl is-active --quiet "$FIREWALL_SERVICE" &&
+       systemctl is-enabled --quiet "$FIREWALL_SERVICE"; then
+        pass "Task 4: Firewalld is running and enabled"
+    else
+        fail "Task 4: Firewalld is not running or enabled"
+    fi
+
+    # TASK 5 - VERIFY WEB DOCUMENT ROOT
+    if [ -d "$WEB_ROOT" ]; then
+        pass "Task 5: Nginx document root exists"
+    else
+        fail "Task 5: Nginx document root does not exist"
+    fi
+
+    # TASK 6 - VERIFY COPY MODULE
+    if [ -f "$COPY_FILE" ] &&
+       grep -q "Welcome to LINOOP Ansible Training!" "$COPY_FILE" &&
+       grep -Fq '{{ ansible_fqdn }}' "$COPY_FILE" &&
+       grep -Fq '{{ ansible_default_ipv4.address }}' "$COPY_FILE" &&
+       grep -q "Ansible copy module" "$COPY_FILE"; then
+
+        pass "Task 6: Static file copied with original Jinja2 variables"
+    else
+        fail "Task 6: Static file is not copied with original Jinja2 variables"
+    fi
+
+    # TASK 7 - VERIFY STATIC FILE USING COPY MODULE
+    if [ -f "$STATIC_FILE" ] &&
+       grep -q "Welcome to LINOOP Ansible Training!" "$STATIC_FILE" &&
+       grep -Fq '{{ ansible_fqdn }}' "$STATIC_FILE" &&
+       grep -Fq '{{ ansible_default_ipv4.address }}' "$STATIC_FILE" &&
+       grep -q "Ansible copy module" "$STATIC_FILE"; then
+    
+        pass "Task 7: Static file copied successfully with original Jinja2 expressions"
+    else
+        fail "Task 7: Static file is not copied successfully with original Jinja2 expressions"
+    fi
+    
+    
+    # TASK 8 - VERIFY TEMPLATE MODULE
+    if [ -f "$WEB_PAGE" ] &&
+       [ -n "$HOST_FQDN" ] &&
+       [ -n "$DEFAULT_IP" ] &&
+       grep -q "Welcome to LINOOP Ansible Training!" "$WEB_PAGE" &&
+       grep -Fq "Managed Host: $HOST_FQDN" "$WEB_PAGE" &&
+       grep -Fq "IP Address: $DEFAULT_IP" "$WEB_PAGE" &&
+       ! grep -Fq '{{ ansible_fqdn }}' "$WEB_PAGE" &&
+       ! grep -Fq '{{ ansible_default_ipv4.address }}' "$WEB_PAGE" &&
+       grep -q "Ansible template module" "$WEB_PAGE"; then
+    
+        pass "Task 8: Template deployed with Jinja2 variables expanded"
+    else
+        fail "Task 8: Template deployed with Jinja2 variables not expanded"
+    fi
+    
+    
+    # TASK 9 - VERIFY FIREWALL PORT
+    if systemctl is-active --quiet "$FIREWALL_SERVICE" &&
+       sudo firewall-cmd --zone=public --permanent \
+       --query-port="$FIREWALL_PORT" >/dev/null 2>&1 &&
+       sudo firewall-cmd --zone=public \
+       --query-port="$FIREWALL_PORT" >/dev/null 2>&1; then
+    
+        pass "Task 9: HTTP port 80 is allowed permanently and at runtime"
+    else
+        fail "Task 9: HTTP port 80 is not allowed permanently and at runtime"
+    fi
+    
+    
+    # TASK 10 - VERIFY NGINX CONFIGURATION
+    if command -v nginx >/dev/null 2>&1 &&
+       sudo nginx -t >/dev/null 2>&1; then
+    
+        pass "Task 10: Nginx configuration syntax is valid"
+    else
+        fail "Task 10: Nginx configuration syntax is not valid"
+    fi
+
+
+    # TASK 11 - VERIFY NGINX LISTENING PORT
+    if command -v ss >/dev/null 2>&1 &&
+       ss -lnt 2>/dev/null |
+       awk '$4 ~ /:80$/ {found=1} END {exit !found}'; then
+    
+        pass "Task 11: Nginx is listening on TCP port 80"
+    else
+        fail "Task 11: Nginx is not listening on TCP port 80"
+    fi    
+    
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#=========================================================

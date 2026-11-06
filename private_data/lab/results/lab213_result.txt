@@ -590,3 +590,7 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 586   muhammad.azlan            2026-10-22 18:18:46    8      6      75%       
 587   muhammad.azlan            2026-10-22 18:21:03    8      7      88%       
 588   hammas.salam              2026-10-23 07:42:16    8      7      88%       
+589   fouzia.sultana            2026-10-30 00:39:02    0      0      0%        
+590   fouzia.sultana            2026-10-30 00:44:23    0      0      0%        
+591   fouzia.sultana            2026-10-30 00:50:23    8      8      100%      
+592   raza.ali                  2026-11-01 05:13:38    8      8      100%      

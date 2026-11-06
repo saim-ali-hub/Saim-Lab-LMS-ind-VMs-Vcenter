@@ -792,3 +792,7 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 788   sardar.akmal              2026-10-27 01:38:49    10     9      90%       
 789   sardar.akmal              2026-10-27 01:40:25    10     9      90%       
 790   sardar.akmal              2026-10-27 01:42:07    10     10     100%      
+791   fouzia.sultana            2026-10-30 00:57:50    10     5      50%       
+792   raza.ali                  2026-10-31 05:25:25    10     10     100%      
+793   kinza.afzal               2026-10-31 19:21:22    10     8      80%       
+794   muhammad.khan             2026-11-05 04:24:01    10     10     100%      

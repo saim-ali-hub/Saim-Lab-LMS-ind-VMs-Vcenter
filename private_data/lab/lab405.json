@@ -31,7 +31,7 @@
         "Define reusable variables for package names, service names, directories, file paths, file contents, firewall services, and SELinux settings.",
         "Define the following variables for the NFS server play.",
         "nfs_share: /nfs_lab405_share",
-        "nfs_file_name: lab405-test.txt",
+        "nfs_file_name: server_test.txt",
         "nfs_file_path: /nfs_lab405_share/server_test.txt",
         "test_content: 'This is my first NFS share, and I am excited to learn how to configure and manage an NFS server.'",
         "package_name: nfs-utils",
@@ -85,6 +85,7 @@
         "nfs_share: /nfs_lab405_share",
         "mount_point: /nfs_lab405",
         "test_file_name: client_test.txt",
+        "server_file_name: server_test.txt",
         "test_file_path: /nfs_lab405/client_test.txt",
         "client_test_content: 'This file was created from the NFS client to verify write access to the NFS shared filesystem.'",
         "server_test_content: 'This file was modified from the NFS client to verify shared filesystem access.'",
@@ -106,15 +107,9 @@
       "title": "Play 2 - Verify NFS Read and Write Access",
       "steps": [
         "Add the verification tasks to the second play targeting dev. Do not create a third play.",
-        "Verify that /nfs_lab405 is mounted as an NFS filesystem.",
-        "Confirm that server_test.txt is accessible from the client.",
-        "Verify that the server-side test file contains the expected initial content.",
         "Create /nfs_lab405/client_test.txt using the test_file_path variable and the client_test_content variable.",
         "Modify server_test.txt from the client by adding the text specified in the server_test_content variable without unintentionally removing the original content.",
-        "Verify that both files are accessible through the client mount.",
-        "Verify that the client-created file and the modification to server_test.txt are visible on the NFS server.",
-        "Verify that the client mount is configured persistently in /etc/fstab.",
-        "Use appropriate Ansible modules such as stat, command, shell, assert, copy, lineinfile, and mount where suitable."
+        "Use appropriate Ansible modules such as copy, lineinfile, and mount where suitable."
       ]
     },
     {
@@ -127,7 +122,13 @@
         "Verify that the first play runs against the prod host group.",
         "Verify that the second play runs against the dev host group.",
         "Confirm that the NFS server exports /nfs_lab405_share to the intended dev clients.",
-        "Confirm that the NFS client mounts the share successfully at /nfs_lab405."
+        "Confirm that the NFS client mounts the share successfully at /nfs_lab405.",
+        "Verify that /nfs_lab405 is mounted as an NFS filesystem.",
+        "Confirm that server_test.txt is accessible from the client.",
+        "Verify that the server-side test file contains the expected initial content.",
+        "Verify that both files are accessible through the client mount.",
+        "Verify that the client-created file and the modification to server_test.txt are visible on the NFS server.",
+        "Verify that the client mount is configured persistently in /etc/fstab."
       ]
     }
   ],

@@ -107,7 +107,7 @@
       "task_number": 6,
       "title": "Create a source file using variables",
       "steps": [
-        "Use the copy module and variable source_file_name to create /opt/lab404-source.txt on the managed hosts.",
+        "Use the copy module and variable source_path to create /opt/lab404-source.txt on the managed hosts.",
         "Use the src_content variable for the content: This file was created by the lab 404 variables playbook.",
         "Set the file permissions to 0640 and the owner and group to root.",
         "Assign tags filesystem."

@@ -1137,3 +1137,11 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 1133  fatima.tabusum            2026-10-21 15:37:35    15     0      0%        
 1134  fouzia.sultana            2026-10-23 01:03:12    0      0      0%        
 1135  fouzia.sultana            2026-10-27 00:50:53    0      0      0%        
+1136  muhammad.bilal            2026-10-28 04:37:02    15     14     93%       
+1137  muhammad.bilal            2026-10-28 04:41:15    15     15     100%      
+1138  fouzia.sultana            2026-10-30 00:58:42    15     12     80%       
+1139  raza.ali                  2026-10-31 05:07:35    15     15     100%      
+1140  muhammad.qaisar           2026-11-04 03:20:43    15     13     87%       
+1141  ahmed.mohammed            2026-11-04 19:32:25    15     12     80%       
+1142  awais.afzal               2026-11-05 02:08:16    15     12     80%       
+1143  muhammad.khan             2026-11-05 04:23:23    15     15     100%      
