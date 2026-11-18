@@ -385,3 +385,7 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 381   raza.ali                  2026-11-02 06:31:41    10     10     100%      
 382   hamza.bashir              2026-11-05 19:40:32    10     9      90%       
 383   hamza.bashir              2026-11-05 19:45:17    10     10     100%      
+384   muhammad.annam            2026-11-07 04:37:46    10     10     100%      
+385   zara.khan                 2026-11-12 03:02:53    10     10     100%      
+386   muhammad.jahanzaib        2026-11-17 00:04:13    10     1      10%       
+387   muhammad.jahanzaib        2026-11-17 00:05:38    10     1      10%       

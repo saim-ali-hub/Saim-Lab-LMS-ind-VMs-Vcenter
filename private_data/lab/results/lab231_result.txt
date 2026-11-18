@@ -221,3 +221,7 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 217   raza.ali                  2026-11-02 07:44:48    13     13     100%      
 218   danial.ahmed              2026-11-02 22:55:14    13     13     100%      
 219   yuliana.cuzzi             2026-11-06 03:49:53    13     13     100%      
+220   waleed.javed              2026-11-07 03:11:48    13     11     85%       
+221   hammas.salam              2026-11-10 03:40:48    13     13     100%      
+222   hammas.salam              2026-11-10 19:21:33    13     13     100%      
+223   amna.bajwa                2026-11-13 05:08:23    13     10     77%       

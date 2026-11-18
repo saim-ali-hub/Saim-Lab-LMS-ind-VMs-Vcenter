@@ -1,0 +1,208 @@
+{
+  "title": "Lab 407 - Ansible Roles",
+  "lab_objective": {
+    "description": "By performing this lab, you will learn how to create, organize, and use Ansible roles to manage configurations in a structured and reusable way.",
+    "objectives": [
+      "Understand the concept and purpose of Ansible roles.",
+      "Understand the standard directory structure of an Ansible role.",
+      "Create an Ansible role using the ansible-galaxy init command.",
+      "Understand the purpose of tasks, handlers, defaults, vars, and templates directories.",
+      "Define and use variables within an Ansible role.",
+      "Create tasks to install and configure Nginx.",
+      "Use handlers and notify directives within a role.",
+      "Create and use a Jinja2 template to configure a web page.",
+      "Execute an Ansible role through a separate playbook.",
+      "Understand how roles help organize and reuse automation code."
+    ],
+    "scenario": [
+      "You are an Ansible administrator responsible for configuring an Nginx web server on a managed node in the dev host group.",
+      "Your task is to create an Ansible role named nginx_setup that installs Nginx, starts and enables its service, creates a custom web page using a Jinja2 template, and configures the firewall to allow HTTP traffic.",
+      "You must organize the configuration using the standard Ansible role directory structure and execute the role through a separate playbook."
+    ]
+  },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Create an Ansible Role",
+      "steps": [
+        "Log in to the Ansible control node as the srvc user.",
+        "Navigate to the srvc user's home directory.",
+        "Create an ~/ansible/roles directory if it does not already exist.",
+        "Navigate to the roles directory.",
+        "Use the ansible-galaxy init command to create a role named nginx_setup.",
+        "Explore the directory structure created by the command.",
+        "Identify the purpose of the following directories: tasks, handlers, defaults, vars, templates, files, and meta."
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Understand the Role Directory Structure",
+      "steps": [
+        "Navigate to the nginx_setup role directory.",
+        "Explore the files created inside each directory.",
+        "Identify the main.yml file inside the tasks directory.",
+        "Identify the main.yml file inside the handlers directory.",
+        "Identify the main.yml file inside the defaults directory.",
+        "Identify the main.yml file inside the vars directory.",
+        "Understand that the tasks directory contains the main tasks executed by the role.",
+        "Understand that the handlers directory contains handlers triggered by notify directives.",
+        "Understand that the defaults directory contains default variable values.",
+        "Understand that the vars directory contains role variables with higher precedence than role defaults.",
+        "Understand that the templates directory stores Jinja2 templates."
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Define Default Variables",
+      "steps": [
+        "Navigate to the defaults directory inside the nginx_setup role.",
+        "Open the main.yml file.",
+        "Define the following variables:",
+        "nginx_package: nginx",
+        "nginx_service: nginx",
+        "firewall_service: firewalld",
+        "http_port: 80/tcp",
+        "nginx_root: /usr/share/nginx/html",
+        "nginx_page: /usr/share/nginx/html/index.html",
+        "Save the file.",
+        "These variables will be used by the role tasks instead of repeating literal values."
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Create Tasks to Install Nginx",
+      "steps": [
+        "Navigate to the tasks directory inside the nginx_setup role.",
+        "Open the main.yml file.",
+        "Create a task to install the Nginx package using the package module.",
+        "Use the nginx_package variable to specify the package name.",
+        "Create another task to start the Nginx service and enable it at boot.",
+        "Use the nginx_service variable to specify the service name.",
+        "Use the service module to manage the service."
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Start and Enable Firewalld",
+      "steps": [
+        "In the tasks/main.yml file, create a task to start the firewalld service and enable it at boot.",
+        "Use the firewall_service variable to specify the service name.",
+        "Use the service module to manage firewalld.",
+        "Ensure the task is executed with the required administrative privileges through the main playbook."
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Create the Web Document Root",
+      "steps": [
+        "Create a task to ensure that the directory specified by nginx_root exists.",
+        "Use the file module.",
+        "Set the directory state to directory.",
+        "Use the nginx_root variable for the directory path."
+      ]
+    },
+    {
+    "task_number": 7,
+    "title": "Create and Deploy a Static File Using Copy",
+    "steps": [
+    "Navigate to the files directory inside the nginx_setup role.",
+    "Create a file named welcome.txt.",
+    "Add the following content to the file:",
+    "Welcome to LINOOP Ansible Training!",
+    "Managed Host: {{ ansible_fqdn }}",
+    "IP Address: {{ ansible_default_ipv4.address }}",
+    "This file was deployed using the Ansible copy module.",
+    "Save the file.",
+    "Return to the tasks/main.yml file.",
+    "Create a task to copy welcome.txt from the role's files directory to /usr/share/nginx/html/welcome.txt on the managed node.",
+    "Use the copy module.",
+    "Ensure the file is copied with the correct content."
+    ]
+    },
+    {
+      "task_number": 8,
+      "title": "Create a Jinja2 Web Page Template",
+      "steps": [
+        "Navigate to the templates directory inside the nginx_setup role.",
+        "Create a file named index.html.j2.",
+        "Add the following HTML and Jinja2 content to templates/index.html.j2:",
+        "<!DOCTYPE html>",
+        "<html>",
+        "<body>",
+        "    <h2>Welcome to LINOOP Ansible Training!</h2>",
+        "    <p>Managed Host: {{ ansible_fqdn }}</p>",
+        "    <p>IP Address: {{ ansible_default_ipv4.address }}</p>",
+        "    <p>This file was deployed using the Ansible template module.</p>",
+        "</body>",
+        "</html>",
+        "Save the template."
+      ]
+    },
+    {
+      "task_number": 9,
+      "title": "Deploy the Dynamic Web Page Using a Template",
+      "steps": [
+        "Return to the tasks/main.yml file.",
+        "Create a task to deploy the index.html.j2 template to the managed node.",
+        "Use the template module.",
+        "Set the destination to the file specified by nginx_page.",
+        "Ensure that Jinja2 variables are replaced with their actual values before the file is deployed.",
+        "Ensure the template is deployed to the Nginx document root."
+      ]
+    },
+    {
+      "task_number": 10,
+      "title": "Configure the Firewall",
+      "steps": [
+        "Create a task to allow HTTP traffic through firewalld.",
+        "Use the ansible.posix.firewalld module.",
+        "Use the http_port variable to specify the port.",
+        "Make the firewall rule permanent.",
+        "Set the rule state to enabled.",
+        "Use notify to trigger a handler named Reload firewalld whenever the firewall configuration changes."
+      ]
+    },
+    {
+      "task_number": 11,
+      "title": "Create a Handler",
+      "steps": [
+        "Navigate to the handlers directory inside the nginx_setup role.",
+        "Open the main.yml file.",
+        "Create a handler named Reload firewalld.",
+        "Use the service module to reload the firewalld service.",
+        "Use the firewall_service variable for the service name.",
+        "Ensure the handler is triggered by the notify directive in the firewall task."
+      ]
+    },
+    {
+      "task_number": 12,
+      "title": "Create a Main Playbook",
+      "steps": [
+        "Navigate to the roles directory, outside the nginx_setup role directory.",
+        "Create a playbook named lab407_roles.yml.",
+        "Target the dev host group using hosts: dev.",
+        "Set gather_facts to true.",
+        "Use become: true to execute administrative tasks with elevated privileges.",
+        "Add a roles section to the playbook.",
+        "Include the nginx_setup role under the roles section.",
+        "Save the playbook."
+      ]
+    },
+    {
+      "task_number": 13,
+      "title": "Execute and Validate the Role",
+      "steps": [
+        "Check the playbook syntax using ansible-playbook --syntax-check.",
+        "Execute the playbook against the dev host group.",
+        "Verify that Nginx is installed.",
+        "Verify that the Nginx service is running and enabled at boot.",
+        "Verify that the custom web page exists at the configured document root.",
+        "Verify that the web page contains the expected title and managed host information.",
+        "Verify that the firewall allows TCP port 80.",
+        "Execute the playbook a second time without making changes.",
+        "Observe the task results and confirm that Ansible reports changed: 0 when the configuration is already in the desired state."
+      ]
+    }
+  ],
+  "completion_message": "Lab 407 completed successfully! You have created an Ansible role using the standard directory structure, organized tasks, handlers, default variables, and Jinja2 templates, and executed the role through a separate playbook to configure an Nginx web server."
+}

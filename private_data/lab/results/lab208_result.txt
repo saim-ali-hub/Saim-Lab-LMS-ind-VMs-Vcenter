@@ -1044,3 +1044,6 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 1040  waleed.javed              2026-11-06 00:37:34    17     7      41%       
 1041  waleed.javed              2026-11-06 00:39:45    17     16     94%       
 1042  waleed.javed              2026-11-06 00:40:35    17     17     100%      
+1043  amna.bajwa                2026-11-13 04:56:28    17     0      0%        
+1044  amna.bajwa                2026-11-13 04:56:46    17     0      0%        
+1045  amna.bajwa                2026-11-13 04:56:56    17     0      0%        

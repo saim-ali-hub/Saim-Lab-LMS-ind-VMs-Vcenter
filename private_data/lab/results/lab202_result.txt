@@ -1043,3 +1043,14 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 1039  muhammad.bilal            2026-10-31 08:11:37    21     21     100%      
 1040  muhammad.qaisar           2026-11-05 02:46:35    21     21     100%      
 1041  muhammad.khan             2026-11-05 04:23:37    21     21     100%      
+1042  hamza.choudhry            2026-11-08 17:39:32    21     5      24%       
+1043  hamza.choudhry            2026-11-08 17:43:03    21     5      24%       
+1044  nimat.ullah               2026-11-12 02:23:55    21     0      0%        
+1045  nimat.ullah               2026-11-12 02:29:43    21     21     100%      
+1046  hamza.choudhry            2026-11-12 05:13:23    21     5      24%       
+1047  hamza.choudhry            2026-11-12 05:59:49    21     20     95%       
+1048  hamza.choudhry            2026-11-12 06:05:02    21     21     100%      
+1049  amna.bajwa                2026-11-13 04:54:18    21     0      0%        
+1050  amna.bajwa                2026-11-13 05:02:04    21     0      0%        
+1051  muhammad.jahanzaib        2026-11-17 00:04:27    21     0      0%        
+1052  adil.hafeez               2026-11-18 17:50:29    0      0      0%        

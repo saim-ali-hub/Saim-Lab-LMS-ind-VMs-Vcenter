@@ -179,3 +179,4 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 175   erum.malik                2026-11-03 02:59:29    12     10     83%       
 176   erum.malik                2026-11-03 03:15:48    12     12     100%      
 177   yuliana.cuzzi             2026-11-06 03:49:28    12     9      75%       
+178   rabia.tariq               2026-11-12 03:48:54    12     9      75%       

@@ -594,3 +594,4 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 590   fouzia.sultana            2026-10-30 00:44:23    0      0      0%        
 591   fouzia.sultana            2026-10-30 00:50:23    8      8      100%      
 592   raza.ali                  2026-11-01 05:13:38    8      8      100%      
+593   amna.bajwa                2026-11-13 05:02:15    8      0      0%        

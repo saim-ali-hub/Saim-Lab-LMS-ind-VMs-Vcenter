@@ -1020,3 +1020,4 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 1016  raza.ali                  2026-11-01 05:36:54    29     27     93%       
 1017  raza.ali                  2026-11-01 05:38:22    29     28     97%       
 1018  raza.ali                  2026-11-01 05:39:41    29     29     100%      
+1019  amna.bajwa                2026-11-13 05:02:28    29     0      0%        

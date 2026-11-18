@@ -542,3 +542,6 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 538   raza.ali                  2026-10-31 06:19:29    10     10     100%      
 539   fatima.tabusum            2026-11-01 23:43:43    10     0      0%        
 540   waleed.javed              2026-11-03 22:06:00    10     10     100%      
+541   nimat.ullah               2026-11-13 04:35:58    10     10     100%      
+542   amna.bajwa                2026-11-13 04:55:45    10     0      0%        
+543   salman.duggal             2026-11-13 14:51:41    10     7      70%       

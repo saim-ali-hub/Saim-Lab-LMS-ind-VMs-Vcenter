@@ -1,0 +1,120 @@
+
+{
+  "title": "Lab 501 - Docker Images, Containers and port mapping",
+  "lab_objective": {
+    "description": "By performing this lab, you will learn how to download Docker images, create and manage containers in interactive and detached modes, publish container ports, create files inside containers, transfer files from the Docker host to containers, and verify web application accessibility.",
+    "objectives": [
+      "Understand how to download Docker images from Docker Hub using docker pull.",
+      "Understand the difference between Docker images and containers.",
+      "Create and run a container in interactive mode using docker run -it.",
+      "Understand how containers behave when their interactive shell is exited.",
+      "Start and restart existing containers.",
+      "Verify file persistence across container stops and restarts.",
+      "Create and run containers in detached mode using docker run -d.",
+      "Understand Docker port publishing using the -p option.",
+      "Publish host ports to container ports.",
+      "Execute commands inside running containers using docker exec.",
+      "Create files on the Docker host and transfer them into containers using docker cp.",
+      "Understand the default web document directories of Apache and Nginx.",
+      "Verify web page contents from inside a container.",
+      "Test web applications using the curl command.",
+      "Access containerized web applications through a web browser.",
+      "Run multiple web server containers simultaneously on the same Docker host."
+    ],
+    "scenario": [
+      "You are a Linux administrator responsible for deploying and managing containerized web servers using Docker.",
+      "Your first assignment is to download the Apache HTTP Server image and launch a container named web-httpd in interactive mode. You must publish host port 8085 to container port 80, create a directory named /linoop, and create a file named docker.txt with the required content.",
+      "After exiting the interactive container, you must start the same container again and verify that the previously created file and its contents are still available. You must also restart the container and verify file persistence.",
+      "Your second assignment is to download the Nginx image and launch a container named web-nginx in detached mode. You must publish host port 8086 to container port 80.",
+      "You must create an HTML file named index.html on the Docker host with the specified content, copy it into the Nginx container's web document directory, and verify its contents.",
+      "Finally, you must verify the Nginx web page using curl and access it through a web browser using the Docker host's IP address.",
+      "At the end of the lab, both web-httpd and web-nginx containers must be running simultaneously and accessible through their respective published ports."
+    ]
+  },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Pull Apache Image and Create an Interactive Container",
+      "steps": [
+        "Pull the httpd:latest image from Docker Hub using the docker pull command.",
+        "Verify that the Apache image has been downloaded successfully.",
+        "Create and run a container named web-httpd using the httpd:latest image.",
+        "Run the container in interactive mode using the -it option.",
+        "Publish host port 8085 to container port 80 using the -p option.",
+        "Verify that you are inside the Apache container.",
+        "Create a directory named /linoop.",
+        "Navigate to the /linoop directory.",
+        "Create a file named docker.txt.",
+        "Add the following exact content to docker.txt:",
+        "Hello everyone! super excited while learning docker",
+        "Display the contents of docker.txt.",
+        "Verify that the file exists inside the /linoop directory.",
+        "Exit the container."
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Start, Restart, and Verify Container Persistence",
+      "steps": [
+        "Verify the status of the web-httpd container using docker ps and docker ps -a.",
+        "Start the existing web-httpd container using docker start.",
+        "Verify that the container is running.",
+        "Access the running container using docker exec.",
+        "Navigate to the /linoop directory.",
+        "Verify that docker.txt still exists.",
+        "Display and verify the exact contents of docker.txt.",
+        "Exit the container shell.",
+        "Restart the web-httpd container using docker restart.",
+        "Verify that the container is running after the restart.",
+        "Access the container again using docker exec.",
+        "Verify that /linoop/docker.txt still exists.",
+        "Verify that the file contains the exact required content."
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Pull Nginx Image and Create a Detached Container",
+      "steps": [
+        "Pull the nginx:latest image from Docker Hub using the docker pull command.",
+        "Verify that the Nginx image has been downloaded successfully using docker images.",
+        "Create and run a container named web-nginx using the nginx:latest image.",
+        "Run the container in detached mode using the -d option.",
+        "Publish host port 8086 to container port 80 using the -p option.",
+        "Verify that the web-nginx container is running using docker ps.",
+        "Verify the published port mapping.",
+        "Access the running Nginx container using docker exec.",
+        "Create a file named index.html inside the /root directory of the Docker host.",
+        "Add the following exact content to index.html:",
+        "Amazing! docker makes application deployment easier.",
+        "Save the file on the Docker host.",
+        "Use the docker cp command to copy index.html from the Docker host into the Nginx container.",
+        "Copy the file to the following destination:",
+        "/usr/share/nginx/html/index.html",
+        "Verify that index.html exists inside the Nginx container.",
+        "Display and verify the exact contents of index.html from inside the container.",
+        "Verify the web page using the curl command from the Docker host.",
+        "Access the web page using a web browser with the following URL:",
+        "http://your-machine-ip:8086"
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Final Container and Web Server Verification",
+      "steps": [
+        "Verify that the web-httpd container is running.",
+        "Verify that the web-nginx container is running.",
+        "Confirm that both containers are running simultaneously on the same Docker host.",
+        "Verify that web-httpd publishes host port 8085 to container port 80.",
+        "Verify that web-nginx publishes host port 8086 to container port 80.",
+        "Verify the Apache container using docker inspect.",
+        "Verify the Nginx container using docker inspect.",
+        "Display the running containers using docker ps.",
+        "Verify Apache port accessibility using curl http://localhost:8085.",
+        "Verify Nginx port accessibility using curl http://localhost:8086.",
+        "Confirm that both web servers are accessible through their respective published ports."
+      ]
+    }
+  ],
+  "completion_message": "Lab 501 completed successfully! You have downloaded and managed Apache and Nginx Docker images, created containers in interactive and detached modes, published container ports, created and transferred files, verified file persistence across container restarts, and deployed two web servers simultaneously on the same Docker host."
+}
+

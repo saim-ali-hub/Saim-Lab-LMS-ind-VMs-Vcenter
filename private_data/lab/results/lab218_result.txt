@@ -408,3 +408,4 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 404   fouzia.sultana            2026-11-06 02:05:05    11     9      82%       
 405   fouzia.sultana            2026-11-06 02:09:07    11     10     91%       
 406   fouzia.sultana            2026-11-06 02:10:28    11     11     100%      
+407   amna.bajwa                2026-11-13 05:03:45    11     8      73%       

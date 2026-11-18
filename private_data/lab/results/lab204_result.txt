@@ -796,3 +796,10 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 792   raza.ali                  2026-10-31 05:25:25    10     10     100%      
 793   kinza.afzal               2026-10-31 19:21:22    10     8      80%       
 794   muhammad.khan             2026-11-05 04:24:01    10     10     100%      
+795   salman.duggal             2026-11-10 19:24:56    10     9      90%       
+796   nimat.ullah               2026-11-12 03:35:05    10     10     100%      
+797   muhammad.qaisar           2026-11-13 03:41:20    10     10     100%      
+798   amna.bajwa                2026-11-13 04:54:46    10     0      0%        
+799   amna.bajwa                2026-11-13 04:54:56    10     0      0%        
+800   amna.bajwa                2026-11-13 05:02:37    10     0      0%        
+801   hamza.choudhry            2026-11-13 05:46:04    10     10     100%      

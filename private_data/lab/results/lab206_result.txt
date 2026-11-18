@@ -805,3 +805,11 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 801   raza.ali                  2026-10-31 06:11:32    7      7      100%      
 802   waleed.javed              2026-11-03 21:37:36    7      7      100%      
 803   waleed.javed              2026-11-03 21:38:20    7      7      100%      
+804   nimat.ullah               2026-11-13 02:58:15    7      6      86%       
+805   nimat.ullah               2026-11-13 02:59:25    7      6      86%       
+806   nimat.ullah               2026-11-13 03:00:43    7      7      100%      
+807   nimat.ullah               2026-11-13 03:01:12    7      7      100%      
+808   amna.bajwa                2026-11-13 04:55:33    7      0      0%        
+809   fakhr.rabbani             2026-11-16 05:12:15    7      3      43%       
+810   fakhr.rabbani             2026-11-16 05:31:45    7      5      71%       
+811   fakhr.rabbani             2026-11-16 05:42:07    7      7      100%      

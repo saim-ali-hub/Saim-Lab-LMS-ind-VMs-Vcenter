@@ -125,3 +125,5 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 121   awais.afzal               2026-10-31 13:35:11    10     9      90%       
 122   awais.afzal               2026-10-31 13:37:42    10     9      90%       
 123   erum.malik                2026-11-02 18:44:01    10     10     100%      
+124   zara.khan                 2026-11-12 03:03:13    10     10     100%      
+125   sana.abbasi               2026-11-16 01:02:00    10     2      20%       

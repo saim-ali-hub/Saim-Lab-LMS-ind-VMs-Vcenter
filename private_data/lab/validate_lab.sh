@@ -107,6 +107,8 @@ ssh \
         lab405) validate_lab405_ansible_nfs_server_client ;;
         lab406) validate_lab406_ansible_handlers_notify ;;
         lab407) validate_lab407_ansible_roles ;;
+        lab501) validate_lab501_docker_images_containers ;;
+        lab502) validate_lab502_docker_volumes_bind_mounts ;;
 
         *) echo 'Invalid lab'; exit 1 ;;
      esac"

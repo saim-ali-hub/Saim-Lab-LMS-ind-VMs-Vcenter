@@ -824,3 +824,8 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 820   waleed.javed              2026-11-03 21:04:11    20     19     95%       
 821   waleed.javed              2026-11-03 21:05:32    20     20     100%      
 822   kinza.afzal               2026-11-03 23:42:15    20     12     60%       
+823   nimat.ullah               2026-11-12 04:31:23    20     20     100%      
+824   amna.bajwa                2026-11-13 04:55:08    20     0      0%        
+825   amna.bajwa                2026-11-13 04:55:22    20     0      0%        
+826   fakhr.rabbani             2026-11-16 05:11:36    20     20     100%      
+827   hamza.choudhry            2026-11-17 06:07:13    20     20     100%      

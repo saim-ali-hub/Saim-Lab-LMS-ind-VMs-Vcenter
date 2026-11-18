@@ -465,3 +465,10 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 461   hammas.salam              2026-10-23 07:42:28    18     6      33%       
 462   awais.afzal               2026-10-29 01:55:06    18     14     78%       
 463   raza.ali                  2026-11-02 06:14:09    18     18     100%      
+464   hammas.salam              2026-11-10 05:25:46    18     6      33%       
+465   hammas.salam              2026-11-10 05:26:02    18     6      33%       
+466   sardar.akmal              2026-11-14 01:06:07    18     18     100%      
+467   awais.afzal               2026-11-14 01:13:10    18     17     94%       
+468   awais.afzal               2026-11-14 01:15:51    18     18     100%      
+469   fouzia.sultana            2026-11-14 05:17:10    18     8      44%       
+470   fouzia.sultana            2026-11-14 06:12:46    18     8      44%       

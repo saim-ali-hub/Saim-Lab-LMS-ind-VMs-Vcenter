@@ -139,3 +139,11 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 135   danial.ahmed              2026-11-02 22:56:02    15     15     100%      
 136   muhammad.azlan            2026-11-03 07:02:16    15     13     87%       
 137   yuliana.cuzzi             2026-11-06 03:50:14    15     15     100%      
+138   waleed.javed              2026-11-07 03:12:16    15     11     73%       
+139   waseem.abbas              2026-11-09 21:55:08    15     9      60%       
+140   waseem.abbas              2026-11-09 22:29:15    15     7      47%       
+141   waseem.abbas              2026-11-09 22:43:59    15     15     100%      
+142   hammas.salam              2026-11-10 03:41:02    15     13     87%       
+143   waseem.abbas              2026-11-10 07:46:15    15     15     100%      
+144   hammas.salam              2026-11-10 19:21:50    15     13     87%       
+145   amna.bajwa                2026-11-13 05:06:46    15     8      53%       

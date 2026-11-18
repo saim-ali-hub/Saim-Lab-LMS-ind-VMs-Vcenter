@@ -19613,8 +19613,8 @@ validate_lab406_ansible_handlers_notify() {
 
     # TASK 6 - VERIFY WEB PAGE AND MESSAGE
     if [ -f "$WEB_PAGE" ] &&
-       grep -q "Welcome to" "$WEB_PAGE" &&
-       grep -q "$(hostname -f)" "$WEB_PAGE"; then
+       sudo grep -q "Welcome to" "$WEB_PAGE" &&
+       sudo grep -q "$(hostname -f)" "$WEB_PAGE"; then
         pass "Task 6: Web page exists and contains the expected message"
     else
         fail "Task 6: Web page exists and contains the expected message"
@@ -20129,3 +20129,944 @@ $RESULT_ICON $RESULT_TEXT
 HTML
 }
 #=========================================================
+validate_lab501_docker_images_containers() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "<h2>Checking Lab 501 - Docker Images and Containers.</h2>"
+
+    TOTAL_TASKS=22
+    PASSED=0
+
+    LAB_NAME="Lab 501 - Docker Images and Containers"
+    DATE=$(date "+%F %T")
+
+    # CONFIGURATION
+    HTTPD_IMAGE="httpd:latest"
+    NGINX_IMAGE="nginx:latest"
+
+    HTTPD_CONTAINER="web-httpd"
+    NGINX_CONTAINER="web-nginx"
+
+    HTTPD_HOST_PORT="8085"
+    NGINX_HOST_PORT="8086"
+    CONTAINER_PORT="80"
+
+    HTTPD_DIR="/linoop"
+    HTTPD_FILE="/linoop/docker.txt"
+    HTTPD_CONTENT="Hello everyone! super excited while learning docker"
+
+    NGINX_HOST_FILE="/root/index.html"
+    NGINX_CONTAINER_FILE="/usr/share/nginx/html/index.html"
+    NGINX_CONTENT="Amazing! docker makes application deployment easier."
+
+    # HELPERS
+
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # TASK 1 - APACHE IMAGE AND INTERACTIVE CONTAINER
+
+    # 1a - VERIFY APACHE IMAGE
+
+    if sudo docker image inspect "$HTTPD_IMAGE" >/dev/null 2>&1; then
+        pass "Task 1a: Apache httpd:latest image is downloaded"
+    else
+        fail "Task 1a: Apache httpd:latest image is downloaded"
+    fi
+
+    # 1b - VERIFY APACHE CONTAINER EXISTS
+
+    if sudo docker inspect "$HTTPD_CONTAINER" >/dev/null 2>&1; then
+        pass "Task 1b: web-httpd container exists"
+    else
+        fail "Task 1b: web-httpd container exists"
+    fi
+
+    # 1c - VERIFY APACHE CONTAINER IS RUNNING
+
+    if [ "$(sudo docker inspect -f '{{.State.Running}}' "$HTTPD_CONTAINER" 2>/dev/null)" = "true" ]; then
+        pass "Task 1c: web-httpd container is running"
+    else
+        fail "Task 1c: web-httpd container is running"
+    fi
+
+    # 1d - VERIFY APACHE PORT PUBLISHING
+
+    if sudo docker port "$HTTPD_CONTAINER" "$CONTAINER_PORT/tcp" 2>/dev/null |
+       grep -Eq "(:|^)${HTTPD_HOST_PORT}$"; then
+        pass "Task 1d: Apache host port 8085 is mapped to container port 80"
+    else
+        fail "Task 1d: Apache host port 8085 is mapped to container port 80"
+    fi
+
+    # 1e - VERIFY LINOOP DIRECTORY
+
+    if sudo docker exec "$HTTPD_CONTAINER" test -d "$HTTPD_DIR" 2>/dev/null; then
+        pass "Task 1e: /linoop directory exists inside Apache container"
+    else
+        fail "Task 1e: /linoop directory exists inside Apache container"
+    fi
+
+    # 1f - VERIFY DOCKER.TXT CONTENT
+
+    if sudo docker exec "$HTTPD_CONTAINER" test -f "$HTTPD_FILE" 2>/dev/null &&
+       sudo docker exec "$HTTPD_CONTAINER" grep -Fxq "$HTTPD_CONTENT" "$HTTPD_FILE" 2>/dev/null; then
+        pass "Task 1f: docker.txt exists with exact required content"
+    else
+        fail "Task 1f: docker.txt exists with exact required content"
+    fi
+
+    # TASK 2 - START, RESTART AND VERIFY PERSISTENCE
+
+    # 2a - VERIFY CONTAINER IS RUNNING
+
+    if [ "$(sudo docker inspect -f '{{.State.Running}}' "$HTTPD_CONTAINER" 2>/dev/null)" = "true" ]; then
+        pass "Task 2a: Existing web-httpd container is running"
+    else
+        fail "Task 2a: Existing web-httpd container is running"
+    fi
+
+    # 2b - VERIFY FILE PERSISTENCE AFTER START
+
+    if sudo docker exec "$HTTPD_CONTAINER" test -f "$HTTPD_FILE" 2>/dev/null &&
+       sudo docker exec "$HTTPD_CONTAINER" grep -Fxq "$HTTPD_CONTENT" "$HTTPD_FILE" 2>/dev/null; then
+        pass "Task 2b: docker.txt persists after starting the container"
+    else
+        fail "Task 2b: docker.txt persists after starting the container"
+    fi
+
+    # 2c - VERIFY CONTAINER RESTART
+
+    if [ "$(sudo docker inspect -f '{{.State.Running}}' "$HTTPD_CONTAINER" 2>/dev/null)" = "true" ] &&
+       [ -n "$(sudo docker inspect -f '{{.State.StartedAt}}' "$HTTPD_CONTAINER" 2>/dev/null)" ]; then
+        pass "Task 2c: web-httpd container is running after restart"
+    else
+        fail "Task 2c: web-httpd container is running after restart"
+    fi
+
+    # 2d - VERIFY FILE PERSISTENCE AFTER RESTART
+
+    if sudo docker exec "$HTTPD_CONTAINER" test -f "$HTTPD_FILE" 2>/dev/null &&
+       sudo docker exec "$HTTPD_CONTAINER" grep -Fxq "$HTTPD_CONTENT" "$HTTPD_FILE" 2>/dev/null; then
+        pass "Task 2d: docker.txt and its contents persist after restart"
+    else
+        fail "Task 2d: docker.txt and its contents persist after restart"
+    fi
+
+    # TASK 3 - NGINX IMAGE AND DETACHED CONTAINER
+
+    # 3a - VERIFY NGINX IMAGE
+
+    if sudo docker image inspect "$NGINX_IMAGE" >/dev/null 2>&1; then
+        pass "Task 3a: Nginx nginx:latest image is downloaded"
+    else
+        fail "Task 3a: Nginx nginx:latest image is downloaded"
+    fi
+
+    # 3b - VERIFY NGINX CONTAINER EXISTS
+
+    if sudo docker inspect "$NGINX_CONTAINER" >/dev/null 2>&1; then
+        pass "Task 3b: web-nginx container exists"
+    else
+        fail "Task 3b: web-nginx container exists"
+    fi
+
+    # 3c - VERIFY NGINX CONTAINER IS RUNNING
+
+    if [ "$(sudo docker inspect -f '{{.State.Running}}' "$NGINX_CONTAINER" 2>/dev/null)" = "true" ]; then
+        pass "Task 3c: web-nginx container is running"
+    else
+        fail "Task 3c: web-nginx container is running"
+    fi
+
+    # 3d - VERIFY NGINX PORT PUBLISHING
+
+    if sudo docker port "$NGINX_CONTAINER" "$CONTAINER_PORT/tcp" 2>/dev/null |
+       grep -Eq "(:|^)${NGINX_HOST_PORT}$"; then
+        pass "Task 3d: Nginx host port 8086 is mapped to container port 80"
+    else
+        fail "Task 3d: Nginx host port 8086 is mapped to container port 80"
+    fi
+
+    # 3e - VERIFY HOST INDEX.HTML
+
+    if sudo test -f "$NGINX_HOST_FILE" 2>/dev/null &&
+       sudo grep -Fxq "$NGINX_CONTENT" "$NGINX_HOST_FILE" 2>/dev/null; then
+        pass "Task 3e: Host index.html exists with exact required content"
+    else
+        fail "Task 3e: Host index.html exists with exact required content"
+    fi
+
+    # 3f - VERIFY INDEX.HTML INSIDE NGINX
+
+    if sudo docker exec "$NGINX_CONTAINER" test -f "$NGINX_CONTAINER_FILE" 2>/dev/null &&
+       sudo docker exec "$NGINX_CONTAINER" grep -Fxq "$NGINX_CONTENT" "$NGINX_CONTAINER_FILE" 2>/dev/null; then
+        pass "Task 3f: index.html is copied into Nginx document root with correct content"
+    else
+        fail "Task 3f: index.html is copied into Nginx document root with correct content"
+    fi
+
+    # 3g - VERIFY NGINX WEB PAGE USING CURL
+
+    NGINX_RESPONSE=$(sudo curl -fsS --max-time 5 "http://localhost:${NGINX_HOST_PORT}" 2>/dev/null)
+
+    if [ -n "$NGINX_RESPONSE" ] &&
+       printf '%s\n' "$NGINX_RESPONSE" | grep -Fq "$NGINX_CONTENT"; then
+        pass "Task 3g: Nginx web page is accessible using curl with expected content"
+    else
+        fail "Task 3g: Nginx web page is accessible using curl with expected content"
+    fi
+
+    # 3h - VERIFY NGINX HTTP RESPONSE
+
+    NGINX_STATUS=$(sudo curl -sS -o /dev/null -w "%{http_code}" \
+        --max-time 5 "http://localhost:${NGINX_HOST_PORT}" 2>/dev/null)
+
+    if [ "$NGINX_STATUS" = "200" ]; then
+        pass "Task 3h: Nginx web server returns HTTP 200"
+    else
+        fail "Task 3h: Nginx web server returns HTTP 200"
+    fi
+
+    # TASK 4 - FINAL VERIFICATION
+
+    # 4a - VERIFY APACHE IS ACCESSIBLE
+
+    HTTPD_STATUS=$(sudo curl -sS -o /dev/null -w "%{http_code}" \
+        --max-time 5 "http://localhost:${HTTPD_HOST_PORT}" 2>/dev/null)
+
+    if [[ "$HTTPD_STATUS" =~ ^2[0-9][0-9]$ ]]; then
+        pass "Task 4a: Apache web server is accessible through port 8085"
+    else
+        fail "Task 4a: Apache web server is accessible through port 8085"
+    fi
+
+    # 4b - VERIFY BOTH CONTAINERS RUNNING
+
+    HTTPD_RUNNING=$(sudo docker inspect -f '{{.State.Running}}' "$HTTPD_CONTAINER" 2>/dev/null)
+    NGINX_RUNNING=$(sudo docker inspect -f '{{.State.Running}}' "$NGINX_CONTAINER" 2>/dev/null)
+
+    if [ "$HTTPD_RUNNING" = "true" ] &&
+       [ "$NGINX_RUNNING" = "true" ]; then
+        pass "Task 4b: Both web-httpd and web-nginx containers are running simultaneously"
+    else
+        fail "Task 4b: Both web-httpd and web-nginx containers are running simultaneously"
+    fi
+
+    # 4c - VERIFY BOTH PUBLISHED PORTS
+
+    if sudo docker port "$HTTPD_CONTAINER" "$CONTAINER_PORT/tcp" 2>/dev/null |
+       grep -Eq "(:|^)${HTTPD_HOST_PORT}$" &&
+       sudo docker port "$NGINX_CONTAINER" "$CONTAINER_PORT/tcp" 2>/dev/null |
+       grep -Eq "(:|^)${NGINX_HOST_PORT}$"; then
+        pass "Task 4c: Both Apache and Nginx published ports are configured correctly"
+    else
+        fail "Task 4c: Both Apache and Nginx published ports are configured correctly"
+    fi
+
+    # 4d - VERIFY BOTH WEB SERVERS RESPOND
+
+    if sudo curl -fsS --max-time 5 "http://localhost:${HTTPD_HOST_PORT}" >/dev/null 2>&1 &&
+       sudo curl -fsS --max-time 5 "http://localhost:${NGINX_HOST_PORT}" |
+       grep -Fq "$NGINX_CONTENT"; then
+        pass "Task 4d: Both web servers are accessible through their published ports"
+    else
+        fail "Task 4d: Both web servers are accessible through their published ports"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#==================================================================
+
+validate_lab502_docker_volumes_bind_mounts() {
+
+    set +e
+    set +u
+    set +o pipefail
+
+    echo "<h2>Checking Lab 502 - Docker Volumes, Bind Mounts and Port Mapping.</h2>"
+
+    TOTAL_TASKS=36
+    PASSED=0
+
+    LAB_NAME="Lab 502 - Docker Volumes, Bind Mounts and Port Mapping"
+    DATE=$(date "+%F %T")
+
+    # CONFIGURATION
+
+    HTTPD_IMAGE="httpd:latest"
+    NGINX_IMAGE="nginx:latest"
+
+    VOLUME_NAME="webdata"
+
+    OLD_HTTPD_CONTAINER="volume-httpd"
+    HTTPD_CONTAINER="volume-httpd2"
+    BIND_CONTAINER="bind-nginx"
+    READONLY_CONTAINER="readonly-nginx"
+
+    CONTAINER_PORT="80"
+
+    HTTPD_HOST_PORT="8088"
+    BIND_HOST_PORT="8089"
+    READONLY_HOST_PORT="8090"
+
+    HTTPD_VOLUME_DIR="/usr/local/apache2/htdocs"
+    HTTPD_FILE="/usr/local/apache2/htdocs/linoop/docker.txt"
+
+    HTTPD_CONTENT="Welcome to LINOOP! Learning Docker volumes and persistent storage."
+
+    BIND_HOST_DIR="/root/webdata"
+    BIND_HOST_FILE="/root/webdata/index.html"
+
+    NGINX_CONTAINER_DIR="/usr/share/nginx/html"
+    NGINX_CONTAINER_FILE="/usr/share/nginx/html/index.html"
+
+    NGINX_CONTENT="Hello from LINOOP! This page is served using a Docker bind mount."
+    CONTAINER_UPDATE="Updated from inside the Docker container!"
+    HOST_UPDATE="Updated from the Docker host!"
+
+    # HELPERS
+
+    pass() {
+        echo "<div class='validation-pass'>✓ $1 – Pass</div>"
+        ((PASSED++))
+    }
+
+    fail() {
+        echo "<div class='validation-fail'>✗ $1 – Fail</div>"
+    }
+
+    # TASK 1 - CREATE AND INSPECT DOCKER VOLUME
+
+    # 1a - VERIFY DOCKER VOLUME
+
+    if sudo docker volume inspect "$VOLUME_NAME" >/dev/null 2>&1; then
+        pass "Task 1a: Docker volume webdata exists"
+    else
+        fail "Task 1a: Docker volume webdata exists"
+    fi
+
+    # 1b - VERIFY VOLUME DRIVER
+
+    if [ "$(sudo docker volume inspect -f '{{.Driver}}' "$VOLUME_NAME" 2>/dev/null)" = "local" ]; then
+        pass "Task 1b: webdata volume uses the local driver"
+    else
+        fail "Task 1b: webdata volume uses the local driver"
+    fi
+
+    # 1c - VERIFY VOLUME MOUNTPOINT
+
+    if [ -n "$(sudo docker volume inspect -f '{{.Mountpoint}}' "$VOLUME_NAME" 2>/dev/null)" ]; then
+        pass "Task 1c: webdata volume has a valid mountpoint"
+    else
+        fail "Task 1c: webdata volume has a valid mountpoint"
+    fi
+
+
+    # TASK 2 - MOUNT DOCKER VOLUME INSIDE APACHE CONTAINER
+
+    # 2a - VERIFY APACHE IMAGE
+
+    if sudo docker image inspect "$HTTPD_IMAGE" >/dev/null 2>&1; then
+        pass "Task 2a: Apache httpd:latest image is downloaded"
+    else
+        fail "Task 2a: Apache httpd:latest image is downloaded"
+    fi
+
+    # 2b - VERIFY APACHE CONTAINER IS RUNNING
+
+    if [ "$(sudo docker inspect -f '{{.State.Running}}' "$HTTPD_CONTAINER" 2>/dev/null)" = "true" ]; then
+        pass "Task 2b: volume-httpd container is running"
+    else
+        fail "Task 2b: volume-httpd container is running"
+    fi
+
+    # 2c - VERIFY VOLUME MOUNT
+
+    if [ "$(sudo docker inspect -f '{{range .Mounts}}{{if eq .Destination "/usr/local/apache2/htdocs"}}{{.Name}}{{end}}{{end}}' "$HTTPD_CONTAINER" 2>/dev/null)" = "$VOLUME_NAME" ]; then
+        pass "Task 2c: webdata volume is mounted at Apache document directory"
+    else
+        fail "Task 2c: webdata volume is mounted at Apache document directory"
+    fi
+
+    # 2d - VERIFY APACHE PORT MAPPING
+
+    if sudo docker port "$HTTPD_CONTAINER" "$CONTAINER_PORT/tcp" 2>/dev/null |
+       grep -Eq "(:|^)${HTTPD_HOST_PORT}$"; then
+        pass "Task 2d: Apache host port 8087 is mapped to container port 80"
+    else
+        fail "Task 2d: Apache host port 8087 is mapped to container port 80"
+    fi
+
+    # 2e - VERIFY LINOOP DIRECTORY
+
+    if sudo docker exec "$HTTPD_CONTAINER" test -d "$HTTPD_VOLUME_DIR/linoop" 2>/dev/null; then
+        pass "Task 2e: linoop directory exists inside mounted volume"
+    else
+        fail "Task 2e: linoop directory exists inside mounted volume"
+    fi
+
+    # 2f - VERIFY DOCKER.TXT CONTENT
+
+    if sudo docker exec "$HTTPD_CONTAINER" test -f "$HTTPD_FILE" 2>/dev/null &&
+       sudo docker exec "$HTTPD_CONTAINER" grep -Fxq "$HTTPD_CONTENT" "$HTTPD_FILE" 2>/dev/null; then
+        pass "Task 2f: docker.txt exists with exact required content"
+    else
+        fail "Task 2f: docker.txt exists with exact required content"
+    fi
+
+
+    # TASK 3 - VERIFY VOLUME PERSISTENCE AFTER CONTAINER REMOVAL
+
+    # 3a - VERIFY ORIGINAL CONTAINER REMOVED
+
+    if ! sudo docker inspect "$OLD_HTTPD_CONTAINER" >/dev/null 2>&1; then
+        pass "Task 3a: Original volume-httpd container has been removed"
+    else
+        fail "Task 3a: Original volume-httpd container has been removed"
+    fi
+
+    # 3b - VERIFY VOLUME STILL EXISTS
+
+    if sudo docker volume inspect "$VOLUME_NAME" >/dev/null 2>&1; then
+        pass "Task 3b: webdata volume still exists after container removal"
+    else
+        fail "Task 3b: webdata volume still exists after container removal"
+    fi
+
+    # 3c - VERIFY SECOND APACHE CONTAINER
+
+    if [ "$(sudo docker inspect -f '{{.State.Running}}' "$HTTPD_CONTAINER" 2>/dev/null)" = "true" ]; then
+        pass "Task 3c: volume-httpd2 container is running"
+    else
+        fail "Task 3c: volume-httpd2 container is running"
+    fi
+
+    # 3d - VERIFY EXISTING VOLUME REUSED
+
+    if [ "$(sudo docker inspect -f '{{range .Mounts}}{{if eq .Destination "/usr/local/apache2/htdocs"}}{{.Name}}{{end}}{{end}}' "$HTTPD_CONTAINER" 2>/dev/null)" = "$VOLUME_NAME" ]; then
+        pass "Task 3d: Existing webdata volume is mounted inside volume-httpd2"
+    else
+        fail "Task 3d: Existing webdata volume is mounted inside volume-httpd2"
+    fi
+
+    # 3e - VERIFY PERSISTENT FILE CONTENT
+
+    if sudo docker exec "$HTTPD_CONTAINER" test -f "$HTTPD_FILE" 2>/dev/null &&
+       sudo docker exec "$HTTPD_CONTAINER" grep -Fxq "$HTTPD_CONTENT" "$HTTPD_FILE" 2>/dev/null; then
+        pass "Task 3e: docker.txt and its contents persist after original container removal"
+    else
+        fail "Task 3e: docker.txt and its contents persist after original container removal"
+    fi
+
+    # 3f - VERIFY APACHE WEB ACCESSIBILITY
+
+    if sudo curl -fsS "http://localhost:${HTTPD_HOST_PORT}/linoop/docker.txt" 2>/dev/null |
+       grep -Fq "$HTTPD_CONTENT"; then
+        pass "Task 3f: Apache serves persistent volume content on port 8088"
+    else
+        fail "Task 3f: Apache serves persistent volume content on port 8088"
+    fi
+
+
+    # TASK 4 - CREATE AND CONFIGURE BIND MOUNT
+
+    # 4a - VERIFY HOST DIRECTORY
+
+    if sudo [ -d "$BIND_HOST_DIR" ]; then
+        pass "Task 4a: /root/webdata directory exists on Docker host"
+    else
+        fail "Task 4a: /root/webdata directory exists on Docker host"
+    fi
+
+    # 4b - VERIFY HOST INDEX.HTML CONTENT
+
+    if sudo [ -f "$BIND_HOST_FILE" ] &&
+       sudo grep -Fxq "$NGINX_CONTENT" "$BIND_HOST_FILE"; then
+        pass "Task 4b: Host index.html exists with required initial content"
+    else
+        fail "Task 4b: Host index.html exists with required initial content"
+    fi
+
+    # 4c - VERIFY NGINX IMAGE
+
+    if sudo docker image inspect "$NGINX_IMAGE" >/dev/null 2>&1; then
+        pass "Task 4c: Nginx nginx:latest image is downloaded"
+    else
+        fail "Task 4c: Nginx nginx:latest image is downloaded"
+    fi
+
+    # 4d - VERIFY BIND CONTAINER RUNNING
+
+    if [ "$(sudo docker inspect -f '{{.State.Running}}' "$BIND_CONTAINER" 2>/dev/null)" = "true" ]; then
+        pass "Task 4d: bind-nginx container is running"
+    else
+        fail "Task 4d: bind-nginx container is running"
+    fi
+
+    # 4e - VERIFY BIND MOUNT CONFIGURATION
+
+    if [ "$(sudo docker inspect -f '{{range .Mounts}}{{if eq .Destination "/usr/share/nginx/html"}}{{.Type}}:{{.Source}}:{{.RW}}{{end}}{{end}}' "$BIND_CONTAINER" 2>/dev/null)" = "bind:${BIND_HOST_DIR}:true" ]; then
+        pass "Task 4e: /root/webdata is mounted as a read-write bind mount"
+    else
+        fail "Task 4e: /root/webdata is mounted as a read-write bind mount"
+    fi
+
+    # 4f - VERIFY NGINX PORT MAPPING
+
+    if sudo docker port "$BIND_CONTAINER" "$CONTAINER_PORT/tcp" 2>/dev/null |
+       grep -Eq "(:|^)${BIND_HOST_PORT}$"; then
+        pass "Task 4f: Nginx host port 8089 is mapped to container port 80"
+    else
+        fail "Task 4f: Nginx host port 8089 is mapped to container port 80"
+    fi
+
+    # 4g - VERIFY INDEX.HTML INSIDE CONTAINER
+
+    if sudo docker exec "$BIND_CONTAINER" test -f "$NGINX_CONTAINER_FILE" 2>/dev/null &&
+       sudo docker exec "$BIND_CONTAINER" grep -Fxq "$NGINX_CONTENT" "$NGINX_CONTAINER_FILE" 2>/dev/null; then
+        pass "Task 4g: index.html exists inside Nginx container with required content"
+    else
+        fail "Task 4g: index.html exists inside Nginx container with required content"
+    fi
+
+
+    # TASK 5 - VERIFY TWO-WAY DATA SHARING
+
+    # 5a - VERIFY CONTAINER UPDATE ON HOST
+
+    if sudo [ -f "$BIND_HOST_FILE" ] &&
+       sudo grep -Fxq "$CONTAINER_UPDATE" "$BIND_HOST_FILE"; then
+        pass "Task 5a: Changes made inside container are reflected on Docker host"
+    else
+        fail "Task 5a: Changes made inside container are reflected on Docker host"
+    fi
+
+    # 5b - VERIFY HOST UPDATE IN CONTAINER
+
+    if sudo docker exec "$BIND_CONTAINER" grep -Fxq "$HOST_UPDATE" "$NGINX_CONTAINER_FILE" 2>/dev/null; then
+        pass "Task 5b: Changes made on Docker host are reflected inside container"
+    else
+        fail "Task 5b: Changes made on Docker host are reflected inside container"
+    fi
+
+    # 5c - VERIFY UPDATED WEB PAGE
+
+    if sudo curl -fsS "http://localhost:${BIND_HOST_PORT}" 2>/dev/null |
+       grep -Fq "$NGINX_CONTENT" &&
+       sudo curl -fsS "http://localhost:${BIND_HOST_PORT}" 2>/dev/null |
+       grep -Fq "$CONTAINER_UPDATE" &&
+       sudo curl -fsS "http://localhost:${BIND_HOST_PORT}" 2>/dev/null |
+       grep -Fq "$HOST_UPDATE"; then
+        pass "Task 5c: Nginx serves all updated content from the bind mount"
+    else
+        fail "Task 5c: Nginx serves all updated content from the bind mount"
+    fi
+
+
+    # TASK 6 - VERIFY READ-ONLY BIND MOUNT
+
+    # 6a - VERIFY READONLY CONTAINER RUNNING
+
+    if [ "$(sudo docker inspect -f '{{.State.Running}}' "$READONLY_CONTAINER" 2>/dev/null)" = "true" ]; then
+        pass "Task 6a: readonly-nginx container is running"
+    else
+        fail "Task 6a: readonly-nginx container is running"
+    fi
+
+    # 6b - VERIFY READONLY BIND MOUNT
+
+    if [ "$(sudo docker inspect -f '{{range .Mounts}}{{if eq .Destination "/usr/share/nginx/html"}}{{.Type}}:{{.Source}}{{end}}{{end}}' "$READONLY_CONTAINER" 2>/dev/null)" = "bind:${BIND_HOST_DIR}" ]; then
+        pass "Task 6b: readonly-nginx uses the correct host bind mount"
+    else
+        fail "Task 6b: readonly-nginx uses the correct host bind mount"
+    fi
+
+    # 6c - VERIFY READ-ONLY CONFIGURATION
+
+    if [ "$(sudo docker inspect -f '{{range .Mounts}}{{if eq .Destination "/usr/share/nginx/html"}}{{.RW}}{{end}}{{end}}' "$READONLY_CONTAINER" 2>/dev/null)" = "false" ]; then
+        pass "Task 6c: readonly-nginx bind mount is configured as read-only"
+    else
+        fail "Task 6c: readonly-nginx bind mount is configured as read-only"
+    fi
+
+    # 6d - VERIFY FILE ACCESS
+
+    if sudo docker exec "$READONLY_CONTAINER" test -r "$NGINX_CONTAINER_FILE" 2>/dev/null &&
+       sudo docker exec "$READONLY_CONTAINER" grep -Fxq "$HOST_UPDATE" "$NGINX_CONTAINER_FILE" 2>/dev/null; then
+        pass "Task 6d: index.html is readable inside readonly-nginx"
+    else
+        fail "Task 6d: index.html is readable inside readonly-nginx"
+    fi
+
+    # 6e - VERIFY READONLY WEB ACCESSIBILITY
+
+    if sudo curl -fsS "http://localhost:${READONLY_HOST_PORT}" 2>/dev/null |
+       grep -Fq "$HOST_UPDATE"; then
+        pass "Task 6e: Read-only Nginx web page is accessible on port 8090"
+    else
+        fail "Task 6e: Read-only Nginx web page is accessible on port 8090"
+    fi
+
+
+    # TASK 7 - FINAL CONTAINER AND PORT VERIFICATION
+
+    # 7a - VERIFY APACHE CONTAINER
+
+    if [ "$(sudo docker inspect -f '{{.State.Running}}' "$HTTPD_CONTAINER" 2>/dev/null)" = "true" ]; then
+        pass "Task 7a: volume-httpd2 is running"
+    else
+        fail "Task 7a: volume-httpd2 is running"
+    fi
+
+    # 7b - VERIFY BIND NGINX CONTAINER
+
+    if [ "$(sudo docker inspect -f '{{.State.Running}}' "$BIND_CONTAINER" 2>/dev/null)" = "true" ]; then
+        pass "Task 7b: bind-nginx is running"
+    else
+        fail "Task 7b: bind-nginx is running"
+    fi
+
+    # 7c - VERIFY READONLY NGINX CONTAINER
+
+    if [ "$(sudo docker inspect -f '{{.State.Running}}' "$READONLY_CONTAINER" 2>/dev/null)" = "true" ]; then
+        pass "Task 7c: readonly-nginx is running"
+    else
+        fail "Task 7c: readonly-nginx is running"
+    fi
+
+    # 7d - VERIFY APACHE FINAL PORT
+
+    if sudo docker port "$HTTPD_CONTAINER" "$CONTAINER_PORT/tcp" 2>/dev/null |
+       grep -Eq "(:|^)${HTTPD_HOST_PORT}$"; then
+        pass "Task 7d: volume-httpd2 publishes host port 8088"
+    else
+        fail "Task 7d: volume-httpd2 publishes host port 8088"
+    fi
+
+    # 7e - VERIFY BIND NGINX FINAL PORT
+
+    if sudo docker port "$BIND_CONTAINER" "$CONTAINER_PORT/tcp" 2>/dev/null |
+       grep -Eq "(:|^)${BIND_HOST_PORT}$"; then
+        pass "Task 7e: bind-nginx publishes host port 8089"
+    else
+        fail "Task 7e: bind-nginx publishes host port 8089"
+    fi
+
+    # 7f - VERIFY READONLY NGINX FINAL PORT
+
+    if sudo docker port "$READONLY_CONTAINER" "$CONTAINER_PORT/tcp" 2>/dev/null |
+       grep -Eq "(:|^)${READONLY_HOST_PORT}$"; then
+        pass "Task 7f: readonly-nginx publishes host port 8090"
+    else
+        fail "Task 7f: readonly-nginx publishes host port 8090"
+    fi
+
+    # ============================================================
+    # SUMMARY
+    # ============================================================
+
+    PERCENT=$((PASSED * 100 / TOTAL_TASKS))
+
+    if [ "$PASSED" -eq "$TOTAL_TASKS" ]; then
+        RESULT_CLASS="result-success"
+        RESULT_ICON="✓"
+        RESULT_TEXT="LAB PASSED"
+    else
+        RESULT_CLASS="result-failed"
+        RESULT_ICON="✗"
+        RESULT_TEXT="LAB NEEDS ATTENTION"
+    fi
+
+    # ============================================================
+    # RESULT STYLES
+    # ============================================================
+
+    cat <<'HTML'
+<style>
+.validation-pass {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#DCFCE7;
+    color:#166534;
+    border-left:5px solid #22C55E;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.validation-fail {
+    margin:6px 0;
+    padding:10px 14px;
+    background:#FEE2E2;
+    color:#991B1B;
+    border-left:5px solid #EF4444;
+    border-radius:6px;
+    font-weight:600;
+}
+
+.lab-summary {
+    margin-top:25px;
+    padding:28px;
+    border-radius:14px;
+    text-align:center;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+    color:#fff;
+}
+
+.lab-summary-title {
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    color:#38bdf8;
+}
+
+.lab-summary-info {
+    text-align:left;
+    max-width:650px;
+    margin:0 auto 20px auto;
+}
+
+.lab-summary-row {
+    padding:10px 0;
+    border-bottom:1px solid #334155;
+}
+
+.lab-summary-label {
+    font-weight:700;
+    color:#94a3b8;
+    display:inline-block;
+    min-width:110px;
+}
+
+.result-percentage {
+    margin-top:20px;
+    font-size:42px;
+    font-weight:800;
+    color:#38bdf8;
+}
+
+.result-success {
+    margin-top:20px;
+    padding:15px;
+    background:#166534;
+    color:#dcfce7;
+    border:2px solid #22c55e;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+
+.result-failed {
+    margin-top:20px;
+    padding:15px;
+    background:#991b1b;
+    color:#fee2e2;
+    border:2px solid #ef4444;
+    border-radius:10px;
+    font-size:21px;
+    font-weight:700;
+}
+</style>
+HTML
+
+    # ============================================================
+    # RESULT SUMMARY
+    # ============================================================
+
+    cat <<HTML
+<div class="lab-summary">
+
+<div class="lab-summary-title">LAB RESULT SUMMARY</div>
+
+<div class="lab-summary-info">
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Student:</span>
+<span>$STUDENT_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Lab:</span>
+<span>$LAB_NAME</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Total Tasks:</span>
+<span>$TOTAL_TASKS</span>
+</div>
+
+<div class="lab-summary-row">
+<span class="lab-summary-label">Passed:</span>
+<span>$PASSED</span>
+</div>
+
+</div>
+
+<div class="result-percentage">$PERCENT%</div>
+
+<div class="$RESULT_CLASS">
+$RESULT_ICON $RESULT_TEXT
+</div>
+
+</div>
+HTML
+}
+#==================================================================

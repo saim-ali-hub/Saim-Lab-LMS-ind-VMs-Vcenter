@@ -1,0 +1,199 @@
+
+{
+  "title": "Lab 502 - Docker Volumes, Bind Mounts and Port Mapping",
+  "lab_objective": {
+    "description": "By performing this lab, you will learn:",
+    "objectives": [
+      "Understand why persistent storage is required in Docker.",
+      "Understand what happens to container data when a container is removed.",
+      "Understand the difference between Docker volumes and bind mounts.",
+      "Create and manage Docker volumes using docker volume commands.",
+      "Inspect Docker volumes using docker volume inspect.",
+      "Mount Docker volumes into containers using the -v option.",
+      "Understand how data is shared between Docker volumes and containers.",
+      "Verify data persistence after stopping and removing containers.",
+      "Reuse an existing Docker volume with another container.",
+      "Create bind mounts using directories from the Docker host.",
+      "Mount host directories into containers using the -v option.",
+      "Understand the difference between source and destination paths in a bind mount.",
+      "Create and modify files on the Docker host and access them inside containers.",
+      "Verify that changes made inside a container are reflected on the Docker host.",
+      "Understand the difference between read-write and read-only bind mounts.",
+      "Publish container ports to host ports using the -p option.",
+      "Understand host-to-container port mapping.",
+      "Run multiple web server containers simultaneously using different host ports.",
+      "Verify web applications using curl and a web browser.",
+      "Inspect container mount configurations using docker inspect."
+    ],
+    "scenario": [
+      "You are a Linux administrator responsible for deploying containerized web applications using Docker. Your organization requires application data to remain available even when containers are stopped, restarted, or removed.",
+      "Your first assignment is to create a Docker volume named webdata and mount it inside an Apache container named volume-httpd. You must create a directory named /linoop and a file named docker.txt inside the mounted volume.",
+      "You must verify that the data remains available after stopping and removing the Apache container. You must then create another container named volume-httpd2 and reuse the same Docker volume to verify data persistence.",
+      "Your second assignment is to create a bind mount using a host directory named /root/webdata. You must mount this directory inside an Nginx container named bind-nginx at /usr/share/nginx/html.",
+      "You must create an index.html file on the Docker host with the specified content and verify that the Nginx container can access and serve the file.",
+      "You must also modify the HTML file from inside the container and verify that the changes are reflected in the original file on the Docker host.",
+      "Your third assignment is to create another Nginx container named readonly-nginx using the same host directory as a read-only bind mount. You must verify that files can be viewed but cannot be modified from inside the container.",
+      "Finally, you must deploy the containers using different published host ports and verify that the web applications are accessible through their respective ports."
+    ]
+  },
+  "tasks": [
+    {
+      "task_number": 1,
+      "title": "Create and Inspect a Docker Volume",
+      "steps": [
+        "Verify the available Docker volumes using the docker volume ls command.",
+        "Create a Docker volume named webdata using docker volume create.",
+        "Verify that the webdata volume has been created successfully.",
+        "Inspect the webdata volume using docker volume inspect.",
+        "Identify the Mountpoint of the volume on the Docker host.",
+        "Understand that Docker manages the volume storage location.",
+        "Display the available Docker volumes again and verify webdata."
+      ]
+    },
+    {
+      "task_number": 2,
+      "title": "Mount a Docker Volume Inside an Apache Container",
+      "steps": [
+        "Pull the httpd:latest image from Docker Hub if it is not already available.",
+        "Create and run a container named volume-httpd using the httpd:latest image.",
+        "Run the container in detached mode using the -d option.",
+        "Mount the webdata Docker volume inside the container at /usr/local/apache2/htdocs using the -v option.",
+        "Publish host port 8087 to container port 80 using the -p option.",
+        "Verify that the volume-httpd container is running.",
+        "Verify the published port mapping using docker ps.",
+        "Access the running Apache container using docker exec.",
+        "Create a directory named linoop inside the mounted volume.",
+        "Navigate to the /usr/local/apache2/htdocs/linoop directory.",
+        "Create a file named docker.txt.",
+        "Add the following exact content to docker.txt:",
+        "Welcome to LINOOP! Learning Docker volumes and persistent storage.",
+        "Display the contents of docker.txt.",
+        "Verify that the file exists inside the mounted volume.",
+        "Exit the container shell.",
+        "Verify the container's mount configuration using docker inspect.",
+        "Identify the volume name, source, and destination paths."
+      ]
+    },
+    {
+      "task_number": 3,
+      "title": "Verify Volume Persistence After Container Removal",
+      "steps": [
+        "Verify that volume-httpd is running.",
+        "Stop the volume-httpd container using docker stop.",
+        "Verify that the container has stopped.",
+        "Remove the volume-httpd container using docker rm.",
+        "Verify that the container has been removed.",
+        "Verify that the webdata volume still exists using docker volume ls.",
+        "Inspect the webdata volume using docker volume inspect.",
+        "Create and run another Apache container named volume-httpd2.",
+        "Mount the existing webdata volume inside the new container at /usr/local/apache2/htdocs.",
+        "Publish host port 8088 to container port 80.",
+        "Verify that volume-httpd2 is running.",
+        "Access the container using docker exec.",
+        "Navigate to /usr/local/apache2/htdocs/linoop.",
+        "Verify that docker.txt still exists.",
+        "Display the contents of docker.txt and verify the exact required content.",
+        "Verify the web page using curl http://localhost:8088/linoop/docker.txt.",
+        "Confirm that Docker volume data remains available even after the original container is removed."
+      ]
+    },
+    {
+      "task_number": 4,
+      "title": "Create and Configure a Bind Mount",
+      "steps": [
+        "Create a directory named /root/webdata on the Docker host.",
+        "Verify that the directory exists on the Docker host.",
+        "Create a file named index.html inside /root/webdata.",
+        "Add the following exact content to index.html:",
+        "Hello from LINOOP! This page is served using a Docker bind mount.",
+        "Save the file on the Docker host.",
+        "Verify the contents of /root/webdata/index.html.",
+        "Pull the nginx:latest image from Docker Hub if it is not already available.",
+        "Create and run a container named bind-nginx using the nginx:latest image.",
+        "Run the container in detached mode using the -d option.",
+        "Mount the host directory /root/webdata inside the container at /usr/share/nginx/html using the -v option.",
+        "Publish host port 8089 to container port 80.",
+        "Verify that the bind-nginx container is running.",
+        "Verify the published port mapping using docker ps.",
+        "Access the container using docker exec.",
+        "Verify that /usr/share/nginx/html/index.html exists inside the container.",
+        "Display and verify the exact contents of index.html inside the container.",
+        "Verify the bind mount configuration using docker inspect.",
+        "Identify the host source directory and container destination directory."
+      ]
+    },
+    {
+      "task_number": 5,
+      "title": "Verify Two-Way Data Sharing Through a Bind Mount",
+      "steps": [
+        "Display the contents of /root/webdata/index.html on the Docker host.",
+        "Access the bind-nginx container using docker exec.",
+        "Navigate to /usr/share/nginx/html.",
+        "Modify index.html from inside the container.",
+        "Add the following exact content to the existing file:",
+        "Updated from inside the Docker container!",
+        "Display the updated contents of index.html inside the container.",
+        "Exit the container shell.",
+        "Display /root/webdata/index.html on the Docker host.",
+        "Verify that the new content is also available on the Docker host.",
+        "Modify index.html directly on the Docker host.",
+        "Add the following exact content:",
+        "Updated from the Docker host!",
+        "Access the Nginx web page using curl http://localhost:8089.",
+        "Verify that the latest content is displayed.",
+        "Confirm that changes made on either side are reflected on the other side because both locations reference the same files."
+      ]
+    },
+    {
+      "task_number": 6,
+      "title": "Create a Read-Only Bind Mount",
+      "steps": [
+        "Create and run another Nginx container named readonly-nginx.",
+        "Run the container in detached mode using the -d option.",
+        "Mount the existing host directory /root/webdata inside the container at /usr/share/nginx/html.",
+        "Configure the bind mount as read-only using the :ro option.",
+        "Publish host port 8090 to container port 80.",
+        "Verify that readonly-nginx is running.",
+        "Access the container using docker exec.",
+        "Navigate to /usr/share/nginx/html.",
+        "Verify that index.html exists and display its contents.",
+        "Attempt to create a file named test.txt inside /usr/share/nginx/html.",
+        "Verify that the file creation fails because the bind mount is read-only.",
+        "Attempt to modify index.html from inside the container.",
+        "Verify that the modification is denied.",
+        "Exit the container shell.",
+        "Verify that the original index.html on the Docker host remains unchanged.",
+        "Access the Nginx web page using curl http://localhost:8090.",
+        "Confirm that the read-only bind mount allows the container to read files but prevents it from modifying the mounted host directory."
+      ]
+    },
+    {
+      "task_number": 7,
+      "title": "Final Container, Volume, Bind Mount and Port Mapping Verification",
+      "steps": [
+        "Verify that volume-httpd2 is running.",
+        "Verify that bind-nginx is running.",
+        "Verify that readonly-nginx is running.",
+        "Confirm that all three containers are running simultaneously.",
+        "Verify that volume-httpd2 publishes host port 8088 to container port 80.",
+        "Verify that bind-nginx publishes host port 8089 to container port 80.",
+        "Verify that readonly-nginx publishes host port 8090 to container port 80.",
+        "Verify the volume-httpd2 mount configuration using docker inspect.",
+        "Verify the bind-nginx mount configuration using docker inspect.",
+        "Verify the readonly-nginx mount configuration using docker inspect.",
+        "Verify that webdata is a Docker-managed volume.",
+        "Verify that /root/webdata is being used as a bind mount.",
+        "Verify that the bind-nginx mount is read-write.",
+        "Verify that the readonly-nginx mount is read-only.",
+        "Display all running containers using docker ps.",
+        "Verify Apache access using curl http://localhost:8088/linoop/docker.txt.",
+        "Verify Nginx access using curl http://localhost:8089.",
+        "Verify read-only Nginx access using curl http://localhost:8090.",
+        "Access the Apache and Nginx web applications through a web browser using the Docker host IP address and their respective published ports.",
+        "Confirm that all applications are accessible through their respective host ports."
+      ]
+    }
+  ],
+  "completion_message": "Lab 502 completed successfully! You have created and managed Docker volumes, mounted persistent storage inside containers, verified data persistence after container removal, configured bind mounts, practiced two-way data sharing between the Docker host and containers, configured read-only bind mounts, inspected mount configurations, and published container ports to access multiple web applications simultaneously."
+}
+

@@ -529,3 +529,9 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 525   sardar.akmal              2026-10-31 00:57:02    13     12     92%       
 526   sardar.akmal              2026-10-31 00:58:04    13     13     100%      
 527   raza.ali                  2026-10-31 17:08:45    13     13     100%      
+528   waseem.abbas              2026-11-09 04:09:40    13     1      8%        
+529   waseem.abbas              2026-11-09 04:12:20    13     2      15%       
+530   waseem.abbas              2026-11-09 04:38:06    13     12     92%       
+531   waseem.abbas              2026-11-09 04:39:32    13     13     100%      
+532   kinza.afzal               2026-11-13 01:40:17    13     1      8%        
+533   amna.bajwa                2026-11-13 05:01:59    13     13     100%      
