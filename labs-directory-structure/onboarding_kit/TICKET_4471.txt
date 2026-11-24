@@ -1,0 +1,23 @@
+==================== IT SERVICE DESK - TICKET #4471 ====================
+Priority : HIGH          Assigned to : Linux Administration Team (YOU)
+Requester: HR Department
+Subject  : New developer starts TODAY - please onboard on the server
+
+Hi Linux team,
+
+Our new developer BADSHA starts this morning. His Linux account
+(user: badsha) has already been created by the identity team.
+Please:
+
+  1. Set up a project workspace for the "webshop" application.
+  2. Give badsha ownership of his welcome package and personal
+     workspace files.
+  3. Make the shared application code writable by the whole
+     "developers" group (badsha and future devs).
+  4. Keep the secrets (database password etc.) restricted to the
+     "admins" group ONLY. Developers must never see them.
+  5. Confirm in a report when it is done.
+
+Templates and the team roster are in this folder. Thanks!
+                                                       -- HR
+=======================================================================

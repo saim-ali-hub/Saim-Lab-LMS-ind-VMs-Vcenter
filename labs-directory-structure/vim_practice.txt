@@ -1,0 +1,7 @@
+Linux is a powerful operating system used to manage servers, applications, and infrastructure.
+System administrators use command-line tools every day to maintain reliable systems.
+The Vim editor is an important tool for creating and modifying configuration files.
+Administrators should be comfortable navigating files, making changes, and saving their work.
+Careful editing by Vim editor is important because configuration mistakes can affect running services.
+Always review your changes before leaving the Vim editor.
+Practice makes command-line editing faster and more accurate.

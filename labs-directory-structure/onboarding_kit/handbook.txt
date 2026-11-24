@@ -1,0 +1,5 @@
+DEVELOPER HANDBOOK - short version
+1. All code goes into the shared app/ directory (group: developers).
+2. Never commit passwords. Admins keep secrets in a restricted directory.
+3. Log everything. Read logs before asking for help.
+4. Be nice to the Linux admins. They control the permissions.

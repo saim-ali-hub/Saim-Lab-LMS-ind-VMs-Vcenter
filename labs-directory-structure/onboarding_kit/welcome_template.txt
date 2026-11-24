@@ -1,0 +1,12 @@
+Welcome to the company!
+
+This is your personal welcome package. It was prepared by the
+Linux Administration team and now belongs to YOU - check with
+'ls -l' and you will see your own username as the owner.
+
+Your first tasks:
+  - read the developer handbook (docs/handbook.txt)
+  - your code lives in the shared 'app' directory
+  - never ask an admin for the contents of 'secrets'. They will say no.
+
+Happy coding!

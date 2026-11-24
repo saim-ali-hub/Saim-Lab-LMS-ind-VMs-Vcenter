@@ -1,0 +1,11 @@
+COMPANY TEAM ROSTER - Engineering
+username   role              team        manager     desk
+--------   ----              ----        -------     ----
+akhan      developer         webshop     rsimmons    B-12
+mlopez     developer         payments    rsimmons    B-14
+tnguyen    linux admin       infra       jpark       C-02
+rsimmons   engineering mgr   webshop     ceo         A-01
+badsha     developer         webshop     rsimmons    B-16
+jpark      infra manager     infra       ceo         A-03
+schen      qa engineer       webshop     rsimmons    B-18
+dwhite     linux admin       infra       jpark       C-04

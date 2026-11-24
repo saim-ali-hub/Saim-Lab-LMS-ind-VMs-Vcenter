@@ -1,0 +1,3 @@
+C001,Ali Khan,ali@example.com
+C002,Sara Ahmed,sara@example.com
+C003,John Smith,john@example.com

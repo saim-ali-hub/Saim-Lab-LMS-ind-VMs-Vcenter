@@ -1,0 +1,4 @@
+P001,Laptop,25
+P002,Monitor,40
+P003,Keyboard,75
+P004,Mouse,100
