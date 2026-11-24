@@ -203,3 +203,8 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 199   hammas.salam              2026-11-10 04:47:16    17     17     100%      
 200   amna.bajwa                2026-11-13 05:05:49    17     17     100%      
 201   yuliana.cuzzi             2026-11-18 02:32:54    17     17     100%      
+202   hammas.salam              2026-11-19 00:06:33    17     17     100%      
+203   ayesha.abdullah           2026-11-23 23:26:37    17     14     82%       
+204   ayesha.abdullah           2026-11-23 23:49:47    17     17     100%      
+205   awais.afzal               2026-11-24 01:40:30    0      0      0%        
+206   awais.afzal               2026-11-24 02:03:31    0      0      0%        

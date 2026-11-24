@@ -471,3 +471,4 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 467   muhammad.rafiq            2026-11-13 08:56:58    18     18     100%      
 468   muhammad.jahanzaib        2026-11-13 18:20:55    18     18     100%      
 469   fouzia.sultana            2026-11-14 04:56:03    18     18     100%      
+470   ayesha.abdullah           2026-11-24 01:08:41    18     18     100%      

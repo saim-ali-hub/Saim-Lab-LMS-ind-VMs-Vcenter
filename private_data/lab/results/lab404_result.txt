@@ -196,3 +196,8 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 192   hamza.bashir              2026-11-17 02:57:10    16     4      25%       
 193   syeda.khadija             2026-11-17 03:27:51    16     4      25%       
 194   syeda.khadija             2026-11-17 03:36:20    16     4      25%       
+195   syeda.khadija             2026-11-20 01:48:34    16     4      25%       
+196   hajra.iftikhar            2026-11-22 21:48:28    16     16     100%      
+197   hajra.iftikhar            2026-11-22 21:53:20    16     3      19%       
+198   hajra.iftikhar            2026-11-22 21:54:41    16     1      6%        
+199   hajra.iftikhar            2026-11-22 22:59:01    16     16     100%      

@@ -388,3 +388,4 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 384   waseem.abbas              2026-11-09 05:27:46    8      6      75%       
 385   waseem.abbas              2026-11-09 05:33:03    8      7      88%       
 386   waseem.abbas              2026-11-09 05:35:09    8      8      100%      
+387   hammas.salam              2026-11-20 08:58:46    8      8      100%      

@@ -71,3 +71,4 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 67    waqar.zahoor              2026-11-13 02:47:51    17     17     100%      
 68    rabia.tariq               2026-11-16 04:03:20    17     17     100%      
 69    danyal.khan               2026-11-17 21:40:41    17     17     100%      
+70    sana.abbasi               2026-11-18 23:42:03    17     17     100%      

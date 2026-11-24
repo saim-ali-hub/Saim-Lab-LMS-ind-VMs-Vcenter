@@ -288,3 +288,4 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 284   noor.fatima               2026-11-13 21:02:36    14     13     93%       
 285   noor.fatima               2026-11-13 21:13:24    14     14     100%      
 286   anum.nasim                2026-11-16 23:43:27    14     14     100%      
+287   waqar.zahoor              2026-11-18 21:54:18    14     14     100%      

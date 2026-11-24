@@ -258,3 +258,8 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 254   sana.abbasi               2026-11-14 16:18:22    16     16     100%      
 255   david.salame              2026-11-16 01:34:24    16     16     100%      
 256   noor.fatima               2026-11-16 16:36:11    16     16     100%      
+257   anum.nasim                2026-11-24 03:08:03    16     16     100%      
+258   syeda.khadija             2026-11-24 03:11:20    16     16     100%      
+259   muhammad.annam            2026-11-24 04:20:14    16     15     94%       
+260   muhammad.annam            2026-11-24 04:21:40    16     15     94%       
+261   muhammad.annam            2026-11-24 04:23:19    16     15     94%       

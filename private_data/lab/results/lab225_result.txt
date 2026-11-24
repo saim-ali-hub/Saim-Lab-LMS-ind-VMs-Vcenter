@@ -472,3 +472,5 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 468   awais.afzal               2026-11-14 01:15:51    18     18     100%      
 469   fouzia.sultana            2026-11-14 05:17:10    18     8      44%       
 470   fouzia.sultana            2026-11-14 06:12:46    18     8      44%       
+471   muhammad.jahanzaib        2026-11-22 03:01:15    0      0      0%        
+472   muhammad.jahanzaib        2026-11-22 03:18:07    0      0      0%        

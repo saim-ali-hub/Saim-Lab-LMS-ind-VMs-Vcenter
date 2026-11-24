@@ -238,3 +238,10 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 234   abdullah.anjum            2026-11-10 03:29:36    11     11     100%      
 235   muhammad.shoaib           2026-11-13 21:56:00    11     10     91%       
 236   muhammad.annam            2026-11-17 04:36:11    11     11     100%      
+237   awais.afzal               2026-11-19 01:25:30    11     11     100%      
+238   hammas.salam              2026-11-20 08:59:40    11     1      9%        
+239   ayesha.abdullah           2026-11-20 17:07:07    11     10     91%       
+240   ayesha.abdullah           2026-11-20 17:15:57    11     10     91%       
+241   ayesha.abdullah           2026-11-20 18:15:26    11     11     100%      
+242   hammas.salam              2026-11-20 21:29:42    11     1      9%        
+243   hammas.salam              2026-11-20 22:49:59    11     1      9%        

@@ -535,3 +535,4 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 531   waseem.abbas              2026-11-09 04:39:32    13     13     100%      
 532   kinza.afzal               2026-11-13 01:40:17    13     1      8%        
 533   amna.bajwa                2026-11-13 05:01:59    13     13     100%      
+534   hammas.salam              2026-11-20 07:13:04    13     13     100%      

@@ -43,3 +43,5 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 39    muhammad.khan             2026-10-05 23:45:31    0      0      0%        
 40    kinza.afzal               2026-11-10 14:52:01    0      0      0%        
 41    kinza.afzal               2026-11-13 21:21:09    0      0      0%        
+42    shafaq.zehra              2026-11-19 01:37:11    0      0      0%        
+43    fatima.tabusum            2026-11-24 01:20:57    0      0      0%        

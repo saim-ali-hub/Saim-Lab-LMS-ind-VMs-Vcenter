@@ -499,3 +499,8 @@ Sr.#  Name                      Date                   Total  Passed Percentage
 495   waseem.abbas              2026-11-09 05:05:42    21     20     95%       
 496   amna.bajwa                2026-11-13 05:02:40    17     8      47%       
 497   amna.bajwa                2026-11-13 05:02:56    17     8      47%       
+498   hammas.salam              2026-11-20 07:15:33    21     14     67%       
+499   hammas.salam              2026-11-20 07:45:42    21     14     67%       
+500   hammas.salam              2026-11-20 07:46:02    21     14     67%       
+501   hammas.salam              2026-11-20 07:49:48    21     15     71%       
+502   hammas.salam              2026-11-20 07:59:13    21     21     100%      
