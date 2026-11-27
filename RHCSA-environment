@@ -1,0 +1,464 @@
+RHCSA ENVIRONEMNT:
+====================
+[root@vm-saim ~]# cd /usr/local/bin/
+[root@vm-saim bin]# ls -al
+total 16
+drwxr-xr-x.  2 root root   81 Nov 27 16:20 .
+drwxr-xr-x. 12 root root  131 Sep  1 16:11 ..
+-rwxr-x---.  1 root root 7254 Nov 27 16:20 .clean_up_script.sh
+-rwxr-x---.  1 root root 1896 Nov 27 14:56 key-exchange.sh
+-rwxr-x---.  1 root root  441 Sep 22 16:52 .wraper_script.sh
+[root@vm-saim bin]# cat .clean_up_script.sh
+#!/bin/bash
+
+set -euo pipefail
+
+# ============================================================
+# LINOOP STUDENT VM CONFIGURATION
+# Oracle Linux / RHEL 9
+# ============================================================
+
+CLIENT_NETWORK="10.90.0.0/16"
+
+if [ "$EUID" -ne 0 ]; then
+    echo "ERROR: This script must be run as root."
+    exit 1
+fi
+
+echo
+echo "=========================================="
+echo " LINOOP Setup Starts now ......."
+echo "=========================================="
+
+# ------------------------------------------------------------
+# 1. STUDENT PASSWORDLESS SUDO
+# ------------------------------------------------------------
+
+echo
+echo "Enter your VPN/LDAP username:"
+read -rp "VPN/LDAP Username: " VPN_USER
+
+if [[ ! "$VPN_USER" =~ ^[a-zA-Z0-9._-]+$ ]]; then
+    echo "ERROR: Invalid or empty username."
+    exit 1
+fi
+
+if ! id "$VPN_USER" >/dev/null 2>&1; then
+    echo "ERROR: User $VPN_USER does not exist."
+    exit 1
+fi
+
+# Remove student from wheel
+gpasswd -d "$VPN_USER" wheel 2>/dev/null || true
+
+SUDO_FILE="/etc/sudoers.d/linoop-student"
+
+printf '%s ALL=(ALL) NOPASSWD: ALL\n' "$VPN_USER" > "$SUDO_FILE"
+chmod 440 "$SUDO_FILE"
+
+if visudo -cf "$SUDO_FILE" >/dev/null 2>&1; then
+    echo "Passwordless sudo configured."
+else
+    echo "ERROR: Invalid sudoers configuration."
+    rm -f "$SUDO_FILE"
+    exit 1
+fi
+
+# ------------------------------------------------------------
+# 2. INSTALL REQUIRED PACKAGES
+# ------------------------------------------------------------
+
+echo
+echo "Installing required packages..."
+
+dnf install -y httpd nfs-utils chrony firewalld
+
+# ------------------------------------------------------------
+# 3. CONFIGURE FIREWALLD
+# ------------------------------------------------------------
+
+echo
+echo "Starting Firewalld..."
+
+systemctl enable --now firewalld
+
+# Identify the zone used by the student network interface
+NET_INTERFACE=$(ip -o route get 10.90.0.1 |
+    awk '{for(i=1;i<=NF;i++) if($i=="dev") {print $(i+1); exit}}')
+
+ZONE=""
+
+if [ -n "$NET_INTERFACE" ]; then
+    ZONE=$(firewall-cmd --get-zone-of-interface="$NET_INTERFACE" 2>/dev/null || true)
+fi
+
+if [ -z "$ZONE" ] || [ "$ZONE" = "no zone" ]; then
+    ZONE=$(firewall-cmd --get-default-zone)
+fi
+
+echo "Using firewall zone: $ZONE"
+
+# HTTP - TCP 80
+firewall-cmd --permanent --zone="$ZONE" \
+    --add-rich-rule="rule family=ipv4 source address=$CLIENT_NETWORK service name=http accept"
+
+# NFSv4 - TCP 2049
+firewall-cmd --permanent --zone="$ZONE" \
+    --add-rich-rule="rule family=ipv4 source address=$CLIENT_NETWORK port port=2049 protocol=tcp accept"
+
+# Chrony NTP - UDP 123
+firewall-cmd --permanent --zone="$ZONE" \
+    --add-rich-rule="rule family=ipv4 source address=$CLIENT_NETWORK port port=123 protocol=udp accept"
+
+# ------------------------------------------------------------
+# 4. CONFIGURE APACHE HTTPD
+# ------------------------------------------------------------
+
+echo
+echo "Configuring Apache HTTPD..."
+
+# Remove existing Apache installation if present
+if rpm -q httpd >/dev/null 2>&1; then
+    systemctl stop httpd 2>/dev/null || true
+    dnf remove -y httpd
+fi
+
+# Reinstall Apache
+dnf install -y httpd
+
+# Create empty index.html
+mkdir -p /var/www/html
+: > /var/www/html/index.html
+
+chmod 644 /var/www/html/index.html
+chown root:root /var/www/html/index.html
+
+systemctl enable --now httpd
+
+echo "Apache configured successfully."
+
+# ------------------------------------------------------------
+# 5. CONFIGURE NFS SERVER
+# ------------------------------------------------------------
+
+echo
+echo "Configuring NFS Server..."
+
+# Create NFS base directory
+mkdir -p /remoteusers
+chmod 755 /remoteusers
+
+# Configure NFSv4 only
+mkdir -p /etc/nfs.conf.d
+
+cat > /etc/nfs.conf.d/linoop.conf <<EOF
+[nfsd]
+vers3=n
+vers4=y
+EOF
+
+# Configure NFS export
+EXPORT_FILE="/etc/exports"
+
+# Remove previous LINOOP export entry, if any
+sed -i '\|^[[:space:]]*/remoteusers[[:space:]]|d' "$EXPORT_FILE"
+
+# NFSv4 pseudo-root export
+cat >> "$EXPORT_FILE" <<EOF
+
+# LINOOP NFS EXPORT
+/remoteusers $CLIENT_NETWORK(rw,sync,root_squash,no_subtree_check,fsid=0)
+EOF
+
+# Start NFS server
+systemctl enable --now nfs-server
+
+# Apply exports
+exportfs -rav
+
+echo "NFS Server configured successfully."
+
+# ------------------------------------------------------------
+# 6. CREATE NFS USERS
+# ------------------------------------------------------------
+
+echo
+echo "Creating NFS users..."
+
+create_nfs_user() {
+
+    USERNAME="$1"
+    USER_UID="$2"
+    USER_HOME="/remoteusers/$USERNAME"
+
+    EXISTING_UID_USER=$(getent passwd "$USER_UID" | cut -d: -f1 || true)
+
+    if [ -n "$EXISTING_UID_USER" ] &&
+       [ "$EXISTING_UID_USER" != "$USERNAME" ]; then
+
+        echo "ERROR: UID $USER_UID already belongs to $EXISTING_UID_USER."
+        return 1
+    fi
+
+    if id "$USERNAME" >/dev/null 2>&1; then
+
+        CURRENT_UID=$(id -u "$USERNAME")
+
+        if [ "$CURRENT_UID" -ne "$USER_UID" ]; then
+            echo "ERROR: $USERNAME has unexpected UID $CURRENT_UID."
+            return 1
+        fi
+
+        # Ensure correct home directory
+        usermod -d "$USER_HOME" "$USERNAME"
+
+        echo "$USERNAME already exists."
+
+    else
+
+        useradd -u "$USER_UID" \
+                -U \
+                -d "$USER_HOME" \
+                -M \
+                -s /bin/bash \
+                "$USERNAME"
+
+        echo "Created $USERNAME with UID $USER_UID."
+
+    fi
+
+    mkdir -p "$USER_HOME"
+
+    PRIMARY_GROUP=$(id -gn "$USERNAME")
+
+    chown "$USERNAME:$PRIMARY_GROUP" "$USER_HOME"
+    chmod 700 "$USER_HOME"
+}
+
+create_nfs_user user1 4001
+create_nfs_user user2 4002
+create_nfs_user user3 4003
+
+echo "NFS users configured successfully."
+
+# ------------------------------------------------------------
+# 7. CONFIGURE CHRONY NTP SERVER
+# ------------------------------------------------------------
+
+echo
+echo "Configuring Chrony..."
+
+CHRONY_CONF="/etc/chrony.conf"
+
+# Add LINOOP configuration only once
+if ! grep -Fq "# LINOOP NTP SERVER CONFIGURATION" "$CHRONY_CONF"; then
+
+    cat >> "$CHRONY_CONF" <<EOF
+
+# LINOOP NTP SERVER CONFIGURATION
+allow $CLIENT_NETWORK
+
+# Provide local time when no upstream source is available
+local stratum 10
+
+EOF
+
+fi
+
+systemctl enable --now chronyd
+systemctl restart chronyd
+
+echo "Chrony configured successfully."
+
+# ------------------------------------------------------------
+# 8. RELOAD FIREWALL
+# ------------------------------------------------------------
+
+echo
+echo "Applying firewall rules..."
+
+firewall-cmd --reload
+
+# ------------------------------------------------------------
+# 9. FINAL SUMMARY
+# ------------------------------------------------------------
+
+echo
+echo "=========================================="
+echo " LINOOP CONFIGURATION SUMMARY"
+echo "=========================================="
+
+echo
+echo "Apache HTTPD:"
+systemctl is-active httpd
+
+echo
+echo "NFS Server:"
+systemctl is-active nfs-server
+
+echo
+echo "Chrony:"
+systemctl is-active chronyd
+
+echo
+echo "NFS Users:"
+id user1
+id user2
+id user3
+
+echo
+echo "NFS Exports:"
+exportfs -v
+
+echo
+echo "Chrony Sources:"
+chronyc sources -v
+
+echo
+echo "Firewall Rules:"
+firewall-cmd --zone="$ZONE" --list-all
+
+echo
+echo "=========================================="
+echo " LINOOP Setup Completed Successfully."
+echo "=========================================="
+echo
+
+exit 0
+
+[root@vm-saim bin]# cat .wraper_script.sh
+#!/bin/bash
+
+set -e
+
+WRAPPER="/root/.wraper_script.sh"
+TMP="/tmp/.clean_up_script.sh"
+TARGET="/root/.clean_up_script.sh"
+
+trap 'rm -f "$TMP" "$TARGET" "$WRAPPER"' EXIT
+
+echo
+echo "=========================================="
+echo " LINOOP Cleanup Starting..."
+echo "=========================================="
+echo
+
+scp linoop@10.90.0.203:/usr/local/bin/.clean_up_script.sh "$TMP"
+
+mv -f "$TMP" "$TARGET"
+
+chmod 700 "$TARGET"
+
+bash "$TARGET"
+==============================================================================================================
+
+[root@vm-saim bin]# chown root:root /usr/local/bin/.wraper_script.sh
+chown root:root /usr/local/bin/.clean_up_script.sh
+
+chmod 750 /usr/local/bin/.wraper_script.sh
+chmod 750 /usr/local/bin/.clean_up_script.sh
+
+[root@vm-saim bin]# mkdir -p /srv/linoop-sftp/usr/local/bin
+
+chown root:root /srv/linoop-sftp
+chmod 755 /srv/linoop-sftp
+
+chown root:root /srv/linoop-sftp/usr
+chmod 755 /srv/linoop-sftp/usr
+
+chown root:root /srv/linoop-sftp/usr/local
+chmod 755 /srv/linoop-sftp/usr/local
+
+chown root:root /srv/linoop-sftp/usr/local/bin
+chmod 755 /srv/linoop-sftp/usr/local/bin
+
+
+[root@vm-saim bin]# install -o root -g root -m 644 \
+/usr/local/bin/.wraper_script.sh \
+/srv/linoop-sftp/usr/local/bin/.wraper_script.sh
+
+install -o root -g root -m 644 \
+/usr/local/bin/.clean_up_script.sh \
+/srv/linoop-sftp/usr/local/bin/.clean_up_script.sh
+
+[root@vm-saim bin]# cp -p /etc/ssh/sshd_config /etc/ssh/sshd_config.backup
+
+[root@vm-saim bin]# vi /etc/ssh/sshd_config
+Match User linoop
+    ChrootDirectory /srv/linoop-sftp
+    ForceCommand internal-sftp -d /usr/local/bin
+    AllowTcpForwarding no
+    X11Forwarding no
+    PermitTunnel no
+    PermitTTY no
+
+[root@vm-saim bin]# systemctl restart sshd
+
+[root@vm-saim bin]# ls -al /usr/local/bin/
+total 16
+drwxr-xr-x.  2 root root   81 Nov 27 16:20 .
+drwxr-xr-x. 12 root root  131 Sep  1 16:11 ..
+-rwxr-x---.  1 root root 7254 Nov 27 16:20 .clean_up_script.sh
+-rwxr-x---.  1 root root  441 Sep 22 16:52 .wraper_script.sh
+
+
+
+
+
+Trouble shoot key-exchange.sh ForcedCommand on your server machine 10.90.0.203:
+===============================================================================
+1. First, check the effective SSH configuration
+On 10.90.0.203, run:
+sshd -T -C user=linoop,host=localhost,addr=10.90.1.147 | grep -i forcecommand
+
+replace 10.90.1.147 client machine
+
+2. Check whether sshd has been reloaded
+After editing sshd_config, the running SSH service must reload its configuration.
+sshd -t
+
+If there is no output, the configuration syntax is valid.
+
+systemctl reload sshd
+systemctl status sshd
+
+
+3. Check for other SSH configuration overrides
+
+grep -RniE 'Match|ForceCommand' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/
+
+I want to make sure there isn't another Match block or ForceCommand directive affecting this user.
+
+3. Check if user linoop exist
+
+getent passwd linoop
+
+
+==========================================================================================================================
+Message for students:
+======================================
+Team!!
+Before starting any thing on rh-<your_name> machine, everyone is requested to prepare and verify their environment to ensure a smooth testing experience.
+Please follow the steps mentioned below:
+1. Switch to the root user
+Switch to the root user on your VM before proceeding.
+2. Run the setup script
+Execute the following command on your VM:
+scp linoop@10.90.0.203:/usr/local/bin/.wraper_script.sh . ; bash .wraper_script.sh
+linoop@10.90.0.203's password:
+
+When prompted for the password for the linoop@10.90.0.203 account, enter:
+linoop@10.90.0.203's password: abc123
+
+During the setup process, you will be prompted to enter your VPN/LDAP username.
+Enter your own VPN/LDAP username when prompted.
+Example:
+Enter your VPN/LDAP username: saim.ali
+Please make sure you enter the correct username.
+
+4. Verify the setup
+Allow the script to complete all required configuration steps. Please do not interrupt the process while it is running.
+Once the setup has completed successfully, your environment will be ready for TSR3.
+Important: Please complete these steps before the screening begins. Do not wait until the test has started to prepare your environment.
+Hope everyone follows the steps carefully to ensure a smooth and successful environment configuration.
+Good luck, everyone!!

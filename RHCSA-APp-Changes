@@ -1,0 +1,99 @@
+Changes introduced to RHCSA Setup:
+================================
+
+[root@platform config]# cat config.php
+// VM_PREFIX
+//define('VM_PREFIX','vm-');
+
+
+[root@platform config]# cat functions.php
+
+//function getVmName($student)
+//{
+//    return VM_PREFIX . strtolower($student);
+//}
+
+function getVmTypeForLab($lab)
+{
+    $listFile = '/var/www/private_data/lab/list.json';
+
+    if (!file_exists($listFile)) {
+        error_log("Lab list.json not found: " . $listFile);
+        return null;
+    }
+
+    $labs = json_decode(file_get_contents($listFile), true);
+
+    if (!is_array($labs)) {
+        error_log("Invalid list.json");
+        return null;
+    }
+
+    $labFile = basename($lab);
+
+    if (!preg_match('/^lab[0-9]+\.json$/', $labFile)) {
+        error_log("Invalid lab filename: " . $labFile);
+        return null;
+    }
+
+    foreach ($labs as $item) {
+
+        if (
+            isset($item['file'], $item['category']) &&
+            $item['file'] === $labFile
+        ) {
+
+            if (strcasecmp(trim($item['category']), 'RHCSA') === 0) {
+                return 'rh';
+            }
+
+            return 'linux';
+        }
+    }
+
+    error_log("Lab not found in list.json: " . $labFile);
+
+    return null;
+}
+
+
+function getVmName($student, $lab)
+{
+    $vmType = getVmTypeForLab($lab);
+
+    if ($vmType === null) {
+        return null;
+    }
+
+    if ($vmType === 'rh') {
+        return 'rh-' . strtolower($student);
+    }
+
+    return 'vm-' . strtolower($student);
+}
+
+
+
+[root@platform validator]# cat evaluate_lab.php
+// $vmName = getVmName($username);
+
+$vmName = getVmName($username, $lab . '.json');
+
+if ($vmName === null) {
+    http_response_code(400);
+    exit("Unable to determine student VM for this lab.");
+}
+
+
+[root@platform lab]# cat list.json
+    {    
+     "category": "RHCSA",
+     "name": "Lab 602 - rhcsa prep II",
+     "file": "lab602.json"
+    },
+    {
+        "category": "Technical Screening",
+        "name": "Technical Screening Round - 1",
+        "file": "lab901.json"
+    },
+
